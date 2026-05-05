@@ -1,0 +1,15 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+class OpenRegistrationController extends Controller
+{
+    public function dashboard()
+    {
+        return response()->json([
+            'message' => 'Dashboard API working'
+        ]);
+    }
+}
