@@ -1,3 +1,4 @@
+// ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:umpgo_frontend/widgets/stud_nav.dart';
 import 'package:umpgo_frontend/widgets/app_header.dart';
@@ -7,8 +8,10 @@ class _C {
   static const bg = Color(0xFFF4F7FB);
   static const primary = Color(0xFF1E6FBF);
   static const primaryLight = Color(0xFFD6E8F8);
+  // ignore: unused_field
   static const accent = Color(0xFF3A9FDB);
   static const danger = Color(0xFFE53935);
+  // ignore: unused_field
   static const dangerLight = Color(0xFFFFEBEE);
   static const success = Color(0xFF2E7D32);
   static const successLight = Color(0xFFE8F5E9);
@@ -16,6 +19,7 @@ class _C {
   static const textMain = Color(0xFF1A2B45);
   static const textMuted = Color(0xFF6B7C93);
   static const border = Color(0xFFDDE3EE);
+  // ignore: unused_field
   static const headerBg = Color(0xFF1E6FBF);
 }
 
@@ -77,6 +81,7 @@ class _Breadcrumb extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: _C.primary.withOpacity(0.25),
             blurRadius: 12,
             offset: const Offset(0, 4),
