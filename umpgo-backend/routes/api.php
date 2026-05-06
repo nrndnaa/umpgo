@@ -1,6 +1,7 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\OpenRegistrationController;
+use App\Http\Controllers\AuthController;  // ← add this
 
-Route::get('/student/dashboard', [OpenRegistrationController::class, 'dashboard']);
+Route::post('/login', [AuthController::class, 'login']);
