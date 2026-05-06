@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:umpgo_frontend/widgets/stud_nav.dart';
 import 'package:umpgo_frontend/widgets/app_header.dart';
 import 'OpenRegistration/mainOR.dart';
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 
 class StudentDashboard extends StatelessWidget {
   const StudentDashboard({super.key});
@@ -61,11 +65,15 @@ class StudentDashboard extends StatelessWidget {
                         MaterialPageRoute(builder: (_) => const MainOR()),
                       ),
                     ),
+<<<<<<< Updated upstream
                     _DashCard(
                       icon: Icons.calendar_month_rounded,
                       title: "Class Attendance",
                       onTap: () {},
                     ),
+=======
+
+>>>>>>> Stashed changes
                     _DashCard(
                       icon: Icons.description_rounded,
                       title: "Curriculum",
