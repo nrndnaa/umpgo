@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:umpgo_frontend/widgets/stud_nav.dart';
 import 'package:umpgo_frontend/widgets/app_header.dart';
 import 'OpenRegistration/mainOR.dart';
+import 'Attendance/subject_list.dart'; 
+import 'Attendance/module_list.dart'; 
 
 class StudentDashboard extends StatelessWidget {
   const StudentDashboard({super.key});
@@ -62,10 +64,10 @@ class StudentDashboard extends StatelessWidget {
                       ),
                     ),
                     _DashCard(
-                      icon: Icons.calendar_month_rounded,
-                      title: "Class Attendance",
-                      onTap: () {},
-                    ),
+  icon: Icons.calendar_month_rounded,
+  title: "Class Attendance",
+  onTap: () => _showAttendanceTypeDialog(context), // ← CHANGE THIS
+),
                     _DashCard(
                       icon: Icons.description_rounded,
                       title: "Curriculum",
