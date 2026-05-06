@@ -14,13 +14,13 @@ return new class extends Migration
             $table->string('code')->unique();
             $table->string('name');
             $table->string('campus');
-            $table->integer('catsPoint');
+            $table->integer('catsPoint')->default(2);
             $table->integer('maxSlots');
             $table->integer('filledSlots')->default(0);
             $table->date('startDate');
             $table->date('endDate');
-            $table->time('startTime');
-            $table->time('endTime');
+            $table->string('startTime');
+            $table->string('endTime');
             $table->string('venue');
             $table->string('groupLink')->nullable();
             $table->timestamps();

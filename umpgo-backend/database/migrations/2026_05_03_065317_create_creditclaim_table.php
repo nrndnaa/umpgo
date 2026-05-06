@@ -11,16 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('creditclaim', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+        Schema::create('creditclaims', function (Blueprint $table) {
+        $table->id('claimID');
+        $table->unsignedBigInteger('studentID');
+        $table->string('semester');
+        $table->integer('totalCats')->default(0);
+        $table->string('status')->default('Not Complete');
+        $table->timestamp('submitted_At')->nullable();
+        $table->timestamps();
+
+        $table->foreign('studentID')->references('studentID')->on('students');
+    });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+        public function down(): void
     {
         Schema::dropIfExists('creditclaim');
     }
