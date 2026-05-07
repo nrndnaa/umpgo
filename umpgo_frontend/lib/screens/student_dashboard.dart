@@ -4,9 +4,12 @@ import 'package:umpgo_frontend/widgets/stud_nav.dart';
 import 'package:umpgo_frontend/widgets/app_header.dart';
 
 import 'OpenRegistration/mainOR.dart';
+<<<<<<< HEAD
 import 'Attendance/subject_list.dart'; 
 import 'Attendance/module_list.dart'; 
 import 'curriculum/student/curriculum_menu.dart';
+=======
+>>>>>>> 39a645b8dbb5946fdc0c3161a983136a38eba5bc
 
 class StudentDashboard extends StatelessWidget {
   final StudentModel student; // ← add this
@@ -70,11 +73,7 @@ class StudentDashboard extends StatelessWidget {
                         MaterialPageRoute(builder: (_) => const MainOR()),
                       ),
                     ),
-                    _DashCard(
-  icon: Icons.calendar_month_rounded,
-  title: "Class Attendance",
-  onTap: () => _showAttendanceTypeDialog(context), // ← CHANGE THIS
-),
+                    
                     _DashCard(
   icon: Icons.description_rounded,
   title: "Curriculum",

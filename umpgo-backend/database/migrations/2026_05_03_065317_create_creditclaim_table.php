@@ -17,7 +17,6 @@ return new class extends Migration
         $table->string('semester');
         $table->integer('totalCats')->default(0);
         $table->string('status')->default('Not Complete');
-        $table->timestamp('submitted_At')->nullable();
         $table->timestamps();
 
         $table->foreign('studentID')->references('studentID')->on('students');
