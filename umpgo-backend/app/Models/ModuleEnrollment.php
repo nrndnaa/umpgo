@@ -8,7 +8,7 @@ use App\Models\KoqModule;
 
 class ModuleEnrollment extends Model
 {
-    protected $table = 'moduleenrollments'; // add this!
+    protected $table = 'moduleenrollment'; 
     protected $primaryKey = 'modEnrollID';
 
     protected $fillable = [

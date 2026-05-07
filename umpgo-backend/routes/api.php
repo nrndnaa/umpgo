@@ -19,7 +19,9 @@ Route::post('/modules/register', [KoqController::class, 'registerModule']);
 Route::get('/modules/mybookings/{studentID}', [KoqController::class, 'getMyBookings']);
 Route::get('/modules/enrollments/{moduleID}', [KoqController::class, 'getEnrollmentsByModule']);
 
+
 // Student Credit Claim
+Route::get('/creditclaim/cats/{studentID}', [KoqController::class, 'getStudentCats']);
 Route::post('/creditclaim/submit', [KoqController::class, 'submitCreditClaim']);
 Route::get('/creditclaim/student/{studentID}', [KoqController::class, 'getStudentClaim']);
 

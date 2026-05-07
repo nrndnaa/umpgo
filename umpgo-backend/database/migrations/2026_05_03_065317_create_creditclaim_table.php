@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('creditclaims', function (Blueprint $table) {
+        Schema::create('creditclaim', function (Blueprint $table) {
         $table->id('claimID');
         $table->unsignedBigInteger('studentID');
         $table->string('semester');
@@ -19,7 +19,7 @@ return new class extends Migration
         $table->string('status')->default('Not Complete');
         $table->timestamps();
 
-        $table->foreign('studentID')->references('studentID')->on('students');
+        $table->foreign('studentID')->references('studentID')->on('student');
     });
     }
 

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CreditClaim extends Model
 {
-    protected $table = 'creditclaims';
+    protected $table = 'creditclaim';
     protected $primaryKey = 'claimID';
 
     protected $fillable = [

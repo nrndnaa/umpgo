@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('koqmodule', function (Blueprint $table) {
             $table->id('moduleID');
-            $table->foreignId('adabID')->constrained('pusatadab', 'adabID')->cascadeOnDelete(); // ← adabID not staffID
+            $table->foreignId('adabID')->constrained('pusatadab', 'adabID')->cascadeOnDelete(); 
             $table->string('code')->unique();
             $table->string('name');
             $table->string('campus');
@@ -19,8 +19,8 @@ return new class extends Migration
             $table->integer('filledSlots')->default(0);
             $table->date('startDate');
             $table->date('endDate');
-            $table->string('startTime');
-            $table->string('endTime');
+            $table->time('startTime');
+            $table->time('endTime');
             $table->string('venue');
             $table->string('groupLink')->nullable();
             $table->timestamps();

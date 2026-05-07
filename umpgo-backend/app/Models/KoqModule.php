@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class KoqModule extends Model
 {
-protected $table = 'koqmodules';
+protected $table = 'koqmodule';
 protected $primaryKey = 'moduleID';
 public $incrementing = true;
 protected $keyType = 'int';
     protected $fillable = [
-        'staffID',
+        'adabID',
         'code',
         'name',
         'catsPoint',
