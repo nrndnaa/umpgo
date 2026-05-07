@@ -6,20 +6,27 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('koqmodule', function (Blueprint $table) {
-            $table->id();
+            $table->id('moduleID');
+            $table->foreignId('adabID')->constrained('pusatadab', 'adabID')->cascadeOnDelete(); // ← adabID not staffID
+            $table->string('code')->unique();
+            $table->string('name');
+            $table->string('campus');
+            $table->integer('catsPoint');
+            $table->integer('maxSlots');
+            $table->integer('filledSlots')->default(0);
+            $table->date('startDate');
+            $table->date('endDate');
+            $table->time('startTime');
+            $table->time('endTime');
+            $table->string('venue');
+            $table->string('groupLink')->nullable();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('koqmodule');

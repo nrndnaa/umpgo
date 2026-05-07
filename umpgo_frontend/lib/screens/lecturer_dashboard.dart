@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:umpgo_frontend/domain/lecturer_model.dart';
 import 'package:umpgo_frontend/widgets/app_header.dart';
 
 class LecturerDashboard extends StatelessWidget {
-  const LecturerDashboard({super.key});
+  final Lecturer lecturer;
+
+  const LecturerDashboard({super.key, required this.lecturer});
 
   // Theme Colors from your image
   static const Color primaryOrange = Color(0xFFFFD18E);

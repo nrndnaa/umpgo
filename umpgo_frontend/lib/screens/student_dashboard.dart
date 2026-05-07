@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:umpgo_frontend/domain/student_model.dart';
 import 'package:umpgo_frontend/widgets/stud_nav.dart';
 import 'package:umpgo_frontend/widgets/app_header.dart';
+
 import 'OpenRegistration/mainOR.dart';
 
 class StudentDashboard extends StatelessWidget {
-  const StudentDashboard({super.key});
+  final StudentModel student; // ← add this
+
+  const StudentDashboard({
+    super.key,
+    required this.student,
+  }); // ← add required this.student
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          Colors.white, // Matches the clean white background in the image
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
-            const AppHeader(), // Your existing header widget
+            const AppHeader(),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(
@@ -25,9 +31,9 @@ class StudentDashboard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // ── Welcome Text ──────────────────────────────────────────
-                    const Text(
-                      "Welcome, Nurin Irdina",
-                      style: TextStyle(
+                    Text(
+                      "Welcome, ${student.name}", // ← use real name from model
+                      style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.w900,
                         color: Colors.black,
@@ -61,11 +67,7 @@ class StudentDashboard extends StatelessWidget {
                         MaterialPageRoute(builder: (_) => const MainOR()),
                       ),
                     ),
-                    _DashCard(
-                      icon: Icons.calendar_month_rounded,
-                      title: "Class Attendance",
-                      onTap: () {},
-                    ),
+                    
                     _DashCard(
                       icon: Icons.description_rounded,
                       title: "Curriculum",
@@ -76,7 +78,7 @@ class StudentDashboard extends StatelessWidget {
                 ),
               ),
             ),
-            const StudNav(), // Your existing navigation widget
+            const StudNav(),
           ],
         ),
       ),
@@ -84,7 +86,7 @@ class StudentDashboard extends StatelessWidget {
   }
 }
 
-// ── Reusable Card (Updated for the Vertical Image Style) ──────────────────────
+// ── Reusable Card ─────────────────────────────────────────────────────────────
 class _DashCard extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -102,7 +104,7 @@ class _DashCard extends StatelessWidget {
       width: double.infinity,
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFFD6E8F8), // The light blue from the image
+        color: const Color(0xFFD6E8F8),
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
@@ -122,8 +124,6 @@ class _DashCard extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // For exact match with image_65fcc1.jpg, replace 'Icon' with 'Image.asset'
-                // once you have the specific 3D-style PNGs
                 Icon(icon, size: 50, color: const Color(0xFF1E6FBF)),
                 const SizedBox(height: 12),
                 Text(

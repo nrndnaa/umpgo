@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:umpgo_frontend/screens/login.dart';
-import 'package:umpgo_frontend/screens/student_dashboard.dart';
-import 'package:umpgo_frontend/screens/lecturer_dashboard.dart';
-import 'package:umpgo_frontend/screens/registrar_dashboard.dart';
-import 'package:umpgo_frontend/screens/treasury_dashboard.dart';
+import 'package:umpgo_frontend/screens/Attendance/checkin.dart';
 
 void main() {
   runApp(const UMPGoApp());
@@ -19,19 +16,9 @@ class UMPGoApp extends StatelessWidget {
       title: 'UMPGo',
       theme: ThemeData(
         useMaterial3: true,
-        fontFamily: 'Inter', // Or whichever font you prefer
+        fontFamily: 'Inter',
       ),
-      // Initial screen
-      home: const LoginScreen(),
-
-      // Defining routes for cleaner navigation
-      routes: {
-        '/login': (context) => const LoginScreen(),
-        '/student_dashboard': (context) => const StudentDashboard(),
-        '/lecturer_dashboard': (context) => const LecturerDashboard(),
-        '/registrar_dashboard': (context) => const RegistrarDashboard(),
-        '/treasury_dashboard': (context) => const TreasuryDashboard(),
-      },
+      home: const CheckInScreen(studentID: 12345),  // ← must be LoginScreen not LoginController
     );
   }
 }

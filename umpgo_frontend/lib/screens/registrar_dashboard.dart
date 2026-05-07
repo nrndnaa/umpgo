@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:umpgo_frontend/domain/facultyregistrar_model.dart';
 import 'package:umpgo_frontend/widgets/reg_nav.dart';
 import 'package:umpgo_frontend/widgets/app_header.dart'; // Reusing header
 
@@ -7,7 +8,9 @@ const _registrarMint = Color(0xFFA8E6CF); // Main background for cards/nav
 const _registrarBg = Colors.white;
 
 class RegistrarDashboard extends StatelessWidget {
-  const RegistrarDashboard({super.key});
+   final FacultyRegistrar registrar;
+
+  const RegistrarDashboard({super.key, required this.registrar});
 
   @override
   Widget build(BuildContext context) {
