@@ -61,15 +61,11 @@ class StudentDashboard extends StatelessWidget {
                         MaterialPageRoute(builder: (_) => const MainOR()),
                       ),
                     ),
-<<<<<<< Updated upstream
                     _DashCard(
                       icon: Icons.calendar_month_rounded,
                       title: "Class Attendance",
                       onTap: () {},
                     ),
-=======
-
->>>>>>> Stashed changes
                     _DashCard(
                       icon: Icons.description_rounded,
                       title: "Curriculum",
