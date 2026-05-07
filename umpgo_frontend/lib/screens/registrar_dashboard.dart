@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:umpgo_frontend/domain/facultyregistrar_model.dart';
 import 'package:umpgo_frontend/widgets/reg_nav.dart';
+import 'package:umpgo_frontend/screens/OpenRegistration/scheduleOR.dart';
 import 'package:umpgo_frontend/widgets/app_header.dart'; // Reusing header
 
 // ── Colors from Registrar Image ──────────────────────────────────────────────
@@ -8,7 +9,7 @@ const _registrarMint = Color(0xFFA8E6CF); // Main background for cards/nav
 const _registrarBg = Colors.white;
 
 class RegistrarDashboard extends StatelessWidget {
-   final FacultyRegistrar registrar;
+  final FacultyRegistrar registrar;
 
   const RegistrarDashboard({super.key, required this.registrar});
 
@@ -56,7 +57,12 @@ class RegistrarDashboard extends StatelessWidget {
                     _RegistrarCard(
                       icon: Icons.calendar_today_rounded,
                       title: "Registration Schedule",
-                      onTap: () {},
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ScheduleOR(registrar: registrar),
+                        ),
+                      ),
                     ),
                     _RegistrarCard(
                       icon: Icons.menu_book_rounded,

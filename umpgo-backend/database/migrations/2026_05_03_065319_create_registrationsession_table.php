@@ -6,22 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    public function up()
     {
-        Schema::create('registrationsession', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::table('registrationsession', function (Blueprint $table) {
+            $table->string('registrarID');
+            $table->string('eligableYear');
+            $table->date('startDate');
+            $table->date('endDate');
+            $table->time('startTime');
+            $table->time('endTime');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
-        Schema::dropIfExists('registrationsession');
+        Schema::table('registrationsession', function (Blueprint $table) {
+            $table->dropColumn(['registrarID', 'eligableYear', 'startDate', 'endDate', 'startTime', 'endTime']);
+        });
     }
 };
