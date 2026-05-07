@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:umpgo_frontend/domain/treasury_model.dart';
 import 'package:umpgo_frontend/widgets/app_header.dart';
 
 class TreasuryDashboard extends StatelessWidget {
-  const TreasuryDashboard({super.key});
+   final TreasuryModel treasury;
+
+  const TreasuryDashboard({super.key, required this.treasury});
 
   // Theme Colors from your image
   static const Color primaryPurple = Color(0xFFD161E9);
