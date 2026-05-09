@@ -21,8 +21,16 @@ class FacultyRegistrarSeeder extends Seeder
                 'name' => 'En. Zulkifli',
                 'email' => 'zul@ump.edu.my',
                 'password' => Hash::make('registrar123'),
-                'faculty' => 'FKAM',
+                'faculty' => 'FK',
             ],
+            [
+                'staffID' => 'REG002',
+                'name' => 'Pn. Sarah Adlyn',
+                'email' => 'sarahadlyn@ump.edu.my',
+                'password' => Hash::make('pass123'),
+                'faculty' => 'FK',
+            ],
+
         ]);
     }
 }

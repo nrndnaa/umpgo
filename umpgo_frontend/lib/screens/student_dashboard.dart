@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:umpgo_frontend/domain/student_model.dart';
 import 'package:umpgo_frontend/widgets/stud_nav.dart';
 import 'package:umpgo_frontend/widgets/app_header.dart';
-
 import 'OpenRegistration/mainOR.dart';
 
 class StudentDashboard extends StatelessWidget {
@@ -64,7 +63,9 @@ class StudentDashboard extends StatelessWidget {
                       title: "Open Registration",
                       onTap: () => Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const MainOR()),
+                        MaterialPageRoute(
+                          builder: (_) => MainOR(student: student),
+                        ),
                       ),
                     ),
                     _DashCard(

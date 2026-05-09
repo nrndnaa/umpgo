@@ -44,7 +44,10 @@ class LoginController {
       final response = await http
           .post(
             Uri.parse(ApiConfig.login),
-            headers: {'Content-Type': 'application/json'},
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json', // ← add this line
+            },
             body: jsonEncode({
               'username': trimmedUser,
               'password': trimmedPass,
@@ -54,15 +57,18 @@ class LoginController {
           .timeout(const Duration(seconds: 10));
 
       final data = jsonDecode(response.body);
-
       if (data['success'] == true) {
-        _navigateToDashboard(context, role, data['user']);
+        try {
+          _navigateToDashboard(context, role, data['user']);
+        } catch (e) {
+          return 'Dashboard error: $e'; // This will reveal the real problem
+        }
         return null;
       } else {
         return data['message'] ?? 'Login failed. Please try again.';
       }
     } catch (e) {
-      return 'Could not connect to server. Check your network.';
+      return 'Error: $e'; // shows the actual exception
     }
   }
 

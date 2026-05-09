@@ -2,30 +2,223 @@
 import 'package:flutter/material.dart';
 import 'package:umpgo_frontend/widgets/stud_nav.dart';
 import 'package:umpgo_frontend/widgets/app_header.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:umpgo_frontend/config/api.dart';
+import 'package:umpgo_frontend/domain/student_model.dart';
+import 'package:umpgo_frontend/screens/OpenRegistration/subjectStatusOR.dart';
 
-// ─── Theme constants ────────────────────────────────────────────────────────
+// ─── Theme constants ─────────────────────────────────────────────────────────
 class _C {
   static const bg = Color(0xFFF4F7FB);
   static const primary = Color(0xFF1E6FBF);
   static const primaryLight = Color(0xFFD6E8F8);
-  // ignore: unused_field
-  static const accent = Color(0xFF3A9FDB);
   static const danger = Color(0xFFE53935);
-  // ignore: unused_field
-  static const dangerLight = Color(0xFFFFEBEE);
   static const success = Color(0xFF2E7D32);
   static const successLight = Color(0xFFE8F5E9);
+  static const warning = Color(0xFFF57C00);
+  static const warningLight = Color(0xFFFFF3E0);
   static const surface = Colors.white;
   static const textMain = Color(0xFF1A2B45);
   static const textMuted = Color(0xFF6B7C93);
   static const border = Color(0xFFDDE3EE);
-  // ignore: unused_field
-  static const headerBg = Color(0xFF1E6FBF);
 }
 
-// ─── Root screen ────────────────────────────────────────────────────────────
-class MainOR extends StatelessWidget {
-  const MainOR({super.key});
+// ─── Root screen ──────────────────────────────────────────────────────────────
+class MainOR extends StatefulWidget {
+  final StudentModel student;
+  const MainOR({super.key, required this.student});
+
+  @override
+  State<MainOR> createState() => _MainORState();
+}
+
+class _MainORState extends State<MainOR> {
+  List<Map<String, dynamic>> _subjects = [];
+  List<Map<String, dynamic>> _enrollments = [];
+  bool _loadingSubjects = true;
+  bool _loadingEnrollments = true;
+  String _searchQuery = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchSubjects();
+    _fetchEnrollments();
+  }
+
+  // ── Fetch all subjects with sections ────────────────────────────────────────
+  Future<void> _fetchSubjects() async {
+    try {
+      final res = await http
+          .get(
+            Uri.parse('${ApiConfig.baseUrl}/subjects-with-sections'),
+            headers: {'Accept': 'application/json'},
+          )
+          .timeout(const Duration(seconds: 10));
+
+      debugPrint('STATUS: ${res.statusCode}'); // ← add this
+      debugPrint('BODY: ${res.body}'); // ← add this
+
+      final data = jsonDecode(res.body);
+      if (data['success'] == true) {
+        setState(() {
+          _subjects = List<Map<String, dynamic>>.from(data['subjects']);
+        });
+      }
+    } catch (e) {
+      debugPrint('Error fetching subjects: $e');
+    } finally {
+      setState(() => _loadingSubjects = false);
+    }
+  }
+
+  // ── Fetch student's current enrollments ─────────────────────────────────────
+  Future<void> _fetchEnrollments() async {
+    try {
+      final res = await http
+          .get(
+            Uri.parse(
+              '${ApiConfig.baseUrl}/my-enrollments/${widget.student.studentID}',
+            ),
+            headers: {'Accept': 'application/json'},
+          )
+          .timeout(const Duration(seconds: 10));
+      final data = jsonDecode(res.body);
+      if (data['success'] == true) {
+        setState(() {
+          _enrollments = List<Map<String, dynamic>>.from(data['enrollments']);
+        });
+      }
+    } catch (e) {
+      debugPrint('Error fetching enrollments: $e');
+    } finally {
+      setState(() => _loadingEnrollments = false);
+    }
+  }
+
+  // ── Enroll in a section ──────────────────────────────────────────────────────
+  Future<void> _enroll(int sectionID) async {
+    try {
+      final res = await http
+          .post(
+            Uri.parse('${ApiConfig.baseUrl}/enroll'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+            },
+            body: jsonEncode({
+              'studentID': widget.student.studentID,
+              'sectionID': sectionID,
+            }),
+          )
+          .timeout(const Duration(seconds: 10));
+      final data = jsonDecode(res.body);
+      final success = data['success'] == true;
+      final message = data['message'] ?? 'Done';
+      _showPopup(success: success, message: message);
+      if (success) _fetchEnrollments();
+    } catch (e) {
+      _showPopup(success: false, message: 'Error: $e');
+    }
+  }
+
+  // ── Drop a subject ───────────────────────────────────────────────────────────
+  Future<void> _drop(int enrollmentID) async {
+    try {
+      final res = await http
+          .delete(
+            Uri.parse('${ApiConfig.baseUrl}/enroll/$enrollmentID'),
+            headers: {'Accept': 'application/json'},
+          )
+          .timeout(const Duration(seconds: 10));
+      final data = jsonDecode(res.body);
+      final success = data['success'] == true;
+      final message = data['message'] ?? 'Done';
+      _showPopup(success: success, message: message);
+      if (success) _fetchEnrollments();
+    } catch (e) {
+      _showPopup(success: false, message: 'Error: $e');
+    }
+  }
+
+  void _showPopup({required bool success, required String message}) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        backgroundColor: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Icon circle
+              Container(
+                width: 72,
+                height: 72,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: success ? _C.success : _C.danger,
+                    width: 3,
+                  ),
+                ),
+                child: Icon(
+                  success ? Icons.check_rounded : Icons.close_rounded,
+                  color: success ? _C.success : _C.danger,
+                  size: 40,
+                ),
+              ),
+              const SizedBox(height: 20),
+              // Message
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  color: _C.textMain,
+                ),
+              ),
+              const SizedBox(height: 24),
+              // OK button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: success ? _C.primary : _C.danger,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(vertical: 13),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'OK',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ── Filtered subjects ────────────────────────────────────────────────────────
+  List<Map<String, dynamic>> get _filteredSubjects {
+    if (_searchQuery.isEmpty) return _subjects;
+    final q = _searchQuery.toLowerCase();
+    return _subjects.where((s) {
+      return (s['subjectCode'] ?? '').toLowerCase().contains(q) ||
+          (s['subjectName'] ?? '').toLowerCase().contains(q);
+    }).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +227,7 @@ class MainOR extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            AppHeader(),
+            const AppHeader(),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(
@@ -43,15 +236,15 @@ class MainOR extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    _Breadcrumb(),
+                    _buildBreadcrumb(),
                     const SizedBox(height: 20),
-                    _StudentInfoCard(),
+                    _buildStudentInfoCard(),
                     const SizedBox(height: 20),
-                    _AddSubjectCard(),
+                    _buildAddSubjectCard(),
                     const SizedBox(height: 20),
-                    _RegisteredSubjectsCard(),
+                    _buildRegisteredSubjectsCard(),
                     const SizedBox(height: 20),
-                    _SubjectStatusCard(),
+                    _buildSubjectStatusCard(),
                     const SizedBox(height: 30),
                   ],
                 ),
@@ -63,12 +256,9 @@ class MainOR extends StatelessWidget {
       ),
     );
   }
-}
 
-// ─── Breadcrumb banner ───────────────────────────────────────────────────────
-class _Breadcrumb extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
+  // ── Breadcrumb ───────────────────────────────────────────────────────────────
+  Widget _buildBreadcrumb() {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
@@ -79,21 +269,13 @@ class _Breadcrumb extends StatelessWidget {
           end: Alignment.centerRight,
         ),
         borderRadius: BorderRadius.circular(14),
-        boxShadow: [
-          BoxShadow(
-            // ignore: deprecated_member_use
-            color: _C.primary.withOpacity(0.25),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: Row(
         children: [
           const Icon(Icons.home_rounded, color: Colors.white70, size: 18),
           const SizedBox(width: 6),
           Text(
-            "Menu",
+            'Menu',
             style: TextStyle(
               fontSize: 14,
               color: Colors.white.withOpacity(0.8),
@@ -108,45 +290,47 @@ class _Breadcrumb extends StatelessWidget {
             ),
           ),
           const Text(
-            "Open Registration",
+            'Open Registration',
             style: TextStyle(
               fontSize: 15,
               color: Colors.white,
               fontWeight: FontWeight.w700,
-              letterSpacing: 0.2,
             ),
           ),
         ],
       ),
     );
   }
-}
 
-// ─── Student info card ───────────────────────────────────────────────────────
-class _StudentInfoCard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
+  // ── Student Info Card ────────────────────────────────────────────────────────
+  Widget _buildStudentInfoCard() {
     return _Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _SectionHeader(
+          const _SectionHeader(
             icon: Icons.person_rounded,
-            label: "Student Information",
+            label: 'Student Information',
           ),
           const SizedBox(height: 14),
+          _infoTile(Icons.badge_rounded, 'Full Name', widget.student.name),
+          const Divider(color: _C.border, height: 1),
           _infoTile(
-            Icons.badge_rounded,
-            "Full Name",
-            "Nurin Irdina Binti Faizul Zaki",
+            Icons.numbers_rounded,
+            'Matric ID',
+            widget.student.matricID,
           ),
-          const _Divider(),
-          _infoTile(Icons.numbers_rounded, "Matric ID", "CB23090"),
-          const _Divider(),
+          const Divider(color: _C.border, height: 1),
+          _infoTile(
+            Icons.school_rounded,
+            'Programme',
+            widget.student.programme,
+          ),
+          const Divider(color: _C.border, height: 1),
           _infoTile(
             Icons.calendar_month_rounded,
-            "Semester",
-            "Semester II  •  2025 / 2026",
+            'Year of Study',
+            widget.student.yearOfStudy,
           ),
         ],
       ),
@@ -178,7 +362,6 @@ class _StudentInfoCard extends StatelessWidget {
                     fontSize: 11,
                     color: _C.textMuted,
                     fontWeight: FontWeight.w600,
-                    letterSpacing: 0.4,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -197,25 +380,17 @@ class _StudentInfoCard extends StatelessWidget {
       ),
     );
   }
-}
 
-// ─── Add subject card ────────────────────────────────────────────────────────
-class _AddSubjectCard extends StatefulWidget {
-  @override
-  State<_AddSubjectCard> createState() => _AddSubjectCardState();
-}
-
-class _AddSubjectCardState extends State<_AddSubjectCard> {
-  String _selectedSection = "2A";
-  final _sections = ["1A", "1B", "2A", "2B", "3A", "3B"];
-
-  @override
-  Widget build(BuildContext context) {
+  // ── Add Subject Card ─────────────────────────────────────────────────────────
+  Widget _buildAddSubjectCard() {
     return _Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _SectionHeader(icon: Icons.add_circle_rounded, label: "Add Subject"),
+          const _SectionHeader(
+            icon: Icons.add_circle_rounded,
+            label: 'Add Subject',
+          ),
           const SizedBox(height: 16),
 
           // Search field
@@ -233,13 +408,14 @@ class _AddSubjectCardState extends State<_AddSubjectCard> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: TextField(
+                    onChanged: (v) => setState(() => _searchQuery = v),
                     style: const TextStyle(
                       fontSize: 14,
                       color: _C.textMain,
                       fontWeight: FontWeight.w600,
                     ),
                     decoration: const InputDecoration(
-                      hintText: "Search by subject code or name…",
+                      hintText: 'Search by subject code or name…',
                       hintStyle: TextStyle(color: _C.textMuted, fontSize: 13),
                       border: InputBorder.none,
                       isDense: true,
@@ -249,143 +425,52 @@ class _AddSubjectCardState extends State<_AddSubjectCard> {
               ],
             ),
           ),
-
           const SizedBox(height: 16),
 
-          // Subject result row
-          Container(
-            decoration: BoxDecoration(
-              color: _C.bg,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: _C.border),
-            ),
-            child: Column(
-              children: [
-                // Header
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 10,
+          // Subject list
+          _loadingSubjects
+              ? const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(20),
+                    child: CircularProgressIndicator(color: _C.primary),
                   ),
-                  decoration: BoxDecoration(
-                    color: _C.primaryLight,
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(11),
+                )
+              : _filteredSubjects.isEmpty
+              ? const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Text(
+                      'No subjects found.',
+                      style: TextStyle(color: _C.textMuted),
                     ),
                   ),
-                  child: Row(
-                    children: const [
-                      _ColHead("Code", flex: 2),
-                      _ColHead("Subject Name", flex: 5),
-                      _ColHead("Section", flex: 2),
-                    ],
-                  ),
+                )
+              : Column(
+                  children: _filteredSubjects.map((subject) {
+                    return _SubjectRow(
+                      subject: subject,
+                      enrollments: _enrollments,
+                      onEnroll: _enroll,
+                    );
+                  }).toList(),
                 ),
-                // Data row
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 12,
-                  ),
-                  child: Row(
-                    children: [
-                      const Expanded(
-                        flex: 2,
-                        child: Text(
-                          "BCN3023",
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                            color: _C.primary,
-                          ),
-                        ),
-                      ),
-                      const Expanded(
-                        flex: 5,
-                        child: Text(
-                          "Network Management",
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: _C.textMain,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            value: _selectedSection,
-                            isDense: true,
-                            icon: const Icon(
-                              Icons.expand_more_rounded,
-                              size: 18,
-                              color: _C.primary,
-                            ),
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
-                              color: _C.primary,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                            items: _sections
-                                .map(
-                                  (s) => DropdownMenuItem(
-                                    value: s,
-                                    child: Text(s),
-                                  ),
-                                )
-                                .toList(),
-                            onChanged: (v) =>
-                                setState(() => _selectedSection = v!),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 16),
-
-          Align(
-            alignment: Alignment.centerRight,
-            child: _PrimaryButton(
-              label: "Add Subject",
-              icon: Icons.add_rounded,
-              onPressed: () {},
-            ),
-          ),
         ],
       ),
     );
   }
-}
 
-// ─── Registered subjects card ────────────────────────────────────────────────
-class _RegisteredSubjectsCard extends StatelessWidget {
-  final _subjects = const [
-    ["BCS3133", "Software Engineering Practices"],
-    ["BCS3153", "Software Evolution & Maintenance"],
-    ["BCS3143", "Software Project Management"],
-    ["BCI2313", "Algorithm & Complexity"],
-    ["BCI3353", "Blockchain Technology"],
-  ];
-
-  @override
-  Widget build(BuildContext context) {
+  // ── Registered Subjects Card ─────────────────────────────────────────────────
+  Widget _buildRegisteredSubjectsCard() {
     return _Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Expanded(
+              const Expanded(
                 child: _SectionHeader(
                   icon: Icons.menu_book_rounded,
-                  label: "Registered Subjects",
+                  label: 'Registered Subjects',
                 ),
               ),
               Container(
@@ -398,7 +483,7 @@ class _RegisteredSubjectsCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  "${_subjects.length} subjects",
+                  '${_enrollments.length} subjects',
                   style: const TextStyle(
                     fontSize: 12,
                     color: _C.primary,
@@ -410,177 +495,473 @@ class _RegisteredSubjectsCard extends StatelessWidget {
           ),
           const SizedBox(height: 14),
 
-          // Table header
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            decoration: BoxDecoration(
-              color: _C.primaryLight,
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(12),
-              ),
-            ),
-            child: Row(
-              children: const [
-                _ColHead("No.", flex: 1),
-                _ColHead("Code", flex: 3),
-                _ColHead("Subject Name", flex: 6),
-                _ColHead("", flex: 3),
-              ],
-            ),
-          ),
-
-          // Rows
-          Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: _C.border),
-              borderRadius: const BorderRadius.vertical(
-                bottom: Radius.circular(12),
-              ),
-            ),
-            child: Column(
-              children: List.generate(_subjects.length, (i) {
-                final isEven = i.isEven;
-                final s = _subjects[i];
-                return Container(
-                  color: isEven ? Colors.white : const Color(0xFFF0F5FB),
+          _loadingEnrollments
+              ? const Center(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 10,
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: Text(
-                            "${i + 1}",
-                            style: const TextStyle(
-                              fontSize: 13,
-                              color: _C.textMuted,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 3,
-                          child: Text(
-                            s[0],
-                            style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                              color: _C.primary,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 6,
-                          child: Text(
-                            s[1],
-                            style: const TextStyle(
-                              fontSize: 13,
-                              color: _C.textMain,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 3,
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: _DangerButton(
-                              label: "Drop",
-                              onPressed: () {},
-                            ),
-                          ),
-                        ),
-                      ],
+                    padding: EdgeInsets.all(20),
+                    child: CircularProgressIndicator(color: _C.primary),
+                  ),
+                )
+              : _enrollments.isEmpty
+              ? const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Text(
+                      'No subjects registered yet.',
+                      style: TextStyle(color: _C.textMuted),
                     ),
                   ),
-                );
-              }),
-            ),
-          ),
+                )
+              : Column(
+                  children: [
+                    // Table header
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        color: _C.primaryLight,
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(12),
+                        ),
+                      ),
+                      child: Row(
+                        children: const [
+                          _ColHead('No.', flex: 1),
+                          _ColHead('Code', flex: 3),
+                          _ColHead('Subject Name', flex: 6),
+                          _ColHead('', flex: 2),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: _C.border),
+                        borderRadius: const BorderRadius.vertical(
+                          bottom: Radius.circular(12),
+                        ),
+                      ),
+                      child: Column(
+                        children: List.generate(_enrollments.length, (i) {
+                          final e = _enrollments[i];
+                          return Container(
+                            color: i.isEven
+                                ? Colors.white
+                                : const Color(0xFFF0F5FB),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 10,
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    flex: 1,
+                                    child: Text(
+                                      '${i + 1}',
+                                      style: const TextStyle(
+                                        fontSize: 13,
+                                        color: _C.textMuted,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 3,
+                                    child: Text(
+                                      e['subjectCode'] ?? '',
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w700,
+                                        color: _C.primary,
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 6,
+                                    child: Text(
+                                      e['subjectName'] ?? '',
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: _C.textMain,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Align(
+                                      alignment: Alignment.centerRight,
+                                      child: OutlinedButton(
+                                        style: OutlinedButton.styleFrom(
+                                          foregroundColor: _C.danger,
+                                          side: const BorderSide(
+                                            color: _C.danger,
+                                            width: 1.2,
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                            vertical: 4,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              10,
+                                            ),
+                                          ),
+                                          minimumSize: const Size(50, 28),
+                                        ),
+                                        onPressed: () =>
+                                            _drop(e['enrollmentID']),
+                                        child: const Text(
+                                          'Drop',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
+                    ),
+                  ],
+                ),
 
           const SizedBox(height: 18),
-
-          _OutlineButton(
-            label: "Back to Home",
-            icon: Icons.arrow_back_rounded,
+          OutlinedButton.icon(
+            style: OutlinedButton.styleFrom(
+              foregroundColor: _C.primary,
+              side: const BorderSide(color: _C.primary, width: 1.5),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 11),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
             onPressed: () => Navigator.pop(context),
+            icon: const Icon(Icons.arrow_back_rounded, size: 17),
+            label: const Text(
+              'Back to Home',
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+            ),
           ),
         ],
       ),
     );
   }
-}
 
-// ─── Subject status card ─────────────────────────────────────────────────────
-class _SubjectStatusCard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
+  // ── Subject Status Card ───────────────────────────────────────────────────────
+  Widget _buildSubjectStatusCard() {
+    if (_enrollments.isEmpty) return const SizedBox.shrink();
+
+    // Check if any pending
+    final hasPending = _enrollments.any(
+      (e) => (e['status'] ?? 'Pending') == 'Pending',
+    );
+    final hasRejected = _enrollments.any((e) => e['status'] == 'Rejected');
+
+    Color bgColor;
+    Color iconColor;
+    IconData icon;
+    String title;
+    String subtitle;
+
+    if (hasRejected) {
+      bgColor = const Color(0xFFFFEBEE);
+      iconColor = _C.danger;
+      icon = Icons.cancel_rounded;
+      title = 'Some Subjects Rejected';
+      subtitle = 'Please contact your registrar for more information.';
+    } else if (hasPending) {
+      bgColor = _C.warningLight;
+      iconColor = _C.warning;
+      icon = Icons.hourglass_top_rounded;
+      title = 'Pending Approval';
+      subtitle =
+          '${_enrollments.length} subject(s) awaiting registrar approval.';
+    } else {
+      bgColor = _C.successLight;
+      iconColor = _C.success;
+      icon = Icons.check_circle_rounded;
+      title = 'Registration Approved';
+      subtitle = '${_enrollments.length} subjects approved for this semester.';
+    }
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: _C.successLight,
+        color: bgColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _C.success.withOpacity(0.25)),
-        boxShadow: [
-          BoxShadow(
-            color: _C.success.withOpacity(0.08),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        border: Border.all(color: iconColor.withOpacity(0.25)),
       ),
-      child: Row(
+      child: Column(
+        // Changed to Column to accommodate the button below
         children: [
-          Container(
-            width: 52,
-            height: 52,
-            decoration: BoxDecoration(
-              color: _C.success.withOpacity(0.15),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.check_circle_rounded,
-              color: _C.success,
-              size: 30,
+          Row(
+            children: [
+              Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(
+                  color: iconColor.withOpacity(0.15),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, color: iconColor, size: 30),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: iconColor,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: iconColor.withOpacity(0.75),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          // NEW REDIRECT BUTTON
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        SubjectStatusOR(student: widget.student),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.assignment_turned_in_rounded, size: 18),
+              label: const Text("View Subject Status Details"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: iconColor,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+              ),
             ),
           ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Registration Successful",
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    color: _C.success,
-                  ),
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  "5 subjects registered for Semester II 2025/2026",
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: _C.success.withOpacity(0.75),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const Icon(Icons.chevron_right_rounded, color: _C.success),
         ],
       ),
     );
   }
 }
 
-// ─── Shared small widgets ────────────────────────────────────────────────────
+// ─── Subject Row Widget ───────────────────────────────────────────────────────
+class _SubjectRow extends StatefulWidget {
+  final Map<String, dynamic> subject;
+  final List<Map<String, dynamic>> enrollments;
+  final Future<void> Function(int sectionID) onEnroll;
 
+  const _SubjectRow({
+    required this.subject,
+    required this.enrollments,
+    required this.onEnroll,
+  });
+
+  @override
+  State<_SubjectRow> createState() => _SubjectRowState();
+}
+
+class _SubjectRowState extends State<_SubjectRow> {
+  String? _selectedSectionID;
+
+  @override
+  void initState() {
+    super.initState();
+    final sections = List<Map<String, dynamic>>.from(
+      widget.subject['sections'] ?? [],
+    );
+    if (sections.isNotEmpty) {
+      _selectedSectionID = sections.first['sectionID'].toString();
+    }
+  }
+
+  bool get _isEnrolled {
+    final sections = List<Map<String, dynamic>>.from(
+      widget.subject['sections'] ?? [],
+    );
+    final sectionIDs = sections.map((s) => s['sectionID']).toSet();
+    return widget.enrollments.any(
+      (e) => sectionIDs.contains(
+        e['sectionID'] is int
+            ? e['sectionID']
+            : int.tryParse(e['sectionID'].toString()),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final sections = List<Map<String, dynamic>>.from(
+      widget.subject['sections'] ?? [],
+    );
+    final enrolled = _isEnrolled;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: enrolled ? _C.successLight : Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: enrolled ? _C.success.withOpacity(0.4) : _C.border,
+        ),
+      ),
+      child: Row(
+        children: [
+          // Subject code
+          SizedBox(
+            width: 72,
+            child: Text(
+              widget.subject['subjectCode'] ?? '',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: enrolled ? _C.success : _C.primary,
+              ),
+            ),
+          ),
+
+          // Subject name
+          Expanded(
+            child: Text(
+              widget.subject['subjectName'] ?? '',
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: _C.textMain,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+
+          const SizedBox(width: 8),
+
+          // Section dropdown
+          // Section dropdown
+          // Section dropdown
+          sections.isEmpty
+              ? const Text(
+                  '—',
+                  style: TextStyle(fontSize: 12, color: _C.textMuted),
+                )
+              : Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  decoration: BoxDecoration(
+                    color: _C.bg,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: _C.border),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      // SAFETY CHECK: If the current ID isn't in the list,
+                      // fallback to null or the first available ID to prevent crash
+                      value:
+                          sections.any(
+                            (s) =>
+                                s['sectionID'].toString() == _selectedSectionID,
+                          )
+                          ? _selectedSectionID
+                          : (sections.isNotEmpty
+                                ? sections.first['sectionID'].toString()
+                                : null),
+                      isDense: true,
+                      icon: const Icon(
+                        Icons.expand_more_rounded,
+                        size: 16,
+                        color: _C.primary,
+                      ),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: _C.primary,
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                      selectedItemBuilder: (context) => sections.map((sec) {
+                        return DropdownMenuItem<String>(
+                          value: sec['sectionID'].toString(),
+                          child: Text(sec['sectionNo'] ?? ''),
+                        );
+                      }).toList(),
+                      items: sections.map((sec) {
+                        return DropdownMenuItem<String>(
+                          value: sec['sectionID'].toString(),
+                          child: Text(
+                            sec['sectionNo'] ?? '',
+                          ), // Only showing Section No as requested
+                        );
+                      }).toList(),
+                      onChanged: enrolled
+                          ? null
+                          : (v) => setState(() => _selectedSectionID = v),
+                    ),
+                  ),
+                ),
+          const SizedBox(width: 8),
+
+          // Add / Enrolled
+          enrolled
+              ? const Icon(
+                  Icons.check_circle_rounded,
+                  color: _C.success,
+                  size: 20,
+                )
+              : ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _C.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 6,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    elevation: 0,
+                    minimumSize: const Size(50, 30),
+                  ),
+                  onPressed: _selectedSectionID == null
+                      ? null
+                      : () => widget.onEnroll(int.parse(_selectedSectionID!)),
+                  child: const Text(
+                    'Add',
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+                  ),
+                ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─── Shared widgets ───────────────────────────────────────────────────────────
 class _Card extends StatelessWidget {
   final Widget child;
   const _Card({required this.child});
@@ -631,7 +1012,6 @@ class _SectionHeader extends StatelessWidget {
             fontSize: 15,
             fontWeight: FontWeight.w800,
             color: _C.textMain,
-            letterSpacing: 0.1,
           ),
         ),
       ],
@@ -656,98 +1036,6 @@ class _ColHead extends StatelessWidget {
           color: _C.primary,
           letterSpacing: 0.5,
         ),
-      ),
-    );
-  }
-}
-
-class _Divider extends StatelessWidget {
-  const _Divider();
-
-  @override
-  Widget build(BuildContext context) {
-    return Divider(color: _C.border, height: 1, thickness: 1);
-  }
-}
-
-class _PrimaryButton extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final VoidCallback onPressed;
-  const _PrimaryButton({
-    required this.label,
-    required this.icon,
-    required this.onPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton.icon(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: _C.primary,
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        elevation: 0,
-      ),
-      onPressed: onPressed,
-      icon: Icon(icon, size: 18),
-      label: Text(
-        label,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-      ),
-    );
-  }
-}
-
-class _DangerButton extends StatelessWidget {
-  final String label;
-  final VoidCallback onPressed;
-  const _DangerButton({required this.label, required this.onPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return OutlinedButton(
-      style: OutlinedButton.styleFrom(
-        foregroundColor: _C.danger,
-        side: const BorderSide(color: _C.danger, width: 1.2),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        minimumSize: const Size(60, 30),
-      ),
-      onPressed: onPressed,
-      child: Text(
-        label,
-        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
-      ),
-    );
-  }
-}
-
-class _OutlineButton extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final VoidCallback onPressed;
-  const _OutlineButton({
-    required this.label,
-    required this.icon,
-    required this.onPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return OutlinedButton.icon(
-      style: OutlinedButton.styleFrom(
-        foregroundColor: _C.primary,
-        side: const BorderSide(color: _C.primary, width: 1.5),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 11),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-      onPressed: onPressed,
-      icon: Icon(icon, size: 17),
-      label: Text(
-        label,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
       ),
     );
   }

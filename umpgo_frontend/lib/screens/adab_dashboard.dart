@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:umpgo_frontend/domain/pusatadab_model.dart';
 import 'package:umpgo_frontend/widgets/stud_nav.dart';
-import 'OpenRegistration/mainOR.dart';
 
 class AdabDashboard extends StatelessWidget {
   final PusatAdabModel adab;
@@ -78,10 +77,11 @@ class AdabDashboard extends StatelessWidget {
                       icon: Icons.menu_book,
                       title: "Open Registration",
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const MainOR(),
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              "Open Registration is for students only.",
+                            ),
                           ),
                         );
                       },

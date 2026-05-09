@@ -4,8 +4,10 @@ class SectionModel {
   final int lecturerID;
   final String sectionNo;
   final int capacity;
+  final int enrolled; // ← add this
   final String day;
-  final String time;
+  final String startTime;
+  final String endTime;
   final String venue;
 
   SectionModel({
@@ -14,8 +16,10 @@ class SectionModel {
     required this.lecturerID,
     required this.sectionNo,
     required this.capacity,
+    required this.enrolled,
     required this.day,
-    required this.time,
+    required this.startTime,
+    required this.endTime,
     required this.venue,
   });
 
@@ -25,10 +29,16 @@ class SectionModel {
       subjectID: json['subjectID'],
       lecturerID: json['lecturerID'],
       sectionNo: json['sectionNo'],
-      capacity: json['capacity'],
-      day: json['day'],
-      time: json['time'],
-      venue: json['venue'],
+      capacity: json['capacity'] ?? 0,
+      enrolled:
+          json['enrolled'] ?? 0, // ← default 0 if API doesn't return it yet
+      day: json['day'] ?? '',
+      startTime: json['startTime'] ?? '',
+      endTime: json['endTime'] ?? '',
+      venue: json['venue'] ?? '',
     );
   }
+
+  bool get isFull => enrolled >= capacity;
+  String get time => '$startTime - $endTime';
 }

@@ -87,7 +87,10 @@ class _ScheduleORState extends State<ScheduleOR> {
       final response = await http
           .post(
             Uri.parse('${ApiConfig.baseUrl}/registration-sessions'),
-            headers: {'Content-Type': 'application/json'},
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+            },
             body: jsonEncode({
               'registrarID': widget.registrar.registrarID,
               'eligableYear': _selectedYear,
@@ -102,7 +105,28 @@ class _ScheduleORState extends State<ScheduleOR> {
       final data = jsonDecode(response.body);
 
       if (data['success'] == true) {
-        setState(() => _successMessage = 'Session created successfully.');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Row(
+              children: [
+                Icon(Icons.check_circle_outline, color: Colors.white, size: 18),
+                SizedBox(width: 8),
+                Text(
+                  'Session created successfully!',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ],
+            ),
+            backgroundColor: const Color(0xFF2EB88A),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            margin: const EdgeInsets.all(16),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+        _fetchSessions();
         _fetchSessions();
       } else {
         setState(

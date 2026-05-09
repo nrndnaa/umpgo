@@ -6,20 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('moduleenrollment', function (Blueprint $table) {
-            $table->id();
+            $table->id('modEnrollID');
+            $table->foreignId('moduleID')->constrained('koqmodule', 'moduleID')->cascadeOnDelete();
+            $table->foreignId('studentID')->constrained('student', 'studentID')->cascadeOnDelete();
+            $table->string('attendanceStatus')->default('Pending');
+            $table->decimal('totalMarks', 5, 2)->default(0);
+            $table->timestamp('enrolled_At')->useCurrent();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('moduleenrollment');
