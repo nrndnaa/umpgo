@@ -72,6 +72,7 @@ class OpenRegistrationController extends Controller
         ]);
     }
 
+<<<<<<< Updated upstream
     // GET /api/subjects
     public function igetAllSubjects()
     {
@@ -385,5 +386,25 @@ class OpenRegistrationController extends Controller
             'success' => true,
             'message' => 'Subject dropped successfully.',
         ]);
+=======
+    public function checkSession($yearOfStudy)
+    {
+        $now = now();
+        $today = $now->toDateString();
+        $time  = $now->toTimeString();
+
+        $session = \App\Models\RegistrationSession::where('eligableYear', $yearOfStudy)
+            ->where('startDate', '<=', $today)
+            ->where('endDate',   '>=', $today)
+            ->where('startTime', '<=', $time)
+            ->where('endTime',   '>=', $time)
+            ->first();
+
+        if ($session) {
+            return response()->json(['open' => true,  'session' => $session]);
+        } else {
+            return response()->json(['open' => false, 'session' => null]);
+        }
+>>>>>>> Stashed changes
     }
 }

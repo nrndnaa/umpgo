@@ -6,7 +6,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:umpgo_frontend/config/api.dart';
 import 'package:umpgo_frontend/domain/student_model.dart';
+<<<<<<< Updated upstream
 import 'package:umpgo_frontend/screens/OpenRegistration/subjectStatusOR.dart';
+=======
+>>>>>>> Stashed changes
 
 // ─── Theme constants ─────────────────────────────────────────────────────────
 class _C {
@@ -24,7 +27,11 @@ class _C {
   static const border = Color(0xFFDDE3EE);
 }
 
+<<<<<<< Updated upstream
 // ─── Root screen ──────────────────────────────────────────────────────────────
+=======
+// ─── Root screen ────────────────────────────────────────────────────────────
+>>>>>>> Stashed changes
 class MainOR extends StatefulWidget {
   final StudentModel student;
   const MainOR({super.key, required this.student});
@@ -34,15 +41,21 @@ class MainOR extends StatefulWidget {
 }
 
 class _MainORState extends State<MainOR> {
+<<<<<<< Updated upstream
   List<Map<String, dynamic>> _subjects = [];
   List<Map<String, dynamic>> _enrollments = [];
   bool _loadingSubjects = true;
   bool _loadingEnrollments = true;
   String _searchQuery = '';
+=======
+  bool _isLoading = true;
+  bool _isOpen = false;
+>>>>>>> Stashed changes
 
   @override
   void initState() {
     super.initState();
+<<<<<<< Updated upstream
     _fetchSubjects();
     _fetchEnrollments();
   }
@@ -219,9 +232,44 @@ class _MainORState extends State<MainOR> {
           (s['subjectName'] ?? '').toLowerCase().contains(q);
     }).toList();
   }
+=======
+    _checkSession();
+  }
+
+  Future<void> _checkSession() async {
+    try {
+      final uri = Uri.parse(
+        ApiConfig.registrationSession(widget.student.yearOfStudy),
+      );
+      final response = await http.get(uri).timeout(const Duration(seconds: 10));
+      final data = jsonDecode(response.body);
+      setState(() {
+        _isOpen = data['open'] == true;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isOpen = false;
+        _isLoading = false;
+      });
+    }
+  }
+>>>>>>> Stashed changes
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        backgroundColor: _C.bg,
+        body: Center(child: CircularProgressIndicator(color: _C.primary)),
+      );
+    }
+
+    if (!_isOpen) {
+      return _ClosedScreen(); // 👇 see below
+    }
+
+    // Original open registration UI
     return Scaffold(
       backgroundColor: _C.bg,
       body: SafeArea(
@@ -1040,3 +1088,183 @@ class _ColHead extends StatelessWidget {
     );
   }
 }
+<<<<<<< Updated upstream
+=======
+
+class _Divider extends StatelessWidget {
+  const _Divider();
+
+  @override
+  Widget build(BuildContext context) {
+    return Divider(color: _C.border, height: 1, thickness: 1);
+  }
+}
+
+class _PrimaryButton extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final VoidCallback onPressed;
+  const _PrimaryButton({
+    required this.label,
+    required this.icon,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton.icon(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: _C.primary,
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        elevation: 0,
+      ),
+      onPressed: onPressed,
+      icon: Icon(icon, size: 18),
+      label: Text(
+        label,
+        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+      ),
+    );
+  }
+}
+
+class _DangerButton extends StatelessWidget {
+  final String label;
+  final VoidCallback onPressed;
+  const _DangerButton({required this.label, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton(
+      style: OutlinedButton.styleFrom(
+        foregroundColor: _C.danger,
+        side: const BorderSide(color: _C.danger, width: 1.2),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        minimumSize: const Size(60, 30),
+      ),
+      onPressed: onPressed,
+      child: Text(
+        label,
+        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+      ),
+    );
+  }
+}
+
+class _OutlineButton extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final VoidCallback onPressed;
+  const _OutlineButton({
+    required this.label,
+    required this.icon,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton.icon(
+      style: OutlinedButton.styleFrom(
+        foregroundColor: _C.primary,
+        side: const BorderSide(color: _C.primary, width: 1.5),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 11),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+      onPressed: onPressed,
+      icon: Icon(icon, size: 17),
+      label: Text(
+        label,
+        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+      ),
+    );
+  }
+}
+
+class _ClosedScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: _C.bg,
+      body: SafeArea(
+        child: Column(
+          children: [
+            AppHeader(),
+            Expanded(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(32),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 80,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFFEBEE),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.lock_clock_rounded,
+                          color: Color(0xFFE53935),
+                          size: 40,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      const Text(
+                        "Registration Closed",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                          color: _C.textMain,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      const Text(
+                        "Course Registration is currently closed for your programme / level.",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: _C.textMuted,
+                          fontWeight: FontWeight.w500,
+                          height: 1.5,
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                      OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: _C.primary,
+                          side: const BorderSide(color: _C.primary, width: 1.5),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 12,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.arrow_back_rounded, size: 18),
+                        label: const Text(
+                          "Back to Dashboard",
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const StudNav(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+>>>>>>> Stashed changes
