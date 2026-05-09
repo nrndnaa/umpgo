@@ -17,7 +17,6 @@ class KoqModuleSeeder extends Seeder
                 'adabID'      => $adabId,
                 'code'        => 'UQU1012',
                 'name'        => 'Sukan & Rekreasi',
-                // 'category' => 'Sports',   ← remove this
                 'campus'      => 'UMP Gambang',
                 'catsPoint'   => 2,
                 'maxSlots'    => 40,
@@ -33,7 +32,6 @@ class KoqModuleSeeder extends Seeder
                 'adabID'      => $adabId,
                 'code'        => 'UQU2022',
                 'name'        => 'Pengurusan Organisasi',
-                // 'category' => 'Leadership',  ← remove this
                 'campus'      => 'UMP Gambang',
                 'catsPoint'   => 2,
                 'maxSlots'    => 30,

@@ -6,20 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('creditclaim', function (Blueprint $table) {
-            $table->id();
+            $table->id('claimID');
+            $table->foreignId('studentID')->constrained('student', 'studentID')->cascadeOnDelete();
+            $table->string('semester');
+            $table->decimal('totalCats', 5, 2)->default(0);
+            $table->string('status')->default('Pending'); // Pending / Approved / Rejected
+            $table->timestamp('submitted_At')->useCurrent();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('creditclaim');

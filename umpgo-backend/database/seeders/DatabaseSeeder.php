@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             KoqModuleSeeder::class, // Now this will work[cite: 1]
             SubjectSeeder::class,  // Needed for Section
             SectionSeeder::class,  // Depends on the two above
+            EnrollmentSeeder::class,
         ]);
     }
 }

@@ -13,13 +13,25 @@ class StudNav extends StatelessWidget {
           color: const Color(0xFFD8F1FF),
           borderRadius: BorderRadius.circular(16),
         ),
-        child: const Row(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            Icon(Icons.home),
-            Icon(Icons.settings),
-            Icon(Icons.notifications_none),
-            Icon(Icons.person_outline),
+            IconButton(
+              icon: const Icon(Icons.home),
+              onPressed: () {
+                // Pop all routes back to dashboard
+                Navigator.popUntil(context, (route) => route.isFirst);
+              },
+            ),
+            IconButton(icon: const Icon(Icons.settings), onPressed: () {}),
+            IconButton(
+              icon: const Icon(Icons.notifications_none),
+              onPressed: () {},
+            ),
+            IconButton(
+              icon: const Icon(Icons.person_outline),
+              onPressed: () {},
+            ),
           ],
         ),
       ),

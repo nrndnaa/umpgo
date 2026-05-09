@@ -6,20 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('feerecord', function (Blueprint $table) {
-            $table->id();
+            $table->id('feeID');
+            $table->foreignId('studentID')->constrained('student', 'studentID')->cascadeOnDelete();
+            $table->foreignId('treasuryID')->constrained('treasury', 'treasuryID')->cascadeOnDelete();
+            $table->string('semester');
+            $table->decimal('totalFee', 10, 2);
+            $table->decimal('paidAmount', 10, 2)->default(0);
+            $table->string('feeStatus')->default('Restricted'); // Granted / Restricted
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('feerecord');

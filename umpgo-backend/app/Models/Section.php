@@ -6,5 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Section extends Model
 {
-    //
+    protected $table = 'section';
+    protected $primaryKey = 'sectionID';
+
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class, 'sectionID', 'sectionID');
+    }
 }
