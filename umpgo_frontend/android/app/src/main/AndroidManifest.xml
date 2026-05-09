@@ -1,8 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET"/>  <!-- ADD THIS -->
+    
     <application
         android:label="umpgo_frontend"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:usesCleartextTraffic="true">  <!-- ADD THIS if using http:// -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
