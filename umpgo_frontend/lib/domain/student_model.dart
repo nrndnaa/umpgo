@@ -6,10 +6,8 @@ class StudentModel {
   final String yearOfStudy;
   final String programme;
   final String status;
+  final double outstanding;
 
-  final double outstandingBalance;
-
-  final int outstandingBalance;
 
 
   StudentModel({
@@ -20,7 +18,7 @@ class StudentModel {
     required this.yearOfStudy,
     required this.programme,
     required this.status,
-    required this.outstandingBalance,
+    required this.outstanding,
   });
 
   factory StudentModel.fromJson(Map<String, dynamic> json) {
@@ -39,7 +37,7 @@ class StudentModel {
 
       status: json['status']?.toString() ?? '',
 
-      outstandingBalance:
+      outstanding:
           double.tryParse(json['outstandingBalance'].toString()) ?? 0.0,
     );
   }

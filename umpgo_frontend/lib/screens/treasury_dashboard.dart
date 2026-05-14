@@ -8,12 +8,11 @@ import 'package:umpgo_frontend/screens/TuitionFee/feeListStudent.dart';
 // import 'package:umpgo_frontend/models/treasury_model.dart';
 
 class TreasuryDashboard extends StatefulWidget {
-  // REMOVE treasury if you don't use it yet
-  // final TreasuryModel treasury;
+  final TreasuryModel treasury;
 
   const TreasuryDashboard({
     super.key,
-    // required this.treasury,
+    required this.treasury,
   });
 
   @override

@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import 'package:umpgo_frontend/config/api.dart';
+
 import 'package:umpgo_frontend/domain/student_model.dart';
 import 'package:umpgo_frontend/domain/feerecord_model.dart';
 
@@ -9,9 +11,9 @@ import 'package:umpgo_frontend/widgets/stud_nav.dart';
 import 'package:umpgo_frontend/widgets/app_header.dart';
 
 import 'package:umpgo_frontend/screens/OpenRegistration/mainOR.dart';
-import 'package:umpgo_frontend/screens/TuitionFee/student_financial_detail.dart';
 
-import 'package:umpgo_frontend/config/api.dart';
+import 'package:umpgo_frontend/screens/TuitionFee/pay_feestudent.dart';
+import 'package:umpgo_frontend/screens/TuitionFee/payment_historystudent.dart';
 
 class StudentDashboard extends StatelessWidget {
   final StudentModel student;
@@ -21,8 +23,12 @@ class StudentDashboard extends StatelessWidget {
     required this.student,
   });
 
-  Future<void> _goToTuitionFee(BuildContext context) async {
+  Future<void> _goToTuitionFee(
+    BuildContext context,
+  ) async {
+
     try {
+
       // Loading Spinner
       showDialog(
         context: context,
@@ -32,6 +38,7 @@ class StudentDashboard extends StatelessWidget {
         ),
       );
 
+      // API Request
       final response = await http.get(
         Uri.parse(
           '${ApiConfig.baseUrl}/fee-record/${student.studentID}',
@@ -41,72 +48,129 @@ class StudentDashboard extends StatelessWidget {
         },
       );
 
-      // Close loading
-      if (context.mounted && Navigator.canPop(context)) {
+      // Close Loading
+      if (context.mounted &&
+          Navigator.canPop(context)) {
         Navigator.pop(context);
       }
 
+      // SUCCESS
       if (response.statusCode == 200) {
+
+        print(response.body);
+
         final fee = FeeRecord.fromJson(
           jsonDecode(response.body),
         );
 
+        // CHECK OUTSTANDING BALANCE
         if (context.mounted) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => StudentFinancialDetail(
-                student: student,
-                fee: fee,
+
+          // Student still has unpaid balance
+          if (fee.outstanding > 0) {
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => PayFeeStudent(
+                  student: student,
+                  fee: fee,
+                ),
               ),
-            ),
-          );
+            );
+
+          }
+
+          // Student already paid fully
+          else {
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) =>
+                    PaymentHistoryStudent(
+                  student: student,
+                  fee: fee,
+                ),
+              ),
+            );
+
+          }
         }
-      } else {
+
+      }
+
+      // NO FEE RECORD
+      else {
+
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
+
+          ScaffoldMessenger.of(context)
+              .showSnackBar(
             const SnackBar(
-              content: Text('Fee record not found.'),
+              content: Text(
+                'Fee record not found.',
+              ),
               backgroundColor: Colors.red,
             ),
           );
+
         }
+
       }
-    } catch (e) {
+
+    }
+
+    // ERROR
+    catch (e) {
+
       print(e);
 
       if (context.mounted) {
+
+        // Close loading safely
         if (Navigator.canPop(context)) {
           Navigator.pop(context);
         }
 
-        ScaffoldMessenger.of(context).showSnackBar(
+        ScaffoldMessenger.of(context)
+            .showSnackBar(
           SnackBar(
             content: Text('Error: $e'),
             backgroundColor: Colors.red,
           ),
         );
+
       }
+
     }
+
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Colors.white,
+
       body: SafeArea(
         child: Column(
           children: [
+
             const AppHeader(),
+
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
+                padding:
+                    const EdgeInsets.symmetric(
                   horizontal: 20,
                   vertical: 15,
                 ),
 
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment:
+                      CrossAxisAlignment.start,
+
                   children: [
 
                     // Welcome Text
@@ -114,7 +178,8 @@ class StudentDashboard extends StatelessWidget {
                       "Welcome, ${student.name}",
                       style: const TextStyle(
                         fontSize: 22,
-                        fontWeight: FontWeight.w900,
+                        fontWeight:
+                            FontWeight.w900,
                         color: Colors.black,
                       ),
                     ),
@@ -123,9 +188,12 @@ class StudentDashboard extends StatelessWidget {
 
                     // Banner Image
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(15),
+                      borderRadius:
+                          BorderRadius.circular(15),
+
                       child: Image.network(
                         'https://www.studymalaysiainfo.com/wp-content/uploads/2016/11/Uni-Pahang-1.jpg',
+
                         height: 150,
                         width: double.infinity,
                         fit: BoxFit.cover,
@@ -136,45 +204,70 @@ class StudentDashboard extends StatelessWidget {
 
                     // Tuition Fee
                     _DashCard(
-                      icon: Icons.school_rounded,
+                      icon:
+                          Icons.school_rounded,
+
                       title: "Tuition Fee",
-                      onTap: () => _goToTuitionFee(context),
+
+                      onTap: () =>
+                          _goToTuitionFee(
+                        context,
+                      ),
                     ),
 
                     // Open Registration
                     _DashCard(
-                      icon: Icons.menu_book_rounded,
-                      title: "Open Registration",
+                      icon:
+                          Icons.menu_book_rounded,
+
+                      title:
+                          "Open Registration",
+
                       onTap: () {
+
                         Navigator.push(
                           context,
+
                           MaterialPageRoute(
-                            builder: (_) => const MainOR(),
+                            builder: (_) =>
+                                const MainOR(),
                           ),
+
                         );
+
                       },
                     ),
 
                     // Attendance
                     _DashCard(
-                      icon: Icons.calendar_month_rounded,
-                      title: "Class Attendance",
+                      icon: Icons
+                          .calendar_month_rounded,
+
+                      title:
+                          "Class Attendance",
+
                       onTap: () {},
                     ),
 
                     // Curriculum
                     _DashCard(
-                      icon: Icons.description_rounded,
+                      icon:
+                          Icons.description_rounded,
+
                       title: "Curriculum",
+
                       onTap: () {},
                     ),
 
                     const SizedBox(height: 10),
+
                   ],
                 ),
               ),
             ),
+
             const StudNav(),
+
           ],
         ),
       ),
@@ -184,6 +277,7 @@ class StudentDashboard extends StatelessWidget {
 
 // Dashboard Card Widget
 class _DashCard extends StatelessWidget {
+
   final IconData icon;
   final String title;
   final VoidCallback onTap;
@@ -196,21 +290,30 @@ class _DashCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Container(
       width: double.infinity,
 
-      margin: const EdgeInsets.only(bottom: 16),
+      margin:
+          const EdgeInsets.only(bottom: 16),
 
       decoration: BoxDecoration(
         color: const Color(0xFFD6E8F8),
-        borderRadius: BorderRadius.circular(15),
+
+        borderRadius:
+            BorderRadius.circular(15),
 
         boxShadow: [
+
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black
+                .withOpacity(0.08),
+
             blurRadius: 6,
+
             offset: const Offset(0, 3),
           ),
+
         ],
       ),
 
@@ -220,33 +323,41 @@ class _DashCard extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
 
-          borderRadius: BorderRadius.circular(15),
+          borderRadius:
+              BorderRadius.circular(15),
 
           child: Padding(
-            padding: const EdgeInsets.symmetric(
+            padding:
+                const EdgeInsets.symmetric(
               vertical: 25,
             ),
 
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment:
+                  MainAxisAlignment.center,
 
               children: [
+
                 Icon(
                   icon,
                   size: 50,
-                  color: const Color(0xFF1E6FBF),
+                  color:
+                      const Color(0xFF1E6FBF),
                 ),
 
                 const SizedBox(height: 12),
 
                 Text(
                   title,
+
                   style: const TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.w700,
+                    fontWeight:
+                        FontWeight.w700,
                     color: Colors.black,
                   ),
                 ),
+
               ],
             ),
           ),
