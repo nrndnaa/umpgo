@@ -1,41 +1,129 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+import 'package:umpgo_frontend/domain/student_model.dart';
+import 'package:umpgo_frontend/domain/feerecord_model.dart';
+
 import 'package:umpgo_frontend/widgets/stud_nav.dart';
 import 'package:umpgo_frontend/widgets/app_header.dart';
-import 'OpenRegistration/mainOR.dart';
+
+import 'package:umpgo_frontend/screens/OpenRegistration/mainOR.dart';
+import 'package:umpgo_frontend/screens/TuitionFee/student_financial_detail.dart';
+
+import 'package:umpgo_frontend/config/api.dart';
 
 class StudentDashboard extends StatelessWidget {
-  const StudentDashboard({super.key});
+  final StudentModel student;
+
+  const StudentDashboard({
+    super.key,
+    required this.student,
+  });
+
+  Future<void> _goToTuitionFee(BuildContext context) async {
+    try {
+      // Loading Spinner
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+
+      final response = await http.get(
+        Uri.parse(
+          '${ApiConfig.baseUrl}/fee-record/${student.studentID}',
+        ),
+        headers: {
+          'Accept': 'application/json',
+        },
+      );
+
+      // Close loading
+      if (context.mounted && Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
+
+      if (response.statusCode == 200) {
+        final fee = FeeRecord.fromJson(
+          jsonDecode(response.body),
+        );
+
+        if (context.mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => StudentFinancialDetail(
+                student: student,
+                fee: fee,
+              ),
+            ),
+          );
+        }
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Fee record not found.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      print(e);
+
+      if (context.mounted) {
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          Colors.white, // Matches the clean white background in the image
+      backgroundColor: Colors.white,
+
       body: SafeArea(
         child: Column(
           children: [
-            const AppHeader(), // Your existing header widget
+            const AppHeader(),
+
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 20,
                   vertical: 15,
                 ),
+
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // ── Welcome Text ──────────────────────────────────────────
-                    const Text(
-                      "Welcome, Nurin Irdina",
-                      style: TextStyle(
+
+                    // Welcome Text
+                    Text(
+                      "Welcome, ${student.name}",
+                      style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.w900,
                         color: Colors.black,
                       ),
                     ),
+
                     const SizedBox(height: 16),
 
-                    // ── Campus Banner ─────────────────────────────────────────
+                    // Banner Image
                     ClipRRect(
                       borderRadius: BorderRadius.circular(15),
                       child: Image.network(
@@ -45,38 +133,51 @@ class StudentDashboard extends StatelessWidget {
                         fit: BoxFit.cover,
                       ),
                     ),
+
                     const SizedBox(height: 20),
 
-                    // ── Service Cards ─────────────────────────────────────────
+                    // Tuition Fee
                     _DashCard(
                       icon: Icons.school_rounded,
                       title: "Tuition Fee",
-                      onTap: () {},
+                      onTap: () => _goToTuitionFee(context),
                     ),
+
+                    // Open Registration
                     _DashCard(
                       icon: Icons.menu_book_rounded,
                       title: "Open Registration",
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const MainOR()),
-                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const MainOR(),
+                          ),
+                        );
+                      },
                     ),
+
+                    // Attendance
                     _DashCard(
                       icon: Icons.calendar_month_rounded,
                       title: "Class Attendance",
                       onTap: () {},
                     ),
+
+                    // Curriculum
                     _DashCard(
                       icon: Icons.description_rounded,
                       title: "Curriculum",
                       onTap: () {},
                     ),
+
                     const SizedBox(height: 10),
                   ],
                 ),
               ),
             ),
-            const StudNav(), // Your existing navigation widget
+
+            const StudNav(),
           ],
         ),
       ),
@@ -84,7 +185,7 @@ class StudentDashboard extends StatelessWidget {
   }
 }
 
-// ── Reusable Card (Updated for the Vertical Image Style) ──────────────────────
+// Dashboard Card Widget
 class _DashCard extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -100,10 +201,14 @@ class _DashCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
+
       margin: const EdgeInsets.only(bottom: 16),
+
       decoration: BoxDecoration(
-        color: const Color(0xFFD6E8F8), // The light blue from the image
+        color: const Color(0xFFD6E8F8),
+
         borderRadius: BorderRadius.circular(15),
+
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.08),
@@ -112,20 +217,32 @@ class _DashCard extends StatelessWidget {
           ),
         ],
       ),
+
       child: Material(
         color: Colors.transparent,
+
         child: InkWell(
           onTap: onTap,
+
           borderRadius: BorderRadius.circular(15),
+
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 25),
+            padding: const EdgeInsets.symmetric(
+              vertical: 25,
+            ),
+
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
+
               children: [
-                // For exact match with image_65fcc1.jpg, replace 'Icon' with 'Image.asset'
-                // once you have the specific 3D-style PNGs
-                Icon(icon, size: 50, color: const Color(0xFF1E6FBF)),
+                Icon(
+                  icon,
+                  size: 50,
+                  color: const Color(0xFF1E6FBF),
+                ),
+
                 const SizedBox(height: 12),
+
                 Text(
                   title,
                   style: const TextStyle(
