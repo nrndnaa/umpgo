@@ -11,13 +11,11 @@ class UMPGoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
       title: 'UMPGo',
-      theme: ThemeData(
-        useMaterial3: true,
-        fontFamily: 'Inter',
-      ),
-      home: const LoginScreen(),  // ← must be LoginScreen not LoginController
+      debugShowCheckedModeBanner: false, // Optional: hides the debug banner
+      theme: ThemeData(useMaterial3: true, fontFamily: 'Inter'),
+      // Initial screen
+      home: const LoginScreen(),
     );
   }
 }

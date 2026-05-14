@@ -58,21 +58,15 @@ class LoginController {
 
       final data = jsonDecode(response.body);
       if (data['success'] == true) {
-<<<<<<< Updated upstream
+        debugPrint('USER DATA: ${data['user']}');
+        debugPrint('ROLE: $role');
         try {
           _navigateToDashboard(context, role, data['user']);
-        } catch (e) {
-          return 'Dashboard error: $e'; // This will reveal the real problem
-=======
-        print('USER DATA: ${data['user']}');
-        print('ROLE: $role'); // ADD THIS
-        try {
-          _navigateToDashboard(context, role, data['user']);
-          print('NAVIGATION SUCCESS'); // ADD THIS
+          debugPrint('NAVIGATION SUCCESS');
         } catch (e, stackTrace) {
-          print('NAV ERROR: $e'); // ADD THIS
-          print('STACK: $stackTrace'); // ADD THIS
->>>>>>> Stashed changes
+          debugPrint('NAV ERROR: $e');
+          debugPrint('STACK: $stackTrace');
+          return 'Dashboard error: $e';
         }
         return null;
       } else {

@@ -72,7 +72,7 @@ class OpenRegistrationController extends Controller
         ]);
     }
 
-<<<<<<< Updated upstream
+
     // GET /api/subjects
     public function igetAllSubjects()
     {
@@ -386,7 +386,7 @@ class OpenRegistrationController extends Controller
             'success' => true,
             'message' => 'Subject dropped successfully.',
         ]);
-=======
+    }
     public function checkSession($yearOfStudy)
     {
         $now = now();
@@ -405,6 +405,5 @@ class OpenRegistrationController extends Controller
         } else {
             return response()->json(['open' => false, 'session' => null]);
         }
->>>>>>> Stashed changes
     }
 }

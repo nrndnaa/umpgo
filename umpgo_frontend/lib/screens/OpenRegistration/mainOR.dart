@@ -6,10 +6,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:umpgo_frontend/config/api.dart';
 import 'package:umpgo_frontend/domain/student_model.dart';
-<<<<<<< Updated upstream
 import 'package:umpgo_frontend/screens/OpenRegistration/subjectStatusOR.dart';
-=======
->>>>>>> Stashed changes
 
 // ─── Theme constants ─────────────────────────────────────────────────────────
 class _C {
@@ -27,11 +24,8 @@ class _C {
   static const border = Color(0xFFDDE3EE);
 }
 
-<<<<<<< Updated upstream
 // ─── Root screen ──────────────────────────────────────────────────────────────
-=======
-// ─── Root screen ────────────────────────────────────────────────────────────
->>>>>>> Stashed changes
+
 class MainOR extends StatefulWidget {
   final StudentModel student;
   const MainOR({super.key, required this.student});
@@ -41,23 +35,21 @@ class MainOR extends StatefulWidget {
 }
 
 class _MainORState extends State<MainOR> {
-<<<<<<< Updated upstream
   List<Map<String, dynamic>> _subjects = [];
   List<Map<String, dynamic>> _enrollments = [];
   bool _loadingSubjects = true;
   bool _loadingEnrollments = true;
   String _searchQuery = '';
-=======
+
   bool _isLoading = true;
   bool _isOpen = false;
->>>>>>> Stashed changes
 
   @override
   void initState() {
     super.initState();
-<<<<<<< Updated upstream
     _fetchSubjects();
     _fetchEnrollments();
+    _checkSession();
   }
 
   // ── Fetch all subjects with sections ────────────────────────────────────────
@@ -70,8 +62,8 @@ class _MainORState extends State<MainOR> {
           )
           .timeout(const Duration(seconds: 10));
 
-      debugPrint('STATUS: ${res.statusCode}'); // ← add this
-      debugPrint('BODY: ${res.body}'); // ← add this
+      debugPrint('STATUS: ${res.statusCode}');
+      debugPrint('BODY: ${res.body}');
 
       final data = jsonDecode(res.body);
       if (data['success'] == true) {
@@ -167,7 +159,6 @@ class _MainORState extends State<MainOR> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Icon circle
               Container(
                 width: 72,
                 height: 72,
@@ -185,7 +176,6 @@ class _MainORState extends State<MainOR> {
                 ),
               ),
               const SizedBox(height: 20),
-              // Message
               Text(
                 message,
                 textAlign: TextAlign.center,
@@ -196,7 +186,6 @@ class _MainORState extends State<MainOR> {
                 ),
               ),
               const SizedBox(height: 24),
-              // OK button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -224,6 +213,8 @@ class _MainORState extends State<MainOR> {
   }
 
   // ── Filtered subjects ────────────────────────────────────────────────────────
+  // FIX 1: Removed the extra closing brace that was here, which was
+  // incorrectly closing _MainORState before _checkSession and build().
   List<Map<String, dynamic>> get _filteredSubjects {
     if (_searchQuery.isEmpty) return _subjects;
     final q = _searchQuery.toLowerCase();
@@ -232,10 +223,9 @@ class _MainORState extends State<MainOR> {
           (s['subjectName'] ?? '').toLowerCase().contains(q);
     }).toList();
   }
-=======
-    _checkSession();
-  }
 
+  // ── Check registration session ───────────────────────────────────────────────
+  // FIX 2: _checkSession is now correctly inside _MainORState.
   Future<void> _checkSession() async {
     try {
       final uri = Uri.parse(
@@ -254,7 +244,6 @@ class _MainORState extends State<MainOR> {
       });
     }
   }
->>>>>>> Stashed changes
 
   @override
   Widget build(BuildContext context) {
@@ -266,10 +255,9 @@ class _MainORState extends State<MainOR> {
     }
 
     if (!_isOpen) {
-      return _ClosedScreen(); // 👇 see below
+      return _ClosedScreen();
     }
 
-    // Original open registration UI
     return Scaffold(
       backgroundColor: _C.bg,
       body: SafeArea(
@@ -440,8 +428,6 @@ class _MainORState extends State<MainOR> {
             label: 'Add Subject',
           ),
           const SizedBox(height: 16),
-
-          // Search field
           Container(
             height: 48,
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -474,8 +460,6 @@ class _MainORState extends State<MainOR> {
             ),
           ),
           const SizedBox(height: 16),
-
-          // Subject list
           _loadingSubjects
               ? const Center(
                   child: Padding(
@@ -542,7 +526,6 @@ class _MainORState extends State<MainOR> {
             ],
           ),
           const SizedBox(height: 14),
-
           _loadingEnrollments
               ? const Center(
                   child: Padding(
@@ -562,7 +545,6 @@ class _MainORState extends State<MainOR> {
                 )
               : Column(
                   children: [
-                    // Table header
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 14,
@@ -574,8 +556,8 @@ class _MainORState extends State<MainOR> {
                           top: Radius.circular(12),
                         ),
                       ),
-                      child: Row(
-                        children: const [
+                      child: const Row(
+                        children: [
                           _ColHead('No.', flex: 1),
                           _ColHead('Code', flex: 3),
                           _ColHead('Subject Name', flex: 6),
@@ -680,7 +662,6 @@ class _MainORState extends State<MainOR> {
                     ),
                   ],
                 ),
-
           const SizedBox(height: 18),
           OutlinedButton.icon(
             style: OutlinedButton.styleFrom(
@@ -704,10 +685,10 @@ class _MainORState extends State<MainOR> {
   }
 
   // ── Subject Status Card ───────────────────────────────────────────────────────
+  // FIX 3: Method now properly closes all nested widget trees and ends with }.
   Widget _buildSubjectStatusCard() {
     if (_enrollments.isEmpty) return const SizedBox.shrink();
 
-    // Check if any pending
     final hasPending = _enrollments.any(
       (e) => (e['status'] ?? 'Pending') == 'Pending',
     );
@@ -748,7 +729,6 @@ class _MainORState extends State<MainOR> {
         border: Border.all(color: iconColor.withOpacity(0.25)),
       ),
       child: Column(
-        // Changed to Column to accommodate the button below
         children: [
           Row(
             children: [
@@ -789,7 +769,6 @@ class _MainORState extends State<MainOR> {
             ],
           ),
           const SizedBox(height: 16),
-          // NEW REDIRECT BUTTON
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
@@ -803,7 +782,7 @@ class _MainORState extends State<MainOR> {
                 );
               },
               icon: const Icon(Icons.assignment_turned_in_rounded, size: 18),
-              label: const Text("View Subject Status Details"),
+              label: const Text('View Subject Status Details'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: iconColor,
                 foregroundColor: Colors.white,
@@ -819,6 +798,8 @@ class _MainORState extends State<MainOR> {
       ),
     );
   }
+
+  // FIX 1 (continued): This single } correctly closes _MainORState.
 }
 
 // ─── Subject Row Widget ───────────────────────────────────────────────────────
@@ -884,7 +865,6 @@ class _SubjectRowState extends State<_SubjectRow> {
       ),
       child: Row(
         children: [
-          // Subject code
           SizedBox(
             width: 72,
             child: Text(
@@ -896,8 +876,6 @@ class _SubjectRowState extends State<_SubjectRow> {
               ),
             ),
           ),
-
-          // Subject name
           Expanded(
             child: Text(
               widget.subject['subjectName'] ?? '',
@@ -909,12 +887,7 @@ class _SubjectRowState extends State<_SubjectRow> {
               overflow: TextOverflow.ellipsis,
             ),
           ),
-
           const SizedBox(width: 8),
-
-          // Section dropdown
-          // Section dropdown
-          // Section dropdown
           sections.isEmpty
               ? const Text(
                   '—',
@@ -929,8 +902,6 @@ class _SubjectRowState extends State<_SubjectRow> {
                   ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
-                      // SAFETY CHECK: If the current ID isn't in the list,
-                      // fallback to null or the first available ID to prevent crash
                       value:
                           sections.any(
                             (s) =>
@@ -961,9 +932,7 @@ class _SubjectRowState extends State<_SubjectRow> {
                       items: sections.map((sec) {
                         return DropdownMenuItem<String>(
                           value: sec['sectionID'].toString(),
-                          child: Text(
-                            sec['sectionNo'] ?? '',
-                          ), // Only showing Section No as requested
+                          child: Text(sec['sectionNo'] ?? ''),
                         );
                       }).toList(),
                       onChanged: enrolled
@@ -973,8 +942,6 @@ class _SubjectRowState extends State<_SubjectRow> {
                   ),
                 ),
           const SizedBox(width: 8),
-
-          // Add / Enrolled
           enrolled
               ? const Icon(
                   Icons.check_circle_rounded,
@@ -1088,15 +1055,15 @@ class _ColHead extends StatelessWidget {
     );
   }
 }
-<<<<<<< Updated upstream
-=======
 
-class _Divider extends StatelessWidget {
-  const _Divider();
+// FIX 4: Renamed _Divider → _StyledDivider to avoid shadowing Flutter's Divider.
+// (Unused, but kept to avoid any other references breaking.)
+class _StyledDivider extends StatelessWidget {
+  const _StyledDivider();
 
   @override
   Widget build(BuildContext context) {
-    return Divider(color: _C.border, height: 1, thickness: 1);
+    return const Divider(color: _C.border, height: 1, thickness: 1);
   }
 }
 
@@ -1191,7 +1158,7 @@ class _ClosedScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            AppHeader(),
+            const AppHeader(),
             Expanded(
               child: Center(
                 child: Padding(
@@ -1202,8 +1169,8 @@ class _ClosedScreen extends StatelessWidget {
                       Container(
                         width: 80,
                         height: 80,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFFEBEE),
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFFFEBEE),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
@@ -1214,7 +1181,7 @@ class _ClosedScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 24),
                       const Text(
-                        "Registration Closed",
+                        'Registration Closed',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w800,
@@ -1223,7 +1190,7 @@ class _ClosedScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 10),
                       const Text(
-                        "Course Registration is currently closed for your programme / level.",
+                        'Course Registration is currently closed for your programme / level.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 14,
@@ -1248,7 +1215,7 @@ class _ClosedScreen extends StatelessWidget {
                         onPressed: () => Navigator.pop(context),
                         icon: const Icon(Icons.arrow_back_rounded, size: 18),
                         label: const Text(
-                          "Back to Dashboard",
+                          'Back to Dashboard',
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
@@ -1267,4 +1234,3 @@ class _ClosedScreen extends StatelessWidget {
     );
   }
 }
->>>>>>> Stashed changes
