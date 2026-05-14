@@ -121,7 +121,7 @@ class _ModuleListState extends State<ModuleList> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const ModuleForm()),
+                          builder: (context) => ModuleForm(adab: widget.adab)),
                     ).then((_) => fetchModules());
                   },
                   style: ElevatedButton.styleFrom(
@@ -266,7 +266,7 @@ class _ModuleListState extends State<ModuleList> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ModuleForm(module: module),
+                        builder: (context) => ModuleForm(adab: widget.adab, module: module),
                       ),
                     ).then((_) => fetchModules());
                   },

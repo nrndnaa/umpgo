@@ -27,28 +27,25 @@ class _CreditClaimState extends State<CreditClaim> {
   void fetchClaimStatus() async {
   setState(() => loading = true);
   try {
-    final bookingsResponse = await http.get(
-      Uri.parse('${ApiConfig.baseUrl}/modules/mybookings/${widget.studentID}'),
-    );
-
+    // Get claim status
     final claimResponse = await http.get(
       Uri.parse('${ApiConfig.baseUrl}/creditclaim/student/${widget.studentID}'),
     );
 
-    if (bookingsResponse.statusCode == 200) {
-  final List data = jsonDecode(bookingsResponse.body);
-  int cats = 0;
-  for (var item in data) {
-    if (item['attendanceStatus'] == 'PRESENT') {
-      cats += item['module']['catsPoint'] as int? ?? 0;
-    }
-  }
-  setState(() => totalCats = cats);
-}
+    // Get total CATS from backend
+    final catsResponse = await http.get(
+      Uri.parse('${ApiConfig.baseUrl}/creditclaim/cats/${widget.studentID}'),
+    );
 
     if (claimResponse.statusCode == 200) {
       setState(() => alreadyClaimed = true);
     }
+
+    if (catsResponse.statusCode == 200) {
+      final data = jsonDecode(catsResponse.body);
+      setState(() => totalCats = (data['totalCats'] as num).toInt());
+    }
+
   } catch (e) {
     print('Error: $e');
   } finally {
@@ -154,6 +151,28 @@ class _CreditClaimState extends State<CreditClaim> {
               child: Text('Claim Credit', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
             ),
           ),
+          Padding(
+  padding: const EdgeInsets.symmetric(horizontal: 16),
+  child: Container(
+    width: double.infinity,
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+      color: totalCats >= 8 ? Colors.green.shade50 : Colors.orange.shade50,
+      borderRadius: BorderRadius.circular(8),
+      border: Border.all(
+        color: totalCats >= 8 ? Colors.green : Colors.orange,
+      ),
+    ),
+    child: Text(
+      'Total CATS: $totalCats / 8 ${totalCats >= 8 ? "✓ Eligible to claim!" : "⚠ Need ${8 - totalCats} more CATS"}',
+      style: TextStyle(
+        fontSize: 13,
+        fontWeight: FontWeight.bold,
+        color: totalCats >= 8 ? Colors.green : Colors.orange,
+      ),
+    ),
+  ),
+),
           Expanded(
             child: loading
                 ? const Center(child: CircularProgressIndicator())

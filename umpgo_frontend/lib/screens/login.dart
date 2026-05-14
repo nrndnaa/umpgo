@@ -62,6 +62,7 @@ class LoginController {
         return data['message'] ?? 'Login failed. Please try again.';
       }
     } catch (e) {
+        print('LOGIN ERROR: $e'); // add this
       return 'Could not connect to server. Check your network.';
     }
   }

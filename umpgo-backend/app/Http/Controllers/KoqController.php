@@ -311,15 +311,19 @@ if ($semesterCount >= 2) {
     }
 
     public function updateEnrollment(Request $request, $modEnrollID)
-    {
-        $enrollment = ModuleEnrollment::findOrFail($modEnrollID);
-        $enrollment->update([
-            'attendanceStatus' => $request->attendanceStatus ?? $enrollment->attendanceStatus,
-            'totalMarks'       => $request->totalMarks ?? $enrollment->totalMarks,
-        ]);
+{
+    $enrollment = ModuleEnrollment::findOrFail($modEnrollID);
+    
+    $attendanceStatus = $request->attendanceStatus ?? $enrollment->attendanceStatus;
+    $totalMarks = $attendanceStatus === 'PRESENT' ? '100%' : ($request->totalMarks ?? $enrollment->totalMarks);
 
-        return response()->json(['message' => 'Enrollment updated!', 'data' => $enrollment]);
-    }
+    $enrollment->update([
+        'attendanceStatus' => $attendanceStatus,
+        'totalMarks'       => $totalMarks,
+    ]);
+
+    return response()->json(['message' => 'Enrollment updated!', 'data' => $enrollment]);
+}
 
     // ─── PUSAT ADAB - CREDIT CLAIMS MANAGEMENT ──────────────────
 

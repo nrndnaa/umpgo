@@ -6,7 +6,7 @@ import '../../../widgets/app_header.dart';
 import '../../../widgets/stud_nav.dart';
 
 class KoQModuleBooking extends StatefulWidget {
-  final int studentID;
+final int studentID;
 final String matricID;
 const KoQModuleBooking({super.key, required this.studentID, required this.matricID});
   @override
@@ -28,7 +28,9 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
   void fetchModules() async {
     setState(() => loading = true);
     try {
-      final response = await http.get(Uri.parse(ApiConfig.modules));
+      final response = await http.get(
+        Uri.parse('${ApiConfig.modules}?studentID=${widget.studentID}'),
+      );
       if (response.statusCode == 200) {
         setState(() {
           modules = List<Map<String, dynamic>>.from(jsonDecode(response.body));
@@ -36,7 +38,9 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
       }
     } finally {
       if (mounted) setState(() => loading = false);
@@ -62,6 +66,7 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
   }
 
   void registerModule(int moduleID) {
+    final pageContext = context; // save page context ✅
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -82,24 +87,31 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
                   body: jsonEncode({'moduleID': moduleID, 'studentID': widget.studentID}),
                 );
                 if (response.statusCode == 200) {
-                  setState(() => bookedModuleIDs.add(moduleID));
-                  if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Successfully Registered!'), backgroundColor: Colors.green),
-                    );
-                  }
+                  setState(() {
+                    bookedModuleIDs.add(moduleID);
+                    modules.removeWhere((m) => m['moduleID'] == moduleID);
+                  });
+                   final registeredCount = bookedModuleIDs.length;
+                   ScaffoldMessenger.of(pageContext).showSnackBar( 
+                    SnackBar(
+                      content: Text('Successfully Registered! ($registeredCount/2)'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
                 } else {
                   final error = jsonDecode(response.body);
-                  if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(error['message'] ?? 'Failed to register!'), backgroundColor: Colors.red),
-                    );
-                  }
+                  ScaffoldMessenger.of(pageContext).showSnackBar(  
+                    SnackBar(
+                      content: Text(error['message'] ?? 'Failed to register!'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                  fetchModules();
                 }
               } catch (e) {
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
-                }
+                ScaffoldMessenger.of(pageContext).showSnackBar( 
+                  SnackBar(content: Text('Error: $e')),
+                );
               }
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
@@ -112,9 +124,7 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
 
   @override
   Widget build(BuildContext context) {
-    final availableModules = modules
-        .where((m) => !bookedModuleIDs.contains(m['moduleID']))
-        .toList();
+    final availableModules = modules; 
 
     return Scaffold(
       backgroundColor: Colors.white,

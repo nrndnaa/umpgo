@@ -2,13 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../../config/api.dart';
+import '../../../domain/pusatadab_model.dart';
 import '../../../widgets/app_header.dart';
 import '../../../widgets/adab_nav.dart';
 
 class ModuleForm extends StatefulWidget {
   final Map<String, dynamic>? module;
-  const ModuleForm({super.key, this.module});
+final PusatAdabModel adab;
 
+const ModuleForm({
+  super.key,
+  required this.adab,
+  this.module,
+});
   @override
   State<ModuleForm> createState() => _ModuleFormState();
 }
@@ -45,7 +51,9 @@ class _ModuleFormState extends State<ModuleForm> {
       catsController.text = widget.module!['catsPoint']?.toString() ?? '';
       slotsController.text = widget.module!['maxSlots']?.toString() ?? '';
       groupLinkController.text = widget.module!['groupLink'] ?? '';
-    }
+    } else {
+      catsController.text = '2'; 
+    }  
   }
 
   @override
@@ -88,6 +96,7 @@ class _ModuleFormState extends State<ModuleForm> {
       controller.text =
           '${picked.hour.toString().padLeft(2, '0')}:'
           '${picked.minute.toString().padLeft(2, '0')}';
+          '00'; 
     }
   }
 
@@ -115,6 +124,7 @@ class _ModuleFormState extends State<ModuleForm> {
 
     try {
       final body = jsonEncode({
+        'adabID': widget.adab.adabID,
         'name': moduleNameController.text,
         'code': moduleCodeController.text,
         'startDate': startDateController.text,
@@ -150,8 +160,8 @@ class _ModuleFormState extends State<ModuleForm> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(isEdit
-                  ? 'Module updated successfully!'
-                  : 'Module added successfully!'),
+                  ? 'Module has beenupdated!'
+                  : 'Module has been saved!'),
               backgroundColor: Colors.green,
             ),
           );

@@ -127,11 +127,13 @@ class _AdabDashboardState extends State<AdabDashboard> {
                           label: 'Module List',
                           onTap: () {
                             Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                      builder: (context) => ModuleList(adab: widget.adab),
-                              ),
-                            );
+                          context,
+                            MaterialPageRoute(
+                          builder: (context) => ModuleList(adab: widget.adab),
+                            ),
+                          ).then((_) {
+                            fetchDashboardStats(); // 
+                            });
                           },
                         ),
                       ),
