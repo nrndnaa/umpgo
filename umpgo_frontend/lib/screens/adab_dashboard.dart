@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:umpgo_frontend/domain/pusatadab_model.dart';
 import 'package:umpgo_frontend/config/api.dart';
+import 'package:umpgo_frontend/domain/student_model.dart';
+import 'package:umpgo_frontend/screens/Curriculum/student/curriculum_menu.dart';
 import 'package:umpgo_frontend/widgets/stud_nav.dart';
 import 'OpenRegistration/mainOR.dart';
 
 class AdabDashboard extends StatefulWidget {
   final PusatAdabModel adab;
-  const AdabDashboard({super.key, required this.adab});
+  final StudentModel student; // ← add this
+  const AdabDashboard({super.key, required this.adab, required this.student});
 
   @override
   State<AdabDashboard> createState() => _AdabDashboardState();
@@ -122,7 +125,8 @@ class _AdabDashboardState extends State<AdabDashboard> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const MainOR(),
+                            builder: (context) =>
+                                MainOR(student: widget.student),
                           ),
                         );
                       },
@@ -135,7 +139,15 @@ class _AdabDashboardState extends State<AdabDashboard> {
                     DashboardCard(
                       icon: Icons.assignment,
                       title: "Curriculum",
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                CurriculumMenu(student: widget.student),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),

@@ -9,26 +9,23 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('creditclaim', function (Blueprint $table) {
-
             $table->id('claimID');
-            $table->foreignId('studentID')->constrained('student', 'studentID')->cascadeOnDelete();
+            $table->unsignedBigInteger('studentID');
             $table->string('semester');
             $table->decimal('totalCats', 5, 2)->default(0);
             $table->string('status')->default('Pending'); // Pending / Approved / Rejected
-            $table->timestamp('submitted_At')->useCurrent();
+            $table->timestamp('submitted_at')->useCurrent();
             $table->timestamps();
+
+            $table->foreign('studentID')
+                ->references('studentID')
+                ->on('student')
+                ->cascadeOnDelete();
         });
     }
 
     public function down(): void
     {
-        $table->id('claimID');
-        $table->unsignedBigInteger('studentID');
-        $table->string('semester');
-        $table->integer('totalCats')->default(0);
-        $table->string('status')->default('Not Complete');
-        $table->timestamps();
-
-        $table->foreign('studentID')->references('studentID')->on('student');
+        Schema::dropIfExists('creditclaim');
     }
-}
+};
