@@ -17,6 +17,7 @@ class Student extends Authenticatable
         'programme',
         'faculty',
         'yearOfStudy',
+        'status',
     ];
 
     protected $hidden = [
@@ -26,5 +27,10 @@ class Student extends Authenticatable
     public function enrollments()
     {
         return $this->hasMany(Enrollment::class, 'studentID', 'studentID');
+    }
+
+    public function creditClaim()
+    {
+        return $this->hasOne(CreditClaim::class, 'studentID', 'studentID');
     }
 }

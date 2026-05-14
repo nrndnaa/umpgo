@@ -72,15 +72,16 @@ class StudentDashboard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    _DashCard(
-                      icon: Icons.calendar_month_rounded,
-                      title: "Class Attendance",
-                      onTap: () {},
-                    ),
+                    
                     _DashCard(
                       icon: Icons.description_rounded,
                       title: "Curriculum",
-                      onTap: () {},
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                      builder: (_) => CurriculumMenu(student: student),
+                       ),
+                      ),
                     ),
                     const SizedBox(height: 10),
                   ],
