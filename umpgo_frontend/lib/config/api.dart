@@ -1,5 +1,6 @@
 
 
+
 import 'package:flutter/foundation.dart';
 
 class ApiConfig {
@@ -13,5 +14,11 @@ class ApiConfig {
   }
 
   static String get login => '$baseUrl/login';
+}
+
+
+class ApiConfig {
+  static const String baseUrl = 'http://10.0.2.2:8000/api';
+  static const String login = 'http://10.0.2.2:8000/api/login';
 }
 

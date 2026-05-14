@@ -6,7 +6,11 @@ class StudentModel {
   final String yearOfStudy;
   final String programme;
   final String status;
+
   final double outstandingBalance;
+
+  final int outstandingBalance;
+
 
   StudentModel({
     required this.studentID,

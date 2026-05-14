@@ -1,13 +1,19 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-
-// Import your dashboards
+import 'package:http/http.dart' as http;
+import 'package:umpgo_frontend/config/api.dart';
+import 'package:umpgo_frontend/domain/student_model.dart';
+import 'package:umpgo_frontend/domain/lecturer_model.dart';
+import 'package:umpgo_frontend/domain/facultyregistrar_model.dart';
+import 'package:umpgo_frontend/domain/treasury_model.dart';
+import 'package:umpgo_frontend/domain/pusatadab_model.dart';
 import 'package:umpgo_frontend/screens/student_dashboard.dart';
 import 'package:umpgo_frontend/screens/lecturer_dashboard.dart';
 import 'package:umpgo_frontend/screens/registrar_dashboard.dart';
 import 'package:umpgo_frontend/screens/treasury_dashboard.dart';
 import 'package:umpgo_frontend/screens/adab_dashboard.dart';
 
-// ─── Theme constants ─────────────────────────────────────────────────────────
+// ─── Theme constants ──────────────────────────────────────────────────────────
 class _C {
   static const bg = Color(0xFFF4F7FB);
   static const primary = Color(0xFF1E6FBF);
@@ -20,73 +26,78 @@ class _C {
   static const errorLight = Color(0xFFFFEBEE);
 }
 
-// ─── Login Controller ────────────────────────────────────────────────────────
+// ─── Login Controller ─────────────────────────────────────────────────────────
 class LoginController {
-  // Simulated user database
-  // Replace this with a real API call later
-  static const _mockUsers = {
-    "student1": {"password": "pass123", "role": "Student"},
-    "lecturer1": {"password": "pass123", "role": "Lecturer"},
-    "registrar1": {"password": "pass123", "role": "Faculty Registrar"},
-    "treasury1": {"password": "pass123", "role": "Treasury"},
-    "adab1": {"password": "pass123", "role": "Pusat Adab"},
-  };
-
-  /// Returns an error string if login fails, or null on success.
-  /// On success, navigates to the correct dashboard.
-  static String? login({
+  static Future<String?> login({
     required BuildContext context,
     required String username,
     required String password,
     required String role,
-  }) {
+  }) async {
     final trimmedUser = username.trim();
     final trimmedPass = password.trim();
 
-    // Basic validation
     if (trimmedUser.isEmpty) return "Please enter your username.";
     if (trimmedPass.isEmpty) return "Please enter your password.";
 
-    // Check credentials
-    final user = _mockUsers[trimmedUser];
-    if (user == null || user["password"] != trimmedPass) {
-      return "Incorrect username or password.";
-    }
+    try {
+      final response = await http
+          .post(
+            Uri.parse(ApiConfig.login),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'username': trimmedUser,
+              'password': trimmedPass,
+              'role': role,
+            }),
+          )
+          .timeout(const Duration(seconds: 10));
 
-    // Check that role matches
-    if (user["role"] != role) {
-      return "This account is not registered as a $role.";
-    }
+      final data = jsonDecode(response.body);
 
-    // All good — navigate
-    _navigateToDashboard(context, role);
-    return null;
+      if (data['success'] == true) {
+        _navigateToDashboard(context, role, data['user']);
+        return null;
+      } else {
+        return data['message'] ?? 'Login failed. Please try again.';
+      }
+    } catch (e) {
+      return 'Could not connect to server. Check your network.';
+    }
   }
 
-  static void _navigateToDashboard(BuildContext context, String role) {
+  static void _navigateToDashboard(
+    BuildContext context,
+    String role,
+    Map<String, dynamic> userData,
+  ) {
     Widget dashboard;
 
     switch (role) {
-      case "Student":
-        dashboard = const StudentDashboard();
+      case 'Student':
+        final student = StudentModel.fromJson(userData);
+        dashboard = StudentDashboard(student: student);
         break;
-      case "Lecturer":
-        dashboard = const LecturerDashboard();
+      case 'Lecturer':
+        final lecturer = Lecturer.fromJson(userData);
+        dashboard = LecturerDashboard(lecturer: lecturer);
         break;
-      case "Faculty Registrar":
-        dashboard = const RegistrarDashboard();
+      case 'Faculty Registrar':
+        final registrar = FacultyRegistrar.fromJson(userData);
+        dashboard = RegistrarDashboard(registrar: registrar);
         break;
-      case "Treasury":
-        dashboard = const TreasuryDashboard();
+      case 'Treasury':
+        final treasury = TreasuryModel.fromJson(userData);
+        dashboard = TreasuryDashboard(treasury: treasury);
         break;
-      case "Pusat Adab":
-        dashboard = const AdabDashboard();
+      case 'Pusat Adab':
+        final adab = PusatAdabModel.fromJson(userData);
+        dashboard = AdabDashboard(adab: adab);
         break;
       default:
         return;
     }
 
-    // pushReplacement prevents the user from pressing Back to return to Login
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => dashboard),
@@ -94,7 +105,7 @@ class LoginController {
   }
 }
 
-// ─── Login Screen ────────────────────────────────────────────────────────────
+// ─── Login Screen ─────────────────────────────────────────────────────────────
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -127,6 +138,27 @@ class _LoginScreenState extends State<LoginScreen> {
     "Pusat Adab": Icons.gamepad_rounded,
   };
 
+  // ── Role-aware label & hint ─────────────────────────────────────────────
+  String get _usernameLabel =>
+      (_selectedRole == 'Student') ? 'Matric ID' : 'Staff ID';
+
+  String get _usernameHint {
+    switch (_selectedRole) {
+      case 'Student':
+        return 'e.g. CB23090';
+      case 'Lecturer':
+        return 'e.g. L0001'; // update once you share LecturerSeeder
+      case 'Faculty Registrar':
+        return 'e.g. REG001';
+      case 'Treasury':
+        return 'e.g. TRE001'; // update once you share TreasurySeeder
+      case 'Pusat Adab':
+        return 'e.g. ADM001'; // update once you share PusatAdabSeeder
+      default:
+        return 'Enter your ID';
+    }
+  }
+
   @override
   void dispose() {
     _usernameController.dispose();
@@ -140,12 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _errorMessage = null;
     });
 
-    // Simulate a short network delay — remove if using a real API
-    await Future.delayed(const Duration(milliseconds: 800));
-
-    if (!mounted) return;
-
-    final error = LoginController.login(
+    final error = await LoginController.login(
       context: context,
       username: _usernameController.text,
       password: _passwordController.text,
@@ -168,7 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: _C.bg,
       body: Stack(
         children: [
-          // ── Background image ──────────────────────────────────────────────
+          // ── Background image ──────────────────────────────────────────
           Positioned(
             top: 0,
             left: 0,
@@ -195,7 +222,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
 
-          // ── Branding over image ───────────────────────────────────────────
+          // ── Branding ──────────────────────────────────────────────────
           Positioned(
             top: 52,
             left: 0,
@@ -255,7 +282,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
 
-          // ── Login card ────────────────────────────────────────────────────
+          // ── Login Card ────────────────────────────────────────────────
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -290,7 +317,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-
                     const SizedBox(height: 28),
 
                     // Role chips
@@ -309,6 +335,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: ListView.separated(
                         scrollDirection: Axis.horizontal,
                         itemCount: _roles.length,
+                        // ignore: unnecessary_underscores
                         separatorBuilder: (_, __) => const SizedBox(width: 8),
                         itemBuilder: (_, i) {
                           final r = _roles[i];
@@ -350,22 +377,20 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                       ),
                     ),
-
                     const SizedBox(height: 24),
 
-                    // Username
-                    _FieldLabel("Username"),
+                    // Username — label and hint are role-aware
+                    _FieldLabel(_usernameLabel),
                     const SizedBox(height: 8),
                     _InputField(
                       controller: _usernameController,
-                      hint: "e.g. CB23090",
+                      hint: _usernameHint,
                       prefixIcon: Icons.person_outline_rounded,
                     ),
-
                     const SizedBox(height: 18),
 
                     // Password
-                    _FieldLabel("Password"),
+                    const _FieldLabel("Password"),
                     const SizedBox(height: 8),
                     _InputField(
                       controller: _passwordController,
@@ -385,7 +410,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 10),
 
                     // Forgot password
@@ -403,7 +427,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 16),
 
                     // Error banner
@@ -440,7 +463,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           ],
                         ),
                       ),
-
                     const SizedBox(height: 20),
 
                     // Sign In button
@@ -476,7 +498,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                       ),
                     ),
-
                     const SizedBox(height: 20),
 
                     Center(

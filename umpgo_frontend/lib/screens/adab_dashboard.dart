@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:umpgo_frontend/domain/pusatadab_model.dart';
 import 'package:umpgo_frontend/widgets/stud_nav.dart';
 import 'OpenRegistration/mainOR.dart';
 
 class AdabDashboard extends StatelessWidget {
-  const AdabDashboard({super.key});
+  final PusatAdabModel adab;
+
+  const AdabDashboard({super.key, required this.adab});
 
   @override
   Widget build(BuildContext context) {

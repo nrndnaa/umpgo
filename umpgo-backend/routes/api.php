@@ -1,14 +1,15 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\TuitionFeeController;
 use App\Http\Controllers\OpenRegistrationController;
 
 Route::get('/student/dashboard', [OpenRegistrationController::class, 'dashboard']);
 
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\TuitionFeeController;
+
 
 
 

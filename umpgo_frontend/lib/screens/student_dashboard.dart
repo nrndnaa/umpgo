@@ -94,12 +94,10 @@ class StudentDashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-
       body: SafeArea(
         child: Column(
           children: [
             const AppHeader(),
-
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(
@@ -176,7 +174,6 @@ class StudentDashboard extends StatelessWidget {
                 ),
               ),
             ),
-
             const StudNav(),
           ],
         ),
@@ -206,7 +203,6 @@ class _DashCard extends StatelessWidget {
 
       decoration: BoxDecoration(
         color: const Color(0xFFD6E8F8),
-
         borderRadius: BorderRadius.circular(15),
 
         boxShadow: [
