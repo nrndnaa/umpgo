@@ -10,6 +10,7 @@ class AdabDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+<<<<<<< Updated upstream
       backgroundColor: const Color(0xFFF7FCFF),
       body: SafeArea(
         child: Column(
@@ -23,10 +24,134 @@ class AdabDashboard extends StatelessWidget {
                   Icon(Icons.person_outline, size: 28),
                   Icon(Icons.school, size: 34, color: Color(0xFF0B4C8C)),
                   Icon(Icons.menu, size: 30),
+=======
+      backgroundColor: Colors.white,
+      appBar: const AppHeader(),
+      body: loading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Welcome, ${widget.adab.name}',
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Staff ID: ${widget.adab.staffID}',
+                    style: const TextStyle(fontSize: 13, color: Colors.grey),
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFF9C4),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _buildStatItem(
+                                value: '$totalActivities',
+                                label: 'Total Curriculum\nActivities',
+                              ),
+                            ),
+                            Expanded(
+                              child: _buildStatItem(
+                                value: '$totalEnrollment',
+                                label: 'Total\nEnrollment',
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _buildStatItem(
+                                value: attendancePercentage,
+                                label: 'Attendance\nPercentage',
+                              ),
+                            ),
+                            Expanded(
+                              child: _buildStatItem(
+                                value: '$approvedClaims',
+                                label: 'Approved Credit\nClaims',
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildNavTile(
+                          icon: Icons.assignment_outlined,
+                          label: 'Module List',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ModuleList(adab: widget.adab),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _buildNavTile(
+                          icon: Icons.card_membership_outlined,
+                          label: 'Credit Claim\nApplication',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const CreditClaimApplication(),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildNavTile(
+                          icon: Icons.sports_basketball_outlined,
+                          label: 'Attendance',
+                          onTap: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Coming soon!')),
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      const Expanded(child: SizedBox()),
+                    ],
+                  ),
+>>>>>>> Stashed changes
                 ],
               ),
             ),
 
+<<<<<<< Updated upstream
             // Welcome text
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
@@ -103,12 +228,54 @@ class AdabDashboard extends StatelessWidget {
 
             // Bottom Navigation (YOUR stud_nav.dart)
             const StudNav(),
+=======
+  Widget _buildStatItem({required String value, required String label}) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+        ),
+        Text(
+          label,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 12, color: Colors.black87),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNavTile({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFFF9C4),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 48, color: Colors.black87),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+            ),
+>>>>>>> Stashed changes
           ],
         ),
       ),
     );
   }
 }
+<<<<<<< Updated upstream
 
 class DashboardCard extends StatelessWidget {
   final IconData icon;
@@ -153,3 +320,5 @@ class DashboardCard extends StatelessWidget {
     );
   }
 }
+=======
+>>>>>>> Stashed changes
