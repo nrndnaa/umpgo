@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OpenRegistrationController;
 
-<<<<<<< Updated upstream
 // routes/api.php
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/registration-sessions', [OpenRegistrationController::class, 'getSessions']);
@@ -23,12 +22,3 @@ Route::get('/my-enrollments/{studentID}', [OpenRegistrationController::class, 'g
 Route::post('/enroll', [OpenRegistrationController::class, 'registerSubject']);
 Route::delete('/enroll/{enrollmentID}', [OpenRegistrationController::class, 'dropSubject']);
 Route::get('/my-enrollments/{studentID}', [OpenRegistrationController::class, 'getMyEnrollments']);
-=======
-//Open Registration
-Route::post('/login', [AuthController::class, 'login']);
-Route::get('/registration-sessions', [OpenRegistrationController::class, 'index']);
-Route::post('/registration-sessions', [OpenRegistrationController::class, 'store']);
-Route::get('/registration-sessions/check', [OpenRegistrationController::class, 'check']);
-Route::get('/registration-session/{yearOfStudy}', [OpenRegistrationController::class, 'checkSession']);
-Route::get('/subjects', [OpenRegistrationController::class, 'index']);
->>>>>>> Stashed changes
