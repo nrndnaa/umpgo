@@ -151,28 +151,7 @@ class _CreditClaimState extends State<CreditClaim> {
               child: Text('Claim Credit', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
             ),
           ),
-          Padding(
-  padding: const EdgeInsets.symmetric(horizontal: 16),
-  child: Container(
-    width: double.infinity,
-    padding: const EdgeInsets.all(12),
-    decoration: BoxDecoration(
-      color: totalCats >= 8 ? Colors.green.shade50 : Colors.orange.shade50,
-      borderRadius: BorderRadius.circular(8),
-      border: Border.all(
-        color: totalCats >= 8 ? Colors.green : Colors.orange,
-      ),
-    ),
-    child: Text(
-      'Total CATS: $totalCats / 8 ${totalCats >= 8 ? "✓ Eligible to claim!" : "⚠ Need ${8 - totalCats} more CATS"}',
-      style: TextStyle(
-        fontSize: 13,
-        fontWeight: FontWeight.bold,
-        color: totalCats >= 8 ? Colors.green : Colors.orange,
-      ),
-    ),
-  ),
-),
+          
           Expanded(
             child: loading
                 ? const Center(child: CircularProgressIndicator())
