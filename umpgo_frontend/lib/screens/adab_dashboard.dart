@@ -135,7 +135,6 @@ class AdabDashboard extends StatelessWidget {
               ),
             ),
 
-<<<<<<< Updated upstream
             // Welcome text
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
@@ -212,54 +211,12 @@ class AdabDashboard extends StatelessWidget {
 
             // Bottom Navigation (YOUR stud_nav.dart)
             const StudNav(),
-=======
-  Widget _buildStatItem({required String value, required String label}) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-        ),
-        Text(
-          label,
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 12, color: Colors.black87),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildNavTile({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: const Color(0xFFFFF9C4),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 48, color: Colors.black87),
-            const SizedBox(height: 8),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-            ),
->>>>>>> Stashed changes
           ],
         ),
       ),
     );
   }
 }
-<<<<<<< Updated upstream
 
 class DashboardCard extends StatelessWidget {
   final IconData icon;
@@ -304,5 +261,3 @@ class DashboardCard extends StatelessWidget {
     );
   }
 }
-=======
->>>>>>> Stashed changes
