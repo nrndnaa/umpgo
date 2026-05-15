@@ -77,16 +77,12 @@ class StudentDashboard extends StatelessWidget {
                     _DashCard(
                       icon: Icons.description_rounded,
                       title: "Curriculum",
-<<<<<<< Updated upstream
-                      onTap: () {},
-=======
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (_) => CurriculumMenu(student: student),
                         ),
                       ),
->>>>>>> Stashed changes
                     ),
                     const SizedBox(height: 10),
                   ],

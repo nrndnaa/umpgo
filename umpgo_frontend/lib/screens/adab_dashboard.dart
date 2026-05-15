@@ -10,21 +10,6 @@ class AdabDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-<<<<<<< Updated upstream
-      backgroundColor: const Color(0xFFF7FCFF),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  Icon(Icons.person_outline, size: 28),
-                  Icon(Icons.school, size: 34, color: Color(0xFF0B4C8C)),
-                  Icon(Icons.menu, size: 30),
-=======
       backgroundColor: Colors.white,
       appBar: const AppHeader(),
       body: loading
@@ -146,7 +131,6 @@ class AdabDashboard extends StatelessWidget {
                       const Expanded(child: SizedBox()),
                     ],
                   ),
->>>>>>> Stashed changes
                 ],
               ),
             ),
