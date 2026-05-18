@@ -10,12 +10,17 @@ return new class extends Migration
     {
         Schema::create('creditclaim', function (Blueprint $table) {
             $table->id('claimID');
-            $table->foreignId('studentID')->constrained('student', 'studentID')->cascadeOnDelete();
+            $table->unsignedBigInteger('studentID');
             $table->string('semester');
             $table->decimal('totalCats', 5, 2)->default(0);
             $table->string('status')->default('Pending'); // Pending / Approved / Rejected
-            $table->timestamp('submitted_At')->useCurrent();
+            $table->timestamp('submitted_at')->useCurrent();
             $table->timestamps();
+
+            $table->foreign('studentID')
+                ->references('studentID')
+                ->on('student')
+                ->cascadeOnDelete();
         });
     }
 

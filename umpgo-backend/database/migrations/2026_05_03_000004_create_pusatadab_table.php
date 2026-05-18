@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pusatadab', function (Blueprint $table) {
-            $table->id('adabID');  // ← must match what KoqModuleSeeder reads
+            $table->id('adabID');  
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');

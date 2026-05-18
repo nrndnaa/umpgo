@@ -9,6 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('moduleenrollment', function (Blueprint $table) {
+
             $table->id('modEnrollID');
             $table->foreignId('moduleID')->constrained('koqmodule', 'moduleID')->cascadeOnDelete();
             $table->foreignId('studentID')->constrained('student', 'studentID')->cascadeOnDelete();

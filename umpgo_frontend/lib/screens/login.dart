@@ -103,7 +103,7 @@ class LoginController {
         break;
       case 'Pusat Adab':
         final adab = PusatAdabModel.fromJson(userData);
-        dashboard = AdabDashboard(adab: adab);
+        dashboard = AdabDashboard(adab: adabData, student: studentData)
         break;
       default:
         return;

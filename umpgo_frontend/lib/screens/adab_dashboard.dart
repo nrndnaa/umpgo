@@ -1,11 +1,56 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:umpgo_frontend/domain/pusatadab_model.dart';
+import 'package:umpgo_frontend/config/api.dart';
+import 'package:umpgo_frontend/domain/student_model.dart';
+import 'package:umpgo_frontend/screens/Curriculum/student/curriculum_menu.dart';
 import 'package:umpgo_frontend/widgets/stud_nav.dart';
+import 'OpenRegistration/mainOR.dart';
 
-class AdabDashboard extends StatelessWidget {
+class AdabDashboard extends StatefulWidget {
   final PusatAdabModel adab;
+  final StudentModel student; // ← add this
+  const AdabDashboard({super.key, required this.adab, required this.student});
 
-  const AdabDashboard({super.key, required this.adab});
+  @override
+  State<AdabDashboard> createState() => _AdabDashboardState();
+}
+
+class _AdabDashboardState extends State<AdabDashboard> {
+  bool loading = false;
+  int totalActivities = 0;
+  int totalEnrollment = 0;
+  String attendancePercentage = '0%';
+  int approvedClaims = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchDashboardStats();
+  }
+
+  void fetchDashboardStats() async {
+    setState(() => loading = true);
+    try {
+      final response = await http.get(
+        Uri.parse('${ApiConfig.baseUrl}/dashboard/stats'),
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          totalActivities = data['totalActivities'];
+          totalEnrollment = data['totalEnrollment'];
+          attendancePercentage = data['attendancePercentage'];
+          approvedClaims = data['approvedClaims'];
+        });
+      }
+    } catch (e) {
+      debugPrint('Error: $e');
+    } finally {
+      if (mounted) setState(() => loading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -185,11 +230,11 @@ class AdabDashboard extends StatelessWidget {
                       icon: Icons.menu_book,
                       title: "Open Registration",
                       onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              "Open Registration is for students only.",
-                            ),
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                MainOR(student: widget.student),
                           ),
                         );
                       },
@@ -202,14 +247,21 @@ class AdabDashboard extends StatelessWidget {
                     DashboardCard(
                       icon: Icons.assignment,
                       title: "Curriculum",
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                CurriculumMenu(student: widget.student),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
               ),
             ),
 
-            // Bottom Navigation (YOUR stud_nav.dart)
             const StudNav(),
           ],
         ),
@@ -241,17 +293,21 @@ class DashboardCard extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(12),
-          child: SizedBox(
-            height: 90,
-            width: double.infinity,
+          child: Padding(
+            // ← moved child here
+            padding: const EdgeInsets.symmetric(vertical: 16),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(icon, size: 40, color: const Color(0xFF0B4C8C)),
-                const SizedBox(height: 6),
+                Icon(icon, size: 48, color: Colors.black87),
+                const SizedBox(height: 8),
                 Text(
-                  title,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  title, // ← was `label` (undefined)
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ],
             ),
