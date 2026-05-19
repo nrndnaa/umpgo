@@ -64,7 +64,9 @@ class StudentDashboard extends StatelessWidget {
                       title: "Open Registration",
                       onTap: () => Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const MainOR()),
+                        MaterialPageRoute(
+                          builder: (_) => MainOR(),
+                        ),
                       ),
                     ),
                     

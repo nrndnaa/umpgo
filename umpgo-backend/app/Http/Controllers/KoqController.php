@@ -13,108 +13,108 @@ class KoqController extends Controller
     // ─── STUDENT - MODULE BROWSING ──────────────────────────────
 
     public function getModules(Request $request)
-{
-    $studentID = $request->query('studentID');
+    {
+        $studentID = $request->query('studentID');
 
-    $modules = KoqModule::withCount('enrollments as filledSlots')
-        ->get()
-        ->filter(function($module) use ($studentID) {
-            // Hide full modules
-            if ($module->filledSlots >= $module->maxSlots) {
-                return false;
-            }
-            // Hide already registered modules
-            if ($studentID) {
-                $alreadyRegistered = ModuleEnrollment::where('moduleID', $module->moduleID)
-                    ->where('studentID', $studentID)
-                    ->exists();
-                if ($alreadyRegistered) {
+        $modules = KoqModule::withCount('enrollments as filledSlots')
+            ->get()
+            ->filter(function ($module) use ($studentID) {
+                // Hide full modules
+                if ($module->filledSlots >= $module->maxSlots) {
                     return false;
                 }
-            }
-            return true;
-        })
-        ->values();
+                // Hide already registered modules
+                if ($studentID) {
+                    $alreadyRegistered = ModuleEnrollment::where('moduleID', $module->moduleID)
+                        ->where('studentID', $studentID)
+                        ->exists();
+                    if ($alreadyRegistered) {
+                        return false;
+                    }
+                }
+                return true;
+            })
+            ->values();
 
-    return response()->json($modules);
-}
+        return response()->json($modules);
+    }
 
-public function getStudentCats($studentID)
-{
-    $totalCats = ModuleEnrollment::where('moduleenrollment.studentID', $studentID)
-        ->where('moduleenrollment.attendanceStatus', 'PRESENT')
-        ->join('koqmodule', 'moduleenrollment.moduleID', '=', 'koqmodule.moduleID')
-        ->sum('koqmodule.catsPoint');
+    public function getStudentCats($studentID)
+    {
+        $totalCats = ModuleEnrollment::where('moduleenrollment.studentID', $studentID)
+            ->where('moduleenrollment.attendanceStatus', 'PRESENT')
+            ->join('koqmodule', 'moduleenrollment.moduleID', '=', 'koqmodule.moduleID')
+            ->sum('koqmodule.catsPoint');
 
-    return response()->json(['totalCats' => $totalCats]);
-}
+        return response()->json(['totalCats' => $totalCats]);
+    }
 
     // ─── STUDENT - MODULE REGISTRATION ─────────────────────────
 
     public function registerModule(Request $request)
-{
-    $request->validate([
-        'moduleID'  => 'required',
-        'studentID' => 'required',
-    ]);
+    {
+        $request->validate([
+            'moduleID'  => 'required',
+            'studentID' => 'required',
+        ]);
 
-    // 1. Check already registered same module
-    $existing = ModuleEnrollment::where('moduleID', $request->moduleID)
-        ->where('studentID', $request->studentID)
-        ->first();
+        // 1. Check already registered same module
+        $existing = ModuleEnrollment::where('moduleID', $request->moduleID)
+            ->where('studentID', $request->studentID)
+            ->first();
 
-    if ($existing) {
-        return response()->json(['message' => 'Already registered!'], 400);
+        if ($existing) {
+            return response()->json(['message' => 'Already registered!'], 400);
+        }
+
+        // 2. Check max 2 modules per semester
+        $month = date('n');
+        $year  = date('Y');
+
+        if ($month >= 9) {
+            // Sem 1: September - February next year
+            $semStart = $year . '-09-01';
+            $semEnd   = ($year + 1) . '-02-28';
+        } else if ($month <= 2) {
+            // Sem 1 continuing: January - February
+            $semStart = ($year - 1) . '-09-01';
+            $semEnd   = $year . '-02-28';
+        } else {
+            // Sem 2: March - August
+            $semStart = $year . '-03-01';
+            $semEnd   = $year . '-08-31';
+        }
+
+        $semesterCount = ModuleEnrollment::where('studentID', $request->studentID)
+            ->whereBetween('enrolled_At', [$semStart, $semEnd])
+            ->count();
+
+        if ($semesterCount >= 2) {
+            return response()->json([
+                'message' => 'You can only register maximum 2 modules per semester!'
+            ], 400);
+        }
+
+        // 3. Check module not full
+        $module = KoqModule::find($request->moduleID);
+        if ($module->filledSlots >= $module->maxSlots) {
+            return response()->json(['message' => 'Module is full!'], 400);
+        }
+
+        // 4. Register!
+        $enrollment = ModuleEnrollment::create([
+            'moduleID'         => $request->moduleID,
+            'studentID'        => $request->studentID,
+            'attendanceStatus' => 'Pending',
+            'totalMarks'       => '0%',
+            'enrolled_At'      => now(),
+        ]);
+
+        // 5. Update filledSlots
+        $module->increment('filledSlots');
+
+        return response()->json(['message' => 'Successfully registered!', 'data' => $enrollment]);
     }
-
-    // 2. Check max 2 modules per semester
-    $month = date('n');
-$year  = date('Y');
-
-if ($month >= 9) {
-    // Sem 1: September - February next year
-    $semStart = $year.'-09-01';
-    $semEnd   = ($year + 1).'-02-28';
-} else if ($month <= 2) {
-    // Sem 1 continuing: January - February
-    $semStart = ($year - 1).'-09-01';
-    $semEnd   = $year.'-02-28';
-} else {
-    // Sem 2: March - August
-    $semStart = $year.'-03-01';
-    $semEnd   = $year.'-08-31';
-}
-
-$semesterCount = ModuleEnrollment::where('studentID', $request->studentID)
-    ->whereBetween('enrolled_At', [$semStart, $semEnd])
-    ->count();
-
-if ($semesterCount >= 2) {
-    return response()->json([
-        'message' => 'You can only register maximum 2 modules per semester!'
-    ], 400);
-}
-
-    // 3. Check module not full
-    $module = KoqModule::find($request->moduleID);
-    if ($module->filledSlots >= $module->maxSlots) {
-        return response()->json(['message' => 'Module is full!'], 400);
-    }
-
-    // 4. Register!
-    $enrollment = ModuleEnrollment::create([
-        'moduleID'         => $request->moduleID,
-        'studentID'        => $request->studentID,
-        'attendanceStatus' => 'Pending',
-        'totalMarks'       => '0%',
-        'enrolled_At'      => now(),
-    ]);
-
-    // 5. Update filledSlots
-    $module->increment('filledSlots');
-
-    return response()->json(['message' => 'Successfully registered!', 'data' => $enrollment]);
-}
 
     // ─── STUDENT - MY BOOKINGS ──────────────────────────────────
 
@@ -156,9 +156,9 @@ if ($semesterCount >= 2) {
         $year  = date('Y');
 
         if ($month >= 7) {
-            $semester = 'SEMESTER I ACADEMIC SESSION '.$year.'/'.($year + 1);
+            $semester = 'SEMESTER I ACADEMIC SESSION ' . $year . '/' . ($year + 1);
         } else {
-            $semester = 'SEMESTER II ACADEMIC SESSION '.($year - 1).'/'.$year;
+            $semester = 'SEMESTER II ACADEMIC SESSION ' . ($year - 1) . '/' . $year;
         }
 
         // 5. Submit!
@@ -192,16 +192,16 @@ if ($semesterCount >= 2) {
         $year  = date('Y');
 
         if ($month >= 7 && $month <= 12) {
-            $semester = 'SEMESTER I ACADEMIC SESSION '.$year.'/'.($year + 1);
+            $semester = 'SEMESTER I ACADEMIC SESSION ' . $year . '/' . ($year + 1);
         } else {
-            $semester = 'SEMESTER II ACADEMIC SESSION '.($year - 1).'/'.$year;
+            $semester = 'SEMESTER II ACADEMIC SESSION ' . ($year - 1) . '/' . $year;
         }
 
         $totalActivities      = KoqModule::count();
         $totalEnrollment      = ModuleEnrollment::count();
         $presentCount         = ModuleEnrollment::where('attendanceStatus', 'PRESENT')->count();
         $attendancePercentage = $totalEnrollment > 0
-            ? round(($presentCount / $totalEnrollment) * 100).'%'
+            ? round(($presentCount / $totalEnrollment) * 100) . '%'
             : '0%';
 
         $approvedClaims = CreditClaim::where('semester', $semester)
@@ -219,49 +219,48 @@ if ($semesterCount >= 2) {
     // ─── PUSAT ADAB - MODULE MANAGEMENT ─────────────────────────
 
     public function addModule(Request $request)
-{
-    try {
-        $request->validate([
-            'adabID' => 'required',
-            'code' => 'required',
-            'name' => 'required',
-            'catsPoint' => 'required',
-            'maxSlots' => 'required',
-        ]);
+    {
+        try {
+            $request->validate([
+                'adabID' => 'required',
+                'code' => 'required',
+                'name' => 'required',
+                'catsPoint' => 'required',
+                'maxSlots' => 'required',
+            ]);
 
-        $module = KoqModule::create([
-            'adabID'      => $request->adabID,
-            'code'        => $request->code,
-            'name'        => $request->name,
-            'catsPoint'   => $request->catsPoint,
-            'maxSlots'    => $request->maxSlots,
-            'filledSlots' => 0,
-            'startDate'   => $request->startDate,
-            'startTime'   => $request->startTime,
-            'endDate'     => $request->endDate,
-            'endTime'     => $request->endTime,
-            'campus'      => $request->campus,
-            'venue'       => $request->venue,
-            'groupLink'   => $request->groupLink,
-        ]);
+            $module = KoqModule::create([
+                'adabID'      => $request->adabID,
+                'code'        => $request->code,
+                'name'        => $request->name,
+                'catsPoint'   => $request->catsPoint,
+                'maxSlots'    => $request->maxSlots,
+                'filledSlots' => 0,
+                'startDate'   => $request->startDate,
+                'startTime'   => $request->startTime,
+                'endDate'     => $request->endDate,
+                'endTime'     => $request->endTime,
+                'campus'      => $request->campus,
+                'venue'       => $request->venue,
+                'groupLink'   => $request->groupLink,
+            ]);
 
-        return response()->json([
-            'message' => 'Module added!',
-            'data' => $module
-        ], 201);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'error' => $e->getMessage()
-        ], 500);
+            return response()->json([
+                'message' => 'Module added!',
+                'data' => $module
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
-}
     public function updateModule(Request $request, $id)
     {
         $module = KoqModule::find((int)$id);
 
         if (!$module) {
-            return response()->json(['message' => 'Module not found! ID: '.$id], 404);
+            return response()->json(['message' => 'Module not found! ID: ' . $id], 404);
         }
 
         $module->update([
@@ -295,6 +294,12 @@ if ($semesterCount >= 2) {
 
     // ─── PUSAT ADAB - ENROLLMENT MANAGEMENT ─────────────────────
 
+    public function getAllModules()
+    {
+        $modules = KoqModule::withCount('enrollments as filledSlots')->get();
+        return response()->json($modules);
+    }
+
     public function getEnrollmentsByModule($moduleID)
     {
         $enrollments = ModuleEnrollment::with('student')
@@ -311,19 +316,19 @@ if ($semesterCount >= 2) {
     }
 
     public function updateEnrollment(Request $request, $modEnrollID)
-{
-    $enrollment = ModuleEnrollment::findOrFail($modEnrollID);
-    
-    $attendanceStatus = $request->attendanceStatus ?? $enrollment->attendanceStatus;
-    $totalMarks = $attendanceStatus === 'PRESENT' ? '100%' : ($request->totalMarks ?? $enrollment->totalMarks);
+    {
+        $enrollment = ModuleEnrollment::findOrFail($modEnrollID);
 
-    $enrollment->update([
-        'attendanceStatus' => $attendanceStatus,
-        'totalMarks'       => $totalMarks,
-    ]);
+        $attendanceStatus = $request->attendanceStatus ?? $enrollment->attendanceStatus;
+        $totalMarks = $attendanceStatus === 'PRESENT' ? '100%' : ($request->totalMarks ?? $enrollment->totalMarks);
 
-    return response()->json(['message' => 'Enrollment updated!', 'data' => $enrollment]);
-}
+        $enrollment->update([
+            'attendanceStatus' => $attendanceStatus,
+            'totalMarks'       => $totalMarks,
+        ]);
+
+        return response()->json(['message' => 'Enrollment updated!', 'data' => $enrollment]);
+    }
 
     // ─── PUSAT ADAB - CREDIT CLAIMS MANAGEMENT ──────────────────
 

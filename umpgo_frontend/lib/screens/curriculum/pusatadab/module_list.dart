@@ -29,7 +29,7 @@ class _ModuleListState extends State<ModuleList> {
   void fetchModules() async {
     setState(() => loading = true);
     try {
-      final response = await http.get(Uri.parse(ApiConfig.modules));
+      final response = await http.get(Uri.parse(ApiConfig.allModules));
       if (response.statusCode == 200) {
         setState(() {
           modules = List<Map<String, dynamic>>.from(jsonDecode(response.body));
