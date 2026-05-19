@@ -1151,7 +1151,7 @@ class _OutlineButton extends StatelessWidget {
 }
 
 class _ClosedScreen extends StatelessWidget {
-  final StudentModel student; // ← add this
+  final StudentModel student;
   const _ClosedScreen({required this.student});
   @override
   Widget build(BuildContext context) {
