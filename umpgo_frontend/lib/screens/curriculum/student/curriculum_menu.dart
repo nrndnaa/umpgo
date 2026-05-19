@@ -30,9 +30,10 @@ class _CurriculumMenuState extends State<CurriculumMenu> {
             child: const Text(
               'Menu > Curriculum',
               style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14),
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
             ),
           ),
           Padding(
@@ -58,6 +59,7 @@ class _CurriculumMenuState extends State<CurriculumMenu> {
                           builder: (context) => KoQModuleBooking(
                             studentID: widget.student.studentID,
                             matricID: widget.student.matricID,
+                            student: widget.student,
                           ),
                         ),
                       );
@@ -90,6 +92,7 @@ class _CurriculumMenuState extends State<CurriculumMenu> {
                           builder: (context) => CreditClaim(
                             studentID: widget.student.studentID,
                             matricID: widget.student.matricID,
+                            student: widget.student,
                           ),
                         ),
                       );
@@ -103,10 +106,13 @@ class _CurriculumMenuState extends State<CurriculumMenu> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF5B9BD5),
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                       ),
-                      child: const Text('Back',
-                          style: TextStyle(color: Colors.white)),
+                      child: const Text(
+                        'Back',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ),
                 ],
@@ -115,7 +121,7 @@ class _CurriculumMenuState extends State<CurriculumMenu> {
           ),
         ],
       ),
-      bottomNavigationBar: const StudNav(),
+      bottomNavigationBar: StudNav(student: widget.student),
     );
   }
 
@@ -138,11 +144,14 @@ class _CurriculumMenuState extends State<CurriculumMenu> {
           children: [
             Icon(icon, size: 48, color: const Color(0xFF5B9BD5)),
             const SizedBox(height: 8),
-            Text(title,
-                style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87)),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
           ],
         ),
       ),

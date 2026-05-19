@@ -102,7 +102,7 @@ class _SubjectStatusORState extends State<SubjectStatusOR> {
                 ),
               ),
             ),
-            const StudNav(),
+            StudNav(student: widget.student),
           ],
         ),
       ),

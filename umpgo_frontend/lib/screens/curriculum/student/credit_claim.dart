@@ -4,11 +4,18 @@ import 'dart:convert';
 import '../../../config/api.dart';
 import '../../../widgets/app_header.dart';
 import '../../../widgets/stud_nav.dart';
+import 'package:umpgo_frontend/domain/student_model.dart'; // ← add this
 
 class CreditClaim extends StatefulWidget {
   final int studentID;
-final String matricID;
-const CreditClaim({super.key, required this.studentID, required this.matricID});
+  final String matricID;
+  final StudentModel student;
+  const CreditClaim({
+    super.key,
+    required this.studentID,
+    required this.matricID,
+    required this.student,
+  });
   @override
   State<CreditClaim> createState() => _CreditClaimState();
 }
@@ -25,36 +32,40 @@ class _CreditClaimState extends State<CreditClaim> {
   }
 
   void fetchClaimStatus() async {
-  setState(() => loading = true);
-  try {
-    final bookingsResponse = await http.get(
-      Uri.parse('${ApiConfig.baseUrl}/modules/mybookings/${widget.studentID}'),
-    );
+    setState(() => loading = true);
+    try {
+      final bookingsResponse = await http.get(
+        Uri.parse(
+          '${ApiConfig.baseUrl}/modules/mybookings/${widget.studentID}',
+        ),
+      );
 
-    final claimResponse = await http.get(
-      Uri.parse('${ApiConfig.baseUrl}/creditclaim/student/${widget.studentID}'),
-    );
+      final claimResponse = await http.get(
+        Uri.parse(
+          '${ApiConfig.baseUrl}/creditclaim/student/${widget.studentID}',
+        ),
+      );
 
-    if (bookingsResponse.statusCode == 200) {
-  final List data = jsonDecode(bookingsResponse.body);
-  int cats = 0;
-  for (var item in data) {
-    if (item['attendanceStatus'] == 'PRESENT') {
-      cats += item['module']['catsPoint'] as int? ?? 0;
+      if (bookingsResponse.statusCode == 200) {
+        final List data = jsonDecode(bookingsResponse.body);
+        int cats = 0;
+        for (var item in data) {
+          if (item['attendanceStatus'] == 'PRESENT') {
+            cats += item['module']['catsPoint'] as int? ?? 0;
+          }
+        }
+        setState(() => totalCats = cats);
+      }
+
+      if (claimResponse.statusCode == 200) {
+        setState(() => alreadyClaimed = true);
+      }
+    } catch (e) {
+      debugPrint('Error: $e');
+    } finally {
+      if (mounted) setState(() => loading = false);
     }
   }
-  setState(() => totalCats = cats);
-}
-
-    if (claimResponse.statusCode == 200) {
-      setState(() => alreadyClaimed = true);
-    }
-  } catch (e) {
-    print('Error: $e');
-  } finally {
-    if (mounted) setState(() => loading = false);
-  }
-}
 
   void requestClaim() async {
     if (totalCats < 8) {
@@ -62,11 +73,15 @@ class _CreditClaimState extends State<CreditClaim> {
         context: context,
         builder: (context) => AlertDialog(
           title: const Text('Credit Claim Not Allowed'),
-          content: Text('Minimum 8 CATS required.\nYour current CATS: $totalCats'),
+          content: Text(
+            'Minimum 8 CATS required.\nYour current CATS: $totalCats',
+          ),
           actions: [
             ElevatedButton(
               onPressed: () => Navigator.pop(context),
-              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF5B9BD5)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF5B9BD5),
+              ),
               child: const Text('OK', style: TextStyle(color: Colors.white)),
             ),
           ],
@@ -117,9 +132,9 @@ class _CreditClaimState extends State<CreditClaim> {
                 }
               } catch (e) {
                 if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error: $e')),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text('Error: $e')));
                 }
               }
             },
@@ -144,14 +159,21 @@ class _CreditClaimState extends State<CreditClaim> {
             color: const Color(0xFF5B9BD5),
             child: const Text(
               'Menu > Curriculum > Claim Credit',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
             ),
           ),
           const Padding(
             padding: EdgeInsets.all(16),
             child: Align(
               alignment: Alignment.centerLeft,
-              child: Text('Claim Credit', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+              child: Text(
+                'Claim Credit',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
             ),
           ),
           Expanded(
@@ -173,7 +195,9 @@ class _CreditClaimState extends State<CreditClaim> {
                       },
                       children: [
                         TableRow(
-                          decoration: const BoxDecoration(color: Color(0xFFE8F1FA)),
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFE8F1FA),
+                          ),
                           children: [
                             _tableHeader('No'),
                             _tableHeader('Subject\nCode'),
@@ -186,27 +210,47 @@ class _CreditClaimState extends State<CreditClaim> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(8),
-                              child: Text('1', style: const TextStyle(fontSize: 12), textAlign: TextAlign.center),
+                              child: Text(
+                                '1',
+                                style: const TextStyle(fontSize: 12),
+                                textAlign: TextAlign.center,
+                              ),
                             ),
                             const Padding(
                               padding: EdgeInsets.all(8),
-                              child: Text('UQA2002', style: TextStyle(fontSize: 12)),
+                              child: Text(
+                                'UQA2002',
+                                style: TextStyle(fontSize: 12),
+                              ),
                             ),
                             const Padding(
                               padding: EdgeInsets.all(8),
-                              child: Text('Ko-Kurikulum', style: TextStyle(fontSize: 12)),
+                              child: Text(
+                                'Ko-Kurikulum',
+                                style: TextStyle(fontSize: 12),
+                              ),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(8),
                               child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 4,
+                                ),
                                 decoration: BoxDecoration(
-                                  color: alreadyClaimed ? Colors.green : Colors.red,
+                                  color: alreadyClaimed
+                                      ? Colors.green
+                                      : Colors.red,
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
-                                  alreadyClaimed ? 'Completed' : 'Not Completed',
-                                  style: const TextStyle(color: Colors.white, fontSize: 10),
+                                  alreadyClaimed
+                                      ? 'Completed'
+                                      : 'Not Completed',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                  ),
                                   textAlign: TextAlign.center,
                                 ),
                               ),
@@ -218,12 +262,20 @@ class _CreditClaimState extends State<CreditClaim> {
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color(0xFF5B9BD5),
                                   disabledBackgroundColor: Colors.grey,
-                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 6,
+                                    vertical: 4,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
                                 ),
                                 child: const Text(
                                   'Request\nClaim Credit',
-                                  style: TextStyle(color: Colors.white, fontSize: 9),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 9,
+                                  ),
                                   textAlign: TextAlign.center,
                                 ),
                               ),
@@ -234,7 +286,7 @@ class _CreditClaimState extends State<CreditClaim> {
                     ),
                   ),
           ),
-          
+
           Padding(
             padding: const EdgeInsets.all(16),
             child: SizedBox(
@@ -243,24 +295,31 @@ class _CreditClaimState extends State<CreditClaim> {
                 onPressed: () => Navigator.pop(context),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF5B9BD5),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                 ),
-                child: const Text('Back', style: TextStyle(color: Colors.white)),
+                child: const Text(
+                  'Back',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ),
           ),
         ],
       ),
-    bottomNavigationBar: const StudNav(),
+      bottomNavigationBar: StudNav(student: widget.student),
     );
   }
 
   Widget _tableHeader(String text) {
     return Padding(
       padding: const EdgeInsets.all(8),
-      child: Text(text,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-          textAlign: TextAlign.center),
+      child: Text(
+        text,
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+        textAlign: TextAlign.center,
+      ),
     );
   }
 }

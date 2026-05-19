@@ -6,16 +6,12 @@ import 'package:umpgo_frontend/widgets/app_header.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:umpgo_frontend/config/api.dart';
-import 'package:umpgo_frontend/domain/student_model.dart';
 import 'OpenRegistration/mainOR.dart';
 
 class StudentDashboard extends StatelessWidget {
   final StudentModel student; // ← add this
 
-  const StudentDashboard({
-    super.key,
-    required this.student,
-  }); // ← add required this.student
+  const StudentDashboard({super.key, required this.student});
 
   @override
   Widget build(BuildContext context) {
@@ -73,23 +69,22 @@ class StudentDashboard extends StatelessWidget {
                         ),
                       ),
                     ),
-
+                    _DashCard(
+                      icon: Icons.calendar_month_rounded,
+                      title: "Class Attendance",
+                      onTap: () {},
+                    ),
                     _DashCard(
                       icon: Icons.description_rounded,
                       title: "Curriculum",
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => CurriculumMenu(student: student),
-                        ),
-                      ),
+                      onTap: () {},
                     ),
                     const SizedBox(height: 10),
                   ],
                 ),
               ),
             ),
-            const StudNav(),
+            StudNav(student: student),
           ],
         ),
       ),

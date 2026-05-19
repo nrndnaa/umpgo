@@ -154,7 +154,7 @@ class _AdabDashboardState extends State<AdabDashboard> {
               ),
             ),
 
-            const StudNav(),
+            StudNav(student: widget.student),
           ],
         ),
       ),
