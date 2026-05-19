@@ -12,9 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('moduleenrollment', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+        $table->id('modEnrollID');
+    $table->unsignedBigInteger('moduleID');
+    $table->unsignedBigInteger('studentID');
+    $table->string('attendanceStatus')->default('Pending');
+    $table->string('totalMarks')->default('0%');
+    $table->timestamp('enrolled_At')->nullable(); // ← add this
+    $table->timestamps();
+
+        $table->foreign('moduleID')->references('moduleID')->on('koqmodule');
+        $table->foreign('studentID')->references('studentID')->on('student');
+    });
     }
 
     /**

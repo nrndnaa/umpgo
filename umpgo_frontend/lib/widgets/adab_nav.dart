@@ -10,7 +10,7 @@ class AdabNav extends StatelessWidget {
       child: Container(
         height: 55,
         decoration: BoxDecoration(
-          color: const Color(0xFFD8F1FF),
+          color: const Color(0xFFFFD700),
           borderRadius: BorderRadius.circular(16),
         ),
         child: const Row(

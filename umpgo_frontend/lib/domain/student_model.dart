@@ -6,7 +6,7 @@ class StudentModel {
   final String yearOfStudy;
   final String programme;
   final String status;
-  final int outstandingBalance;
+  final double outstandingBalance;
 
   StudentModel({
     required this.studentID,
@@ -20,15 +20,14 @@ class StudentModel {
   });
 
   factory StudentModel.fromJson(Map<String, dynamic> json) {
-    return StudentModel(
-      studentID:          json['studentID'],
-      matricID:           json['matricID'],
-      name:               json['name'],
-      email:              json['email'],
-      yearOfStudy:        json['yearOfStudy'],
-      programme:          json['programme'],
-      status:             json['status'],
-      outstandingBalance: json['outstandingBalance'],
-    );
-  }
+  return StudentModel(
+    studentID:          int.parse(json['studentID'].toString()),
+    matricID:           json['matricID'],
+    name:               json['name'],
+    email:              json['email'],
+    yearOfStudy:        json['yearOfStudy'],
+    programme:          json['programme'],
+    status:             json['status'],
+    outstandingBalance: double.parse(json['outstandingBalance'].toString()),  );
+}
 }

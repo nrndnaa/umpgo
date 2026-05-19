@@ -12,15 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('creditclaim', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+        $table->id('claimID');
+        $table->unsignedBigInteger('studentID');
+        $table->string('semester');
+        $table->integer('totalCats')->default(0);
+        $table->string('status')->default('Not Complete');
+        $table->timestamps();
+
+        $table->foreign('studentID')->references('studentID')->on('student');
+    });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+        public function down(): void
     {
         Schema::dropIfExists('creditclaim');
     }

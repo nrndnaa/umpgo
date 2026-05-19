@@ -4,7 +4,7 @@ class ModuleEnrollment {
   final int studentID;
   final String attendanceStatus;
   final int totalMarks;
-  final String enrolledAt;
+  final String enrolled_At;
 
   ModuleEnrollment({
     required this.modEnrollID,
@@ -12,7 +12,7 @@ class ModuleEnrollment {
     required this.studentID,
     required this.attendanceStatus,
     required this.totalMarks,
-    required this.enrolledAt,
+    required this.enrolled_At,
   });
 
   factory ModuleEnrollment.fromJson(Map<String, dynamic> json) {
@@ -22,7 +22,7 @@ class ModuleEnrollment {
       studentID: json['studentID'],
       attendanceStatus: json['attendanceStatus'],
       totalMarks: json['totalMarks'],
-      enrolledAt: json['enrolled_At'],
+      enrolled_At: json['enrolled_At'],
     );
   }
 }
