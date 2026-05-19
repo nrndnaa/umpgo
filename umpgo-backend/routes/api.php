@@ -1,10 +1,10 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OpenRegistrationController;
 use App\Http\Controllers\KoqController;
+use App\Http\Controllers\AttendanceController;
 
 // routes/api.php
 Route::post('/login', [AuthController::class, 'login']);
@@ -52,3 +52,10 @@ Route::put('/enrollments/{modEnrollID}', [KoqController::class, 'updateEnrollmen
 
 // Dashboard
 Route::get('/dashboard/stats', [KoqController::class, 'getDashboardStats']);
+
+
+
+Route::get('/student/dashboard', [OpenRegistrationController::class, 'dashboard']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/attendance/session', [AttendanceController::class, 'createSession']);
+Route::post('/attendance/checkin', [AttendanceController::class, 'checkIn']);

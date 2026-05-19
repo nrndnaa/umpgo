@@ -73,9 +73,11 @@ class _CurriculumMenuState extends State<CurriculumMenu> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
+                          // Fixed: Passing down structural model payload
                           builder: (context) => MyKoQBooking(
                             studentID: widget.student.studentID,
                             matricID: widget.student.matricID,
+                            student: widget.student,
                           ),
                         ),
                       );

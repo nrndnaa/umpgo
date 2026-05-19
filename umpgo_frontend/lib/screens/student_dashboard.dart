@@ -9,7 +9,7 @@ import 'package:umpgo_frontend/config/api.dart';
 import 'OpenRegistration/mainOR.dart';
 
 class StudentDashboard extends StatelessWidget {
-  final StudentModel student; // ← add this
+  final StudentModel student;
 
   const StudentDashboard({super.key, required this.student});
 
@@ -32,7 +32,7 @@ class StudentDashboard extends StatelessWidget {
                   children: [
                     // ── Welcome Text ──────────────────────────────────────────
                     Text(
-                      "Welcome, ${student.name}", // ← use real name from model
+                      "Welcome, ${student.name}",
                       style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.w900,
@@ -77,7 +77,13 @@ class StudentDashboard extends StatelessWidget {
                     _DashCard(
                       icon: Icons.description_rounded,
                       title: "Curriculum",
-                      onTap: () {},
+                      // Fixed: Added routing logic to push CurriculumMenu layout stack directly
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => CurriculumMenu(student: student),
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 10),
                   ],

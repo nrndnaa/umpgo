@@ -6,15 +6,20 @@ import '../../../config/api.dart';
 import 'credit_claim.dart';
 import '../../../widgets/app_header.dart';
 import '../../../widgets/stud_nav.dart';
+import 'package:umpgo_frontend/domain/student_model.dart'; // 1. Added import
 
 class MyKoQBooking extends StatefulWidget {
   final int studentID;
   final String matricID;
+  final StudentModel student; // 2. Accept StudentModel from parent page
+
   const MyKoQBooking({
     super.key,
     required this.studentID,
     required this.matricID,
+    required this.student, // 3. Make it required
   });
+
   @override
   State<MyKoQBooking> createState() => _MyKoQBookingState();
 }
@@ -61,7 +66,7 @@ class _MyKoQBookingState extends State<MyKoQBooking> {
               'groupLink': module['groupLink'] ?? '',
             });
           }
-          setState(() => bookedModules = result);
+          bookedModules = result;
         });
       }
     } catch (e) {
@@ -340,9 +345,11 @@ class _MyKoQBookingState extends State<MyKoQBooking> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
+                          // Fixed: Successfully passing down widget.student
                           builder: (context) => CreditClaim(
                             studentID: widget.studentID,
                             matricID: widget.matricID,
+                            student: widget.student,
                           ),
                         ),
                       );
@@ -381,7 +388,8 @@ class _MyKoQBookingState extends State<MyKoQBooking> {
           ),
         ],
       ),
-      bottomNavigationBar: StudNav(student: widget.studentID),
+      // Fixed: Passing widget.student into the layout bar navigation widget
+      bottomNavigationBar: StudNav(student: widget.student),
     );
   }
 }
