@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('subject', function (Blueprint $table) {
-            $table->id('subjectID');
+            $table->id('subjectID'); // Parent ID
             $table->string('subjectName');
             $table->string('subjectCode')->unique();
             $table->integer('creditHours');

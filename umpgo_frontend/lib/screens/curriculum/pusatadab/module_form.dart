@@ -164,15 +164,31 @@ class _ModuleFormState extends State<ModuleForm> {
       }
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                isEdit ? 'Module has been updated!' : 'Module has been saved!',
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text(
+                '✅\nModule has been saved!',
+                textAlign: TextAlign.center,
               ),
-              backgroundColor: Colors.green,
+              actionsAlignment: MainAxisAlignment.center,
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context, true);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF5B9BD5),
+                  ),
+                  child: const Text(
+                    'OK',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
             ),
           );
-          Navigator.pop(context, true);
         }
       } else {
         throw Exception(
@@ -198,16 +214,24 @@ class _ModuleFormState extends State<ModuleForm> {
       body: Column(
         children: [
           // Breadcrumb
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            color: const Color(0xFFFFD700),
-            child: const Text(
-              'Menu > Module List',
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFD700),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Text(
+                isEdit
+                    ? 'Menu > Module List > Edit Module'
+                    : 'Menu > Module List > Add Module',
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                ),
               ),
             ),
           ),
@@ -353,7 +377,7 @@ class _ModuleFormState extends State<ModuleForm> {
                         child: loading
                             ? const SizedBox(
                                 height: 20,
-                                width: 20,
+                                width: 6,
                                 child: CircularProgressIndicator(
                                   color: Colors.white,
                                   strokeWidth: 2,
@@ -382,14 +406,14 @@ class _ModuleFormState extends State<ModuleForm> {
               child: ElevatedButton(
                 onPressed: () => Navigator.pop(context),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFFD700),
+                  backgroundColor: const Color(0xFF5B9BD5),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
                 child: const Text(
                   'Back',
-                  style: TextStyle(color: Colors.black),
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
             ),

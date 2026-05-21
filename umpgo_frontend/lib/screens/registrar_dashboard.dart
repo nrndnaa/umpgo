@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:umpgo_frontend/domain/facultyregistrar_model.dart';
 import 'package:umpgo_frontend/widgets/reg_nav.dart';
+import 'package:umpgo_frontend/screens/OpenRegistration/scheduleOR.dart';
 import 'package:umpgo_frontend/widgets/app_header.dart'; // Reusing header
+import 'package:umpgo_frontend/screens/OpenRegistration/listSubjectOR.dart';
+import 'package:umpgo_frontend/screens/OpenRegistration/registerStatusOR.dart';
+import 'package:umpgo_frontend/screens/OpenRegistration/approveEnrollOR.dart';
 
 // ── Colors from Registrar Image ──────────────────────────────────────────────
 const _registrarMint = Color(0xFFA8E6CF); // Main background for cards/nav
 const _registrarBg = Colors.white;
 
 class RegistrarDashboard extends StatelessWidget {
-   final FacultyRegistrar registrar;
+  final FacultyRegistrar registrar;
 
   const RegistrarDashboard({super.key, required this.registrar});
 
@@ -56,22 +60,43 @@ class RegistrarDashboard extends StatelessWidget {
                     _RegistrarCard(
                       icon: Icons.calendar_today_rounded,
                       title: "Registration Schedule",
-                      onTap: () {},
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ScheduleOR(registrar: registrar),
+                        ),
+                      ),
                     ),
                     _RegistrarCard(
                       icon: Icons.menu_book_rounded,
                       title: "List of Subject",
-                      onTap: () {},
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ListSubjectOR(registrar: registrar),
+                        ),
+                      ),
                     ),
                     _RegistrarCard(
                       icon: Icons.assignment_turned_in_outlined,
                       title: "Student Registration Status",
-                      onTap: () {},
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              RegisterStatusOR(registrar: registrar),
+                        ),
+                      ),
                     ),
                     _RegistrarCard(
                       icon: Icons.how_to_reg_rounded,
                       title: "Approve Enrollment",
-                      onTap: () {},
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ApproveEnrollOR(registrar: registrar),
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 10),
                   ],

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:umpgo_frontend/domain/student_model.dart';
+import 'package:umpgo_frontend/screens/curriculum/student/curriculum_menu.dart';
 import 'package:umpgo_frontend/widgets/stud_nav.dart';
 import 'package:umpgo_frontend/widgets/app_header.dart';
+import 'package:umpgo_frontend/domain/student_model.dart';
 import 'OpenRegistration/mainOR.dart';
-import 'curriculum/student/curriculum_menu.dart';
 
 class StudentDashboard extends StatelessWidget {
   final StudentModel student; // ← add this
@@ -65,19 +66,19 @@ class StudentDashboard extends StatelessWidget {
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => MainOR(),
+                          builder: (_) => MainOR(student: student),
                         ),
                       ),
                     ),
-                    
+
                     _DashCard(
                       icon: Icons.description_rounded,
                       title: "Curriculum",
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                      builder: (_) => CurriculumMenu(student: student),
-                       ),
+                          builder: (_) => CurriculumMenu(student: student),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 10),

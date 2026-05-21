@@ -7,11 +7,12 @@ import 'curriculum/pusatadab/module_list.dart';
 import 'curriculum/pusatadab/credit_claim_application.dart';
 import '../../widgets/app_header.dart';
 import '../../widgets/adab_nav.dart';
+import 'package:umpgo_frontend/domain/student_model.dart';
 
 class AdabDashboard extends StatefulWidget {
   final PusatAdabModel adab;
-  const AdabDashboard({super.key, required this.adab});
-
+  final StudentModel student; // keep this
+  const AdabDashboard({super.key, required this.adab, required this.student});
   @override
   State<AdabDashboard> createState() => _AdabDashboardState();
 }
@@ -65,7 +66,10 @@ class _AdabDashboardState extends State<AdabDashboard> {
                 children: [
                   Text(
                     'Welcome, ${widget.adab.name}',
-                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -124,15 +128,16 @@ class _AdabDashboardState extends State<AdabDashboard> {
                       Expanded(
                         child: _buildNavTile(
                           icon: Icons.assignment_outlined,
-                          label: 'Module List',
+                          label: 'Module\nList',
                           onTap: () {
                             Navigator.push(
-                          context,
-                            MaterialPageRoute(
-                          builder: (context) => ModuleList(adab: widget.adab),
-                            ),
-                          ).then((_) {
-                            fetchDashboardStats(); // 
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ModuleList(adab: widget.adab),
+                              ),
+                            ).then((_) {
+                              fetchDashboardStats(); //
                             });
                           },
                         ),
@@ -146,7 +151,8 @@ class _AdabDashboardState extends State<AdabDashboard> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const CreditClaimApplication(),
+                                builder: (context) =>
+                                    const CreditClaimApplication(),
                               ),
                             );
                           },
@@ -155,22 +161,19 @@ class _AdabDashboardState extends State<AdabDashboard> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildNavTile(
-                          icon: Icons.sports_basketball_outlined,
-                          label: 'Attendance',
-                          onTap: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Coming soon!')),
-                            );
-                          },
-                        ),
+                  Center(
+                    child: SizedBox(
+                      width: (MediaQuery.of(context).size.width - 48) / 2,
+                      child: _buildNavTile(
+                        icon: Icons.sports_basketball_outlined,
+                        label: 'Attendance\n',
+                        onTap: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Coming soon!')),
+                          );
+                        },
                       ),
-                      const SizedBox(width: 16),
-                      const Expanded(child: SizedBox()),
-                    ],
+                    ),
                   ),
                 ],
               ),
@@ -182,11 +185,15 @@ class _AdabDashboardState extends State<AdabDashboard> {
   Widget _buildStatItem({required String value, required String label}) {
     return Column(
       children: [
-        Text(value,
-            style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-        Text(label,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 12, color: Colors.black87)),
+        Text(
+          value,
+          style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+        ),
+        Text(
+          label,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 12, color: Colors.black87,  fontWeight: FontWeight.bold),
+        ),
       ],
     );
   }
@@ -199,6 +206,7 @@ class _AdabDashboardState extends State<AdabDashboard> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        constraints: const BoxConstraints(minHeight: 110),
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: const Color(0xFFFFF9C4),
@@ -209,10 +217,11 @@ class _AdabDashboardState extends State<AdabDashboard> {
           children: [
             Icon(icon, size: 48, color: Colors.black87),
             const SizedBox(height: 8),
-            Text(label,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                    fontSize: 13, fontWeight: FontWeight.w600)),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+            ),
           ],
         ),
       ),

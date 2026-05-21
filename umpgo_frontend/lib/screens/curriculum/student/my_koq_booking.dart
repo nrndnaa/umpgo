@@ -76,69 +76,103 @@ class _MyKoQBookingState extends State<MyKoQBooking> {
   }
 
   void showModuleDetails(Map<String, dynamic> module) {
-    showModalBottomSheet(
+    showDialog(
       context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
       builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'WhatsApp/Telegram Group Link',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                  ),
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close),
-                  ),
-                ],
-              ),
-              const Divider(),
-              _detailRow('Module:', module['name']),
-              const SizedBox(height: 8),
-              _detailRow(
-                'Start Class Date & Time:',
-                '${module['startDate']} ${module['startTime']}',
-              ),
-              const SizedBox(height: 8),
-              _detailRow(
-                'End Class Date & Time:',
-                '${module['endDate']} ${module['endTime']}',
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'WhatsApp/Telegram Group Link',
-                style: TextStyle(fontSize: 13, color: Colors.grey),
-              ),
-              const SizedBox(height: 8),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    final url = Uri.parse(module['groupLink']);
-                    await launchUrl(url, mode: LaunchMode.externalApplication);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                  child: const Text(
-                    'Click to Join',
-                    style: TextStyle(color: Colors.white),
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: const Color(0xFFEFEFEF),
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _detailRow('Module:', module['name']),
+
+                const SizedBox(height: 14),
+
+                _detailRow(
+                  'Start Class Date & Time:',
+                  '${module['startDate']} ${module['startTime']}',
+                ),
+
+                const SizedBox(height: 14),
+
+                _detailRow(
+                  'End Class Date & Time:',
+                  '${module['endDate']} ${module['endTime']}',
+                ),
+
+                const SizedBox(height: 16),
+
+                const Text(
+                  'WhatsApp/Telegram Group Link',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.black54,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
-              ),
-            ],
+
+                const SizedBox(height: 10),
+
+                SizedBox(
+                  width: 130,
+                  height: 38,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      final url = Uri.parse(module['groupLink']);
+
+                      await launchUrl(
+                        url,
+                        mode: LaunchMode.externalApplication,
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: const Text(
+                      'Click to Join',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 60),
+
+                Center(
+                  child: SizedBox(
+                    width: 80,
+                    height: 35,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF5B9BD5),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: const Text(
+                        'Back',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -149,10 +183,24 @@ class _MyKoQBookingState extends State<MyKoQBooking> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
         Text(
-          value,
+          label,
           style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+        ),
+
+        const SizedBox(height: 6),
+
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF5F5F5),
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Text(
+            value,
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+          ),
         ),
       ],
     );
@@ -165,16 +213,22 @@ class _MyKoQBookingState extends State<MyKoQBooking> {
       appBar: const AppHeader(),
       body: Column(
         children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            color: const Color(0xFF5B9BD5),
-            child: const Text(
-              'Menu > Curriculum > My KoQ Booking',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: const Color(0xFF5B9BD5),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: const Text(
+                "Menu > Curriculum > My KoQ Booking",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                ),
               ),
             ),
           ),
@@ -188,7 +242,7 @@ class _MyKoQBookingState extends State<MyKoQBooking> {
               ),
             ),
           ),
-          Expanded(
+          Flexible(
             child: loading
                 ? const Center(child: CircularProgressIndicator())
                 : bookedModules.isEmpty
@@ -197,8 +251,14 @@ class _MyKoQBookingState extends State<MyKoQBooking> {
                     scrollDirection: Axis.horizontal,
                     child: SingleChildScrollView(
                       child: DataTable(
+                        border: TableBorder(
+                          bottom: BorderSide(
+                            color: Colors.grey.shade300,
+                            width: 2,
+                          ),
+                        ),
                         headingRowColor: WidgetStateProperty.all(
-                          const Color(0xFFE8F1FA),
+                          const Color(0xFFF5F5F5),
                         ),
                         columnSpacing: 12,
                         columns: const [
@@ -329,54 +389,64 @@ class _MyKoQBookingState extends State<MyKoQBooking> {
                     ),
                   ),
           ),
+          const SizedBox(height: 16),
           Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CreditClaim(
-                            studentID: widget.studentID,
-                            matricID: widget.matricID,
+            padding: const EdgeInsets.only(right: 20, bottom: 20),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  SizedBox(
+                    width: 150,
+                    height: 38,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CreditClaim(
+                              studentID: widget.studentID,
+                              matricID: widget.matricID,
+                            ),
                           ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
                         ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Text(
+                        'Go to Credit Claim >',
+                        style: TextStyle(color: Colors.white, fontSize: 12),
                       ),
                     ),
-                    child: const Text(
-                      'Go to Claim Credit >',
-                      style: TextStyle(color: Colors.white),
-                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-                SizedBox(
-                  width: 120,
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF5B9BD5),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+
+                  const SizedBox(height: 8),
+
+                  SizedBox(
+                    width: 150,
+                    height: 38,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF4DA3FF),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: const Text(
+                        'Back',
+                        style: TextStyle(color: Colors.white),
                       ),
                     ),
-                    child: const Text(
-                      'Back',
-                      style: TextStyle(color: Colors.white),
-                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],

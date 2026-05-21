@@ -44,7 +44,10 @@ class LoginController {
       final response = await http
           .post(
             Uri.parse(ApiConfig.login),
-            headers: {'Content-Type': 'application/json'},
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json', // ← add this line
+            },
             body: jsonEncode({
               'username': trimmedUser,
               'password': trimmedPass,
@@ -54,9 +57,17 @@ class LoginController {
           .timeout(const Duration(seconds: 10));
 
       final data = jsonDecode(response.body);
-
       if (data['success'] == true) {
-        _navigateToDashboard(context, role, data['user']);
+        debugPrint('USER DATA: ${data['user']}');
+        debugPrint('ROLE: $role');
+        try {
+          _navigateToDashboard(context, role, data['user']);
+          debugPrint('NAVIGATION SUCCESS');
+        } catch (e, stackTrace) {
+          debugPrint('NAV ERROR: $e');
+          debugPrint('STACK: $stackTrace');
+          return 'Dashboard error: $e';
+        }
         return null;
       } else {
         return data['message'] ?? 'Login failed. Please try again.';
@@ -93,7 +104,7 @@ class LoginController {
         break;
       case 'Pusat Adab':
         final adab = PusatAdabModel.fromJson(userData);
-        dashboard = AdabDashboard(adab: adab);
+        dashboard = AdabDashboard(adab: adab, student: StudentModel.empty());
         break;
       default:
         return;

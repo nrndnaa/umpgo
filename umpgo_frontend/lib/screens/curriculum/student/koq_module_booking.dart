@@ -21,6 +21,8 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
   bool loading = false;
   List<Map<String, dynamic>> modules = [];
   List<int> bookedModuleIDs = [];
+  List<Map<String, dynamic>> filteredModules = [];
+  TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
@@ -38,6 +40,7 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
       if (response.statusCode == 200) {
         setState(() {
           modules = List<Map<String, dynamic>>.from(jsonDecode(response.body));
+          filteredModules = modules;
         });
       }
     } catch (e) {
@@ -71,20 +74,27 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
     } catch (_) {}
   }
 
+  void searchModules(String query) {
+    setState(() {
+      filteredModules = modules.where((module) {
+        final title = (module['name'] ?? '').toString().toLowerCase();
+
+        return title.contains(query.toLowerCase());
+      }).toList();
+    });
+  }
+
   void registerModule(int moduleID) {
-    final pageContext = context; // save page context ✅
+    final pageContext = context;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Confirm Registration'),
-        content: const Text(
-          'Are you sure you want to register for this module?',
+        title: const Text(
+          'Do you want to Confirm Registration',
+          textAlign: TextAlign.center,
         ),
+        actionsAlignment: MainAxisAlignment.center,
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
           ElevatedButton(
             onPressed: () async {
               Navigator.pop(context);
@@ -126,8 +136,15 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
                 ).showSnackBar(SnackBar(content: Text('Error: $e')));
               }
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+            style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF5B9BD5)),
             child: const Text('Confirm', style: TextStyle(color: Colors.white)),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF5B9BD5),
+            ),
+            child: const Text('Back', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -136,26 +153,55 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
 
   @override
   Widget build(BuildContext context) {
-    final availableModules = modules;
+    final availableModules = filteredModules;
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: const AppHeader(),
       body: Column(
         children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            color: const Color(0xFF5B9BD5),
-            child: const Text(
-              'Menu > Curriculum > KoQ Module Booking',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: const Color(0xFF5B9BD5),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: const Text(
+                "Menu > Curriculum > KoQ Module Booking",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                ),
               ),
             ),
           ),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30),
+            child: TextField(
+              controller: searchController,
+              onChanged: searchModules,
+              decoration: InputDecoration(
+                hintText: '  Curriculum Module',
+                suffixIcon: const Icon(Icons.search),
+                contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+
           Expanded(
             child: loading
                 ? const Center(child: CircularProgressIndicator())
