@@ -25,10 +25,13 @@ class StudentDashboard extends StatelessWidget {
   });
 
   Future<void> _goToTuitionFee(
-    BuildContext context,
-  ) async {
+  BuildContext context,
+) async {
 
-    try {
+  print('Dashboard Student ID = ${student.studentID}');
+  print('Dashboard Matric ID = ${student.matricID}');
+
+  try {
 
       // Loading Spinner
       showDialog(

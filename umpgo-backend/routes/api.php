@@ -41,3 +41,8 @@ Route::get(
     '/payment-history/{studentID}',
     [TuitionFeeController::class, 'getPaymentHistory']
 );
+
+Route::get(
+    '/treasury/students',
+    [TuitionFeeController::class, 'getStudentList']
+);

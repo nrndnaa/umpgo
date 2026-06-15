@@ -15,9 +15,9 @@ class StudentSeeder extends Seeder
     public function run(): void
 {
     $studentID = DB::table('student')->insertGetId([
-        'matricID' => 'CB23104',
-        'name' => 'yaya',
-        'email' => 'yaya@student.ump.edu.my',
+        'matricID' => 'CB23106',
+        'name' => 'umi',
+        'email' => 'umi@student.ump.edu.my',
         'password' => Hash::make('pass123'),
         'yearOfStudy' => 'Year 1',
         'programme' => 'Software Engineering',

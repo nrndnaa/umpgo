@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\FeeRecord;
 use App\Models\Payment;
 use App\Models\DueDateSetting;
+use App\Models\Student;
 
 class TuitionFeeController extends Controller
 {
@@ -230,6 +231,85 @@ public function getFeeRecord($studentID)
     ->get();
 
     return response()->json($payments);
+}
+
+public function getStudentList()
+{
+    $students = Student::leftJoin(
+            'feerecord',
+            'student.studentID',
+            '=',
+            'feerecord.studentID'
+        )
+        ->select(
+            'student.studentID',
+            'student.matricID',
+            'student.name',
+            'feerecord.feeID',
+            'feerecord.totalFee',
+            'feerecord.paidAmount',
+            'feerecord.feeStatus'
+        )
+        ->get()
+->map(function ($student) {
+
+    $balance =
+        ($student->totalFee ?? 0)
+        -
+        ($student->paidAmount ?? 0);
+
+    $status = 'NO';
+
+    if ($student->feeID) {
+
+        $latestPayment = Payment::where(
+            'feeID',
+            $student->feeID
+        )
+        ->latest('paid_at')
+        ->first();
+
+        $feeRecord = FeeRecord::find(
+            $student->feeID
+        );
+
+        if (
+            $latestPayment &&
+            $feeRecord &&
+            $feeRecord->dueDate
+        ) {
+
+            if (
+                strtotime($latestPayment->paid_at)
+                >
+                strtotime($feeRecord->dueDate)
+            ) {
+
+                $status = 'NO';
+
+            } else {
+
+                $status = 'PAID';
+
+            }
+
+        } else {
+
+            $status = $student->feeStatus ?? 'NO';
+
+        }
+    }
+
+    return [
+        'studentID' => $student->studentID,
+        'matricID' => $student->matricID,
+        'name' => $student->name,
+        'status' => $status,
+        'balance' => $balance,
+    ];
+});
+
+    return response()->json($students);
 }
 
 }

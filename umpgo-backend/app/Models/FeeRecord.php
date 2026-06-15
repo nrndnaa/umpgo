@@ -25,4 +25,9 @@ class FeeRecord extends Model
     {
         return $this->hasMany(Payment::class, 'feeID');
     }
+
+    public function student()
+{
+    return $this->belongsTo(Student::class, 'studentID');
+}
 }
