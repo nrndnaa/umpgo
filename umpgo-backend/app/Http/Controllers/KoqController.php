@@ -97,16 +97,27 @@ class KoqController extends Controller
 
         // 3. Check module not full
         $module = KoqModule::find($request->moduleID);
-        if ($module->filledSlots >= $module->maxSlots) {
-            return response()->json(['message' => 'Module is full!'], 400);
-        }
+
+if (!$module) {
+    return response()->json([
+        'message' => 'Module not found'
+    ], 404);
+}
+
+$currentSlots = ModuleEnrollment::where('moduleID', $request->moduleID)->count();
+
+if ($currentSlots >= $module->maxSlots) {
+    return response()->json([
+        'message' => 'Module is full!'
+    ], 400);
+}
 
         // 4. Register!
         $enrollment = ModuleEnrollment::create([
             'moduleID'         => $request->moduleID,
             'studentID'        => $request->studentID,
             'attendanceStatus' => 'Pending',
-            'totalMarks'       => '0%',
+            'totalMarks'       => '0',
             'enrolled_At'      => now(),
         ]);
 
@@ -155,8 +166,10 @@ class KoqController extends Controller
         $month = date('n');
         $year  = date('Y');
 
-        if ($month >= 7) {
+        if ($month >= 9) {
             $semester = 'SEMESTER I ACADEMIC SESSION ' . $year . '/' . ($year + 1);
+        } elseif ($month <= 2) {
+            $semester = 'SEMESTER I ACADEMIC SESSION ' . ($year - 1) . '/' . $year;
         } else {
             $semester = 'SEMESTER II ACADEMIC SESSION ' . ($year - 1) . '/' . $year;
         }
@@ -191,8 +204,10 @@ class KoqController extends Controller
         $month = date('n');
         $year  = date('Y');
 
-        if ($month >= 7 && $month <= 12) {
+        if ($month >= 9) {
             $semester = 'SEMESTER I ACADEMIC SESSION ' . $year . '/' . ($year + 1);
+        } elseif ($month <= 2) {
+            $semester = 'SEMESTER I ACADEMIC SESSION ' . ($year - 1) . '/' . $year;
         } else {
             $semester = 'SEMESTER II ACADEMIC SESSION ' . ($year - 1) . '/' . $year;
         }
