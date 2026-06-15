@@ -14,6 +14,9 @@ import 'package:umpgo_frontend/screens/OpenRegistration/mainOR.dart';
 
 import 'package:umpgo_frontend/screens/TuitionFee/pay_feestudent.dart';
 import 'package:umpgo_frontend/screens/TuitionFee/payment_historystudent.dart';
+import 'package:umpgo_frontend/screens/TuitionFee/payment_historystudent.dart';
+
+import 'package:umpgo_frontend/screens/TuitionFee/student_financial_detail.dart';
 
 class StudentDashboard extends StatelessWidget {
   final StudentModel student;
@@ -28,6 +31,13 @@ class StudentDashboard extends StatelessWidget {
   ) async {
 
     try {
+  BuildContext context,
+ async {
+
+  print('Dashboard Student ID = ${student.studentID}');
+  print('Dashboard Matric ID = ${student.matricID}');
+
+  try {
 
       // Loading Spinner
       showDialog(
@@ -66,6 +76,7 @@ class StudentDashboard extends StatelessWidget {
         // CHECK OUTSTANDING BALANCE
         if (context.mounted) {
 
+<<<<<<< HEAD
           // Student still has unpaid balance
           if (fee.outstanding > 0) {
 
@@ -97,6 +108,35 @@ class StudentDashboard extends StatelessWidget {
 
           }
         }
+=======
+  if (fee.outstanding <= 0) {
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PaymentHistoryStudent(
+          student: student,
+          fee: fee,
+        ),
+      ),
+    );
+
+  } else {
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => StudentFinancialDetail(
+          student: student,
+          fee: fee,
+        ),
+      ),
+    );
+
+  }
+
+}
+>>>>>>> 713aa36724c7827811b29592451ae39987d4fc9f
 
       }
 

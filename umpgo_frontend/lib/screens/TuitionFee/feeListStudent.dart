@@ -1,23 +1,27 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:umpgo_frontend/widgets/app_header.dart';
 import 'package:umpgo_frontend/screens/TuitionFee/student_fee_detail_screen.dart';
-
+import 'package:flutter/foundation.dart';
 // ── Model ────────────────────────────────────────────────────────────────────
 
 class StudentFeeRecord {
+  final int studentID;
   final int no;
   final String matricId;
   final String name;
-  final String status; // "PAID" | "NO"
+  final String status;
   final double balance;
 
-  const StudentFeeRecord({
-    required this.no,
-    required this.matricId,
-    required this.name,
-    required this.status,
-    required this.balance,
-  });
+const StudentFeeRecord({
+  required this.studentID,
+  required this.no,
+  required this.matricId,
+  required this.name,
+  required this.status,
+  required this.balance,
+});
 
   bool get isPaid => status.toUpperCase() == 'PAID';
   bool get isBlocked => status.toUpperCase() == 'NO';
@@ -33,12 +37,57 @@ class ListOfSubjectScreen extends StatefulWidget {
 }
 
 class _ListOfSubjectScreenState extends State<ListOfSubjectScreen> {
+String get baseUrl {
+  if (kIsWeb) {
+    return 'http://127.0.0.1:8000';
+  } else {
+    return 'http://10.0.2.2:8000';
+  }
+}
+    @override
+  void initState() {
+    super.initState();
+    fetchStudents();
+  
+  }
   // ── Theme colours (matches TreasuryDashboard) ──────────────────────────────
   static const Color primaryPurple = Color(0xFFD161E9);
   static const Color lightPurple = Color(0xFFE9ADFF);
   static const Color bgGrey = Color(0xFFF5F5F5);
   static const Color cardWhite = Color(0xFFF8EEFF); // very light purple-white
+Future<void> fetchStudents() async {
+  try {
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/treasury/students'),
+    );
 
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(response.body);
+
+      setState(() {
+        _allRecords = data.asMap().entries.map((entry) {
+          final index = entry.key;
+          final e = entry.value;
+
+          return StudentFeeRecord(
+            studentID: e['studentID'],
+            no: index + 1,
+            matricId: e['matricID'],
+            name: e['name'],
+            status: e['status'],
+            balance: double.parse(
+              e['balance'].toString(),
+            ),
+          );
+        }).toList();
+
+        isLoading = false;
+      });
+    }
+  } catch (e) {
+    print('Error: $e');
+  }
+}
   // ── State ──────────────────────────────────────────────────────────────────
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
@@ -46,14 +95,9 @@ class _ListOfSubjectScreenState extends State<ListOfSubjectScreen> {
   static const int _pageSize = 10;
 
   // ── Mock data (replace with API call) ─────────────────────────────────────
-  final List<StudentFeeRecord> _allRecords = const [
-    StudentFeeRecord(no: 1,  matricId: 'CB24053', name: 'BALQES BINTI HANAN', status: 'PAID', balance: 0),
-    StudentFeeRecord(no: 2,  matricId: 'CB23045', name: 'NISHA A/P SURESH',   status: 'PAID', balance: 0),
-    StudentFeeRecord(no: 3,  matricId: 'CB24013', name: 'ADAM BIN ALI',        status: 'NO',   balance: 500),
-    StudentFeeRecord(no: 4,  matricId: 'CB23073', name: 'ALI BIN AZIM',        status: 'NO',   balance: 500),
-    StudentFeeRecord(no: 5,  matricId: 'CB24013', name: 'AZMAN BIN AZLI',      status: 'NO',   balance: 500),
-    StudentFeeRecord(no: 6,  matricId: 'CB23073', name: 'ALI BIN AZIM',        status: 'NO',   balance: 500),
-  ];
+  List<StudentFeeRecord> _allRecords = [];
+
+bool isLoading = true;
 
   // ── Derived helpers ────────────────────────────────────────────────────────
   List<StudentFeeRecord> get _filtered {
@@ -80,7 +124,11 @@ class _ListOfSubjectScreenState extends State<ListOfSubjectScreen> {
     return Scaffold(
       backgroundColor: bgGrey,
       appBar: const AppHeader(),
-      body: Column(
+     body: isLoading
+    ? const Center(
+        child: CircularProgressIndicator(),
+      )
+    : Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildBreadcrumb(),

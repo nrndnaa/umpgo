@@ -18,7 +18,6 @@ class Payment extends Model
         'paid_at',
     ];
 
-    // MANY payments belong to ONE fee record
     public function feeRecord()
     {
         return $this->belongsTo(FeeRecord::class, 'feeID');

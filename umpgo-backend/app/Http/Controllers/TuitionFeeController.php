@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\FeeRecord;
 use App\Models\Payment;
 use App\Models\DueDateSetting;
+use App\Models\Student;
 
 class TuitionFeeController extends Controller
 {
@@ -102,47 +103,102 @@ class TuitionFeeController extends Controller
     // MAKE PAYMENT
     // =========================================
     public function makePayment(Request $request)
-    {
-        $request->validate([
-            'feeID' => 'required',
-            'amount' => 'required|numeric',
-            'paymentMethod' => 'required',
-        ]);
+{
+    $request->validate([
+        'feeID' => 'required',
+        'amount' => 'required|numeric|min:0.01',
+        'paymentMethod' => 'required',
+    ]);
 
-        // CREATE PAYMENT
-        $payment = Payment::create([
-            'feeID' => $request->feeID,
-            'amount' => $request->amount,
-            'paymentMethod' => $request->paymentMethod,
-            'paymentStatus' => 'Success',
-            'paid_at' => now(),
-        ]);
+    $feeRecord = FeeRecord::find($request->feeID);
 
-        // UPDATE PAID AMOUNT
-        $feeRecord = FeeRecord::find($request->feeID);
-
-        $feeRecord->paidAmount += $request->amount;
-
-        $feeRecord->save();
-
+    if (!$feeRecord) {
         return response()->json([
-            'message' => 'Payment successful',
-            'data' => $payment
-        ], 201);
+            'success' => false,
+            'message' => 'Fee record not found.'
+        ], 404);
     }
 
+    $outstanding =
+        $feeRecord->totalFee -
+        $feeRecord->paidAmount;
 
+    if ($request->amount > $outstanding) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Amount exceeds outstanding balance.'
+        ], 400);
+    }
+
+    // CREATE PAYMENT
+    $payment = Payment::create([
+        'feeID' => $request->feeID,
+        'amount' => $request->amount,
+        'paymentMethod' => $request->paymentMethod,
+        'paymentStatus' => 'Success',
+        'paid_at' => now(),
+    ]);
+
+    // UPDATE PAID AMOUNT
+    $feeRecord->paidAmount += $request->amount;
+
+    $remainingBalance =
+        $feeRecord->totalFee -
+        $feeRecord->paidAmount;
+
+    // UPDATE STATUS
+    if ($remainingBalance <= 0) {
+        $feeRecord->feeStatus = 'Paid';
+    } else {
+        $feeRecord->feeStatus = 'Partial';
+    }
+
+    $feeRecord->save();
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Payment successful',
+        'remainingBalance' => $remainingBalance,
+        'feeStatus' => $feeRecord->feeStatus,
+        'data' => $payment,
+    ], 200);
+}
 public function getFeeRecord($studentID)
 {
-    $record = FeeRecord::where('studentID', $studentID)->latest()->first();
+    $record = FeeRecord::where(
+        'studentID',
+        $studentID
+    )->latest()->first();
 
     if (!$record) {
-        return response()->json(['message' => 'No fee record found'], 404); // ← this triggers the snackbar
+        return response()->json([
+            'message' => 'No fee record found'
+        ], 404);
     }
 
-    return response()->json($record);
-}
+    $outstanding =
+        $record->totalFee -
+        $record->paidAmount;
 
+    return response()->json([
+        'feeID' => $record->feeID,
+        'studentID' => $record->studentID,
+        'treasuryID' => $record->treasuryID,
+        'semester' => $record->semester,
+        'totalFee' => $record->totalFee,
+        'paidAmount' => $record->paidAmount,
+        'feeStatus' => $record->feeStatus,
+
+        'outstanding' => $outstanding,
+
+        'dueDate' => $record->dueDate ?? '',
+
+        'accessStatus' =>
+            $outstanding > 0
+                ? 'Restricted'
+                : 'Granted',
+    ]);
+}
 
     // =========================================
     // GET ALL PAYMENTS
@@ -153,4 +209,107 @@ public function getFeeRecord($studentID)
             Payment::all()
         );
     }
+
+    public function getPaymentHistory($studentID)
+{
+    $feeRecord = FeeRecord::where(
+        'studentID',
+        $studentID
+    )->first();
+
+    if (!$feeRecord) {
+        return response()->json([
+            'message' => 'Fee record not found'
+        ], 404);
+    }
+
+    $payments = Payment::where(
+        'feeID',
+        $feeRecord->feeID
+    )
+    ->orderBy('paid_at', 'desc')
+    ->get();
+
+    return response()->json($payments);
+}
+
+public function getStudentList()
+{
+    $students = Student::leftJoin(
+            'feerecord',
+            'student.studentID',
+            '=',
+            'feerecord.studentID'
+        )
+        ->select(
+            'student.studentID',
+            'student.matricID',
+            'student.name',
+            'feerecord.feeID',
+            'feerecord.totalFee',
+            'feerecord.paidAmount',
+            'feerecord.feeStatus'
+        )
+        ->get()
+->map(function ($student) {
+
+    $balance =
+        ($student->totalFee ?? 0)
+        -
+        ($student->paidAmount ?? 0);
+
+    $status = 'NO';
+
+    if ($student->feeID) {
+
+        $latestPayment = Payment::where(
+            'feeID',
+            $student->feeID
+        )
+        ->latest('paid_at')
+        ->first();
+
+        $feeRecord = FeeRecord::find(
+            $student->feeID
+        );
+
+        if (
+            $latestPayment &&
+            $feeRecord &&
+            $feeRecord->dueDate
+        ) {
+
+            if (
+                strtotime($latestPayment->paid_at)
+                >
+                strtotime($feeRecord->dueDate)
+            ) {
+
+                $status = 'NO';
+
+            } else {
+
+                $status = 'PAID';
+
+            }
+
+        } else {
+
+            $status = $student->feeStatus ?? 'NO';
+
+        }
+    }
+
+    return [
+        'studentID' => $student->studentID,
+        'matricID' => $student->matricID,
+        'name' => $student->name,
+        'status' => $status,
+        'balance' => $balance,
+    ];
+});
+
+    return response()->json($students);
+}
+
 }

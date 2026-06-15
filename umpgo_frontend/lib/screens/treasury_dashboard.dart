@@ -92,7 +92,7 @@ class _TreasuryDashboardState extends State<TreasuryDashboard> {
             // List of Subject button
             _buildCategoryButton(
               icon: Icons.person_search,
-              label: "List of Subject",
+              label: "List Students",
               color: lightPurple,
               onTap: () {
                 Navigator.push(
