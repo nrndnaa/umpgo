@@ -11,14 +11,14 @@ class FeeRecord extends Model
     protected $primaryKey = 'feeID';
 
     protected $fillable = [
-        'studentID',
-        'treasuryID',
-        'semester',
-        'totalFee',
-        'paidAmount',
-        'dueDate',
-        'feeStatus',
-    ];
+    'studentID',
+    'treasuryID',
+    'semester',
+    'totalFee',
+    'paidAmount',
+    'dueDate',
+    'feeStatus',
+];
 
     // ONE fee record has MANY payments
     public function payments()

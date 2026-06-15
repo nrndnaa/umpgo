@@ -66,6 +66,8 @@ class StudentDashboard extends StatelessWidget {
         final fee = FeeRecord.fromJson(
           jsonDecode(response.body),
         );
+        print('API RESPONSE = ${response.body}');
+print('DUE DATE = ${fee.dueDate}');
 
         // CHECK OUTSTANDING BALANCE
         if (context.mounted) {

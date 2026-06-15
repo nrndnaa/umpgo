@@ -242,14 +242,15 @@ public function getStudentList()
             'feerecord.studentID'
         )
         ->select(
-            'student.studentID',
-            'student.matricID',
-            'student.name',
-            'feerecord.feeID',
-            'feerecord.totalFee',
-            'feerecord.paidAmount',
-            'feerecord.feeStatus'
-        )
+    'student.studentID',
+    'student.matricID',
+    'student.name',
+    'feerecord.feeID',
+    'feerecord.totalFee',
+    'feerecord.paidAmount',
+    'feerecord.feeStatus',
+    'feerecord.dueDate'
+)
         ->get()
 ->map(function ($student) {
 
@@ -257,48 +258,15 @@ public function getStudentList()
         ($student->totalFee ?? 0)
         -
         ($student->paidAmount ?? 0);
+$status = 'PAID';
 
+if (
+    $student->dueDate &&
+    $balance > 0 &&
+    now()->gt($student->dueDate)
+) {
     $status = 'NO';
-
-    if ($student->feeID) {
-
-        $latestPayment = Payment::where(
-            'feeID',
-            $student->feeID
-        )
-        ->latest('paid_at')
-        ->first();
-
-        $feeRecord = FeeRecord::find(
-            $student->feeID
-        );
-
-        if (
-            $latestPayment &&
-            $feeRecord &&
-            $feeRecord->dueDate
-        ) {
-
-            if (
-                strtotime($latestPayment->paid_at)
-                >
-                strtotime($feeRecord->dueDate)
-            ) {
-
-                $status = 'NO';
-
-            } else {
-
-                $status = 'PAID';
-
-            }
-
-        } else {
-
-            $status = $student->feeStatus ?? 'NO';
-
-        }
-    }
+}
 
     return [
         'studentID' => $student->studentID,

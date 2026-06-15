@@ -161,7 +161,7 @@ class _StudentFinancialDetailState
 
                 const SizedBox(height: 16),
 
-                _buildDueBadge('31 July 2026'),
+                _buildDueBadge(widget.fee.dueDate),
 
                 const SizedBox(height: 20),
 
