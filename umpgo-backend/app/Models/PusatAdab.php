@@ -17,7 +17,7 @@ class PusatAdab extends Model
     ];
 
     protected $hidden = ['password'];
-    
+
     public function modules()
     {
         return $this->hasMany(KoqModule::class, 'staffID', 'staffID');

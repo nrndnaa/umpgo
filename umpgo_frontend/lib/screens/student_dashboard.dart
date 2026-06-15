@@ -3,16 +3,19 @@ import 'package:umpgo_frontend/domain/student_model.dart';
 import 'package:umpgo_frontend/screens/curriculum/student/curriculum_menu.dart';
 import 'package:umpgo_frontend/widgets/stud_nav.dart';
 import 'package:umpgo_frontend/widgets/app_header.dart';
+<<<<<<< HEAD
 import 'package:umpgo_frontend/domain/student_model.dart';
+=======
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:umpgo_frontend/config/api.dart';
+>>>>>>> openRegistration
 import 'OpenRegistration/mainOR.dart';
 
 class StudentDashboard extends StatelessWidget {
-  final StudentModel student; // ← add this
+  final StudentModel student;
 
-  const StudentDashboard({
-    super.key,
-    required this.student,
-  }); // ← add required this.student
+  const StudentDashboard({super.key, required this.student});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +36,7 @@ class StudentDashboard extends StatelessWidget {
                   children: [
                     // ── Welcome Text ──────────────────────────────────────────
                     Text(
-                      "Welcome, ${student.name}", // ← use real name from model
+                      "Welcome, ${student.name}",
                       style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.w900,
@@ -70,10 +73,15 @@ class StudentDashboard extends StatelessWidget {
                         ),
                       ),
                     ),
-
+                    _DashCard(
+                      icon: Icons.calendar_month_rounded,
+                      title: "Class Attendance",
+                      onTap: () {},
+                    ),
                     _DashCard(
                       icon: Icons.description_rounded,
                       title: "Curriculum",
+                      // Fixed: Added routing logic to push CurriculumMenu layout stack directly
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -86,7 +94,7 @@ class StudentDashboard extends StatelessWidget {
                 ),
               ),
             ),
-            const StudNav(),
+            StudNav(student: student),
           ],
         ),
       ),

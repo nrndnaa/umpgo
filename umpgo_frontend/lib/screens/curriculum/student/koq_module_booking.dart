@@ -4,14 +4,23 @@ import 'dart:convert';
 import '../../../config/api.dart';
 import '../../../widgets/app_header.dart';
 import '../../../widgets/stud_nav.dart';
+import 'package:umpgo_frontend/domain/student_model.dart'; // ← add this
 
 class KoQModuleBooking extends StatefulWidget {
   final int studentID;
   final String matricID;
+<<<<<<< HEAD
+=======
+  final StudentModel student; // ← add this
+>>>>>>> openRegistration
   const KoQModuleBooking({
     super.key,
     required this.studentID,
     required this.matricID,
+<<<<<<< HEAD
+=======
+    required this.student, // ← add this
+>>>>>>> openRegistration
   });
   @override
   State<KoQModuleBooking> createState() => _KoQModuleBookingState();
@@ -89,11 +98,18 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+<<<<<<< HEAD
         title: const Text(
           'Do you want to Confirm Registration',
           textAlign: TextAlign.center,
         ),
         actionsAlignment: MainAxisAlignment.center,
+=======
+        title: const Text('Confirm Registration'),
+        content: const Text(
+          'Are you sure you want to register for this module?',
+        ),
+>>>>>>> openRegistration
         actions: [
           ElevatedButton(
             onPressed: () async {
@@ -108,6 +124,7 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
                   }),
                 );
                 if (response.statusCode == 200) {
+<<<<<<< HEAD
                   setState(() {
                     bookedModuleIDs.add(moduleID);
                   });
@@ -134,6 +151,36 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
                 ScaffoldMessenger.of(
                   pageContext,
                 ).showSnackBar(SnackBar(content: Text('Error: $e')));
+=======
+                  setState(() => bookedModuleIDs.add(moduleID));
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Successfully Registered!'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  }
+                } else {
+                  final error = jsonDecode(response.body);
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          error['message'] ?? 'Failed to register!',
+                        ),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text('Error: $e')));
+                }
+>>>>>>> openRegistration
               }
             },
             style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF5B9BD5)),
@@ -160,6 +207,7 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
       appBar: const AppHeader(),
       body: Column(
         children: [
+<<<<<<< HEAD
           Padding(
             padding: const EdgeInsets.all(16),
             child: Container(
@@ -176,6 +224,18 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
                   fontWeight: FontWeight.w700,
                   fontSize: 14,
                 ),
+=======
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            color: const Color(0xFF5B9BD5),
+            child: const Text(
+              'Menu > Curriculum > KoQ Module Booking',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+>>>>>>> openRegistration
               ),
             ),
           ),
@@ -235,7 +295,7 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
           ),
         ],
       ),
-      bottomNavigationBar: const StudNav(),
+      bottomNavigationBar: StudNav(student: widget.student),
     );
   }
 
@@ -330,6 +390,7 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
+<<<<<<< HEAD
                 onPressed: (isBooked || isFullyBooked)
                     ? null
                     : () => registerModule(module['moduleID']),
@@ -340,6 +401,14 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
                       ? Colors.red
                       : Colors.green,
                   disabledBackgroundColor: isBooked ? Colors.red : Colors.red,
+=======
+                onPressed: isFullyBooked
+                    ? null
+                    : () => registerModule(module['moduleID']),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: isFullyBooked ? Colors.red : Colors.green,
+                  disabledBackgroundColor: Colors.red,
+>>>>>>> openRegistration
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),

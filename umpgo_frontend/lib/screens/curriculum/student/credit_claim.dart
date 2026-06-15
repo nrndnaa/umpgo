@@ -4,14 +4,23 @@ import 'dart:convert';
 import '../../../config/api.dart';
 import '../../../widgets/app_header.dart';
 import '../../../widgets/stud_nav.dart';
+import 'package:umpgo_frontend/domain/student_model.dart'; // ← add this
 
 class CreditClaim extends StatefulWidget {
   final int studentID;
   final String matricID;
+<<<<<<< HEAD
+=======
+  final StudentModel student;
+>>>>>>> openRegistration
   const CreditClaim({
     super.key,
     required this.studentID,
     required this.matricID,
+<<<<<<< HEAD
+=======
+    required this.student,
+>>>>>>> openRegistration
   });
   @override
   State<CreditClaim> createState() => _CreditClaimState();
@@ -31,6 +40,7 @@ class _CreditClaimState extends State<CreditClaim> {
   void fetchClaimStatus() async {
     setState(() => loading = true);
     try {
+<<<<<<< HEAD
       // Get claim status
       final claimResponse = await http.get(
         Uri.parse(
@@ -53,6 +63,36 @@ class _CreditClaimState extends State<CreditClaim> {
       }
     } catch (e) {
       print('Error: $e');
+=======
+      final bookingsResponse = await http.get(
+        Uri.parse(
+          '${ApiConfig.baseUrl}/modules/mybookings/${widget.studentID}',
+        ),
+      );
+
+      final claimResponse = await http.get(
+        Uri.parse(
+          '${ApiConfig.baseUrl}/creditclaim/student/${widget.studentID}',
+        ),
+      );
+
+      if (bookingsResponse.statusCode == 200) {
+        final List data = jsonDecode(bookingsResponse.body);
+        int cats = 0;
+        for (var item in data) {
+          if (item['attendanceStatus'] == 'PRESENT') {
+            cats += item['module']['catsPoint'] as int? ?? 0;
+          }
+        }
+        setState(() => totalCats = cats);
+      }
+
+      if (claimResponse.statusCode == 200) {
+        setState(() => alreadyClaimed = true);
+      }
+    } catch (e) {
+      debugPrint('Error: $e');
+>>>>>>> openRegistration
     } finally {
       if (mounted) setState(() => loading = false);
     }
@@ -164,6 +204,7 @@ class _CreditClaimState extends State<CreditClaim> {
                 }
               } catch (e) {
                 if (mounted) {
+<<<<<<< HEAD
                   showDialog(
                     context: pageContext, 
                     builder: (context) => AlertDialog(
@@ -184,6 +225,11 @@ class _CreditClaimState extends State<CreditClaim> {
                       ],
                     ),
                   );
+=======
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text('Error: $e')));
+>>>>>>> openRegistration
                 }
               }
             },
@@ -202,6 +248,7 @@ class _CreditClaimState extends State<CreditClaim> {
       appBar: const AppHeader(),
       body: Column(
         children: [
+<<<<<<< HEAD
           Padding(
             padding: const EdgeInsets.all(16),
             child: Container(
@@ -218,6 +265,18 @@ class _CreditClaimState extends State<CreditClaim> {
                   fontWeight: FontWeight.w700,
                   fontSize: 14,
                 ),
+=======
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            color: const Color(0xFF5B9BD5),
+            child: const Text(
+              'Menu > Curriculum > Claim Credit',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+>>>>>>> openRegistration
               ),
             ),
           ),
@@ -360,6 +419,106 @@ class _CreditClaimState extends State<CreditClaim> {
                           ),
                         ],
                       ),
+<<<<<<< HEAD
+=======
+                      columnWidths: const {
+                        0: FixedColumnWidth(35),
+                        1: FixedColumnWidth(80),
+                        2: FlexColumnWidth(),
+                        3: FixedColumnWidth(90),
+                        4: FixedColumnWidth(120),
+                      },
+                      children: [
+                        TableRow(
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFE8F1FA),
+                          ),
+                          children: [
+                            _tableHeader('No'),
+                            _tableHeader('Subject\nCode'),
+                            _tableHeader('Subject Name'),
+                            _tableHeader('Status'),
+                            _tableHeader('Action'),
+                          ],
+                        ),
+                        TableRow(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: Text(
+                                '1',
+                                style: const TextStyle(fontSize: 12),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.all(8),
+                              child: Text(
+                                'UQA2002',
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.all(8),
+                              child: Text(
+                                'Ko-Kurikulum',
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: alreadyClaimed
+                                      ? Colors.green
+                                      : Colors.red,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  alreadyClaimed
+                                      ? 'Completed'
+                                      : 'Not Completed',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(6),
+                              child: ElevatedButton(
+                                onPressed: alreadyClaimed ? null : requestClaim,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF5B9BD5),
+                                  disabledBackgroundColor: Colors.grey,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 6,
+                                    vertical: 4,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                ),
+                                child: const Text(
+                                  'Request\nClaim Credit',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 9,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+>>>>>>> openRegistration
                     ),
                   ),
           ),
@@ -385,7 +544,11 @@ class _CreditClaimState extends State<CreditClaim> {
           ),
         ],
       ),
+<<<<<<< HEAD
       bottomNavigationBar: const StudNav(),
+=======
+      bottomNavigationBar: StudNav(student: widget.student),
+>>>>>>> openRegistration
     );
   }
 

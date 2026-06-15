@@ -104,7 +104,17 @@ class LoginController {
         break;
       case 'Pusat Adab':
         final adab = PusatAdabModel.fromJson(userData);
+<<<<<<< HEAD
         dashboard = AdabDashboard(adab: adab, student: StudentModel.empty());
+=======
+        final student = StudentModel.fromJson(
+          userData,
+        ); // ← parse student from same userData
+        dashboard = AdabDashboard(
+          adab: adab,
+          student: student,
+        ); // ← semicolon + student
+>>>>>>> openRegistration
         break;
       default:
         return;
