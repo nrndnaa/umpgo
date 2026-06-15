@@ -34,6 +34,10 @@ class _PayFeeStudentState extends State<PayFeeStudent> {
   String? _selectedBank;
   bool _isPaying = false;
 
+final TextEditingController _amountController =
+    TextEditingController();
+  
+
   final List<String> _banks = [
     'Maybank2u',
     'CIMB Clicks',
@@ -47,95 +51,121 @@ class _PayFeeStudentState extends State<PayFeeStudent> {
     'UOB',
   ];
 
-  Future<void> _submitPayment() async {
+Future<void> _submitPayment() async {
 
-    if (_selectedMethod == PaymentMethod.fpx &&
-        _selectedBank == null) {
+  if (_selectedMethod == PaymentMethod.fpx &&
+      _selectedBank == null) {
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Please select a bank.'),
+        backgroundColor: Colors.orange,
+      ),
+    );
+
+    return;
+  }
+
+  final outstanding =
+      widget.fee.totalFee - widget.fee.paidAmount;
+
+  final enteredAmount =
+      double.tryParse(_amountController.text) ?? 0;
+
+  if (enteredAmount <= 0) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Please enter a valid payment amount'),
+        backgroundColor: Colors.orange,
+      ),
+    );
+    return;
+  }
+
+  if (enteredAmount > outstanding) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Maximum payment amount is RM${outstanding.toStringAsFixed(2)}',
+        ),
+        backgroundColor: Colors.orange,
+      ),
+    );
+    return;
+  }
+
+  setState(() => _isPaying = true);
+
+  try {
+
+    final response = await http.post(
+      Uri.parse('${ApiConfig.baseUrl}/make-payment'),
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'studentID': widget.student.studentID,
+        'feeID': widget.fee.feeID,
+        'amount': enteredAmount,
+        'paymentMethod':
+            _selectedMethod == PaymentMethod.fpx
+                ? 'FPX'
+                : 'Credit/Debit Card',
+        'bank': _selectedBank ?? '',
+      }),
+    );
+
+    print(response.body);
+
+    if (!mounted) return;
+
+    final data = jsonDecode(response.body);
+
+    if (response.statusCode == 200 &&
+        data['success'] == true) {
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please select a bank.'),
-          backgroundColor: Colors.orange,
+          content: Text('Payment successful!'),
+          backgroundColor: Colors.green,
         ),
       );
 
-      return;
-    }
-
-    setState(() => _isPaying = true);
-
-    try {
-
-      final outstanding =
-          widget.fee.totalFee - widget.fee.paidAmount;
-
-      final response = await http.post(
-        Uri.parse('${ApiConfig.baseUrl}/make-payment'),
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'studentID': widget.student.studentID,
-          'feeID': widget.fee.feeID,
-          'amount': outstanding,
-          'paymentMethod':
-              _selectedMethod == PaymentMethod.fpx
-                  ? 'FPX'
-                  : 'Credit/Debit Card',
-          'bank': _selectedBank ?? '',
-        }),
+      Navigator.popUntil(
+        context,
+        (route) => route.isFirst,
       );
 
-      print(response.body);
-
-      if (!mounted) return;
-
-      final data = jsonDecode(response.body);
-
-      if (response.statusCode == 200 &&
-          data['success'] == true) {
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Payment successful!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-
-        Navigator.popUntil(
-          context,
-          (route) => route.isFirst,
-        );
-
-      } else {
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              data['message'] ?? 'Payment failed.',
-            ),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-
-    } catch (e) {
+    } else {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error: $e'),
+          content: Text(
+            data['message'] ?? 'Payment failed.',
+          ),
           backgroundColor: Colors.red,
         ),
       );
-
-    } finally {
-
-      if (mounted) {
-        setState(() => _isPaying = false);
-      }
     }
+
+  } catch (e) {
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Error: $e'),
+        backgroundColor: Colors.red,
+      ),
+    );
+
+  } finally {
+
+    if (mounted) {
+      setState(() => _isPaying = false);
+    }
+
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -260,13 +290,26 @@ class _PayFeeStudentState extends State<PayFeeStudent> {
                 ),
 
                 _buildInfoRow(
-                  'Payment Total :',
-                  'RM${outstanding.toStringAsFixed(2)}',
-                ),
+  'Payment Total :',
+  'RM${outstanding.toStringAsFixed(2)}',
+),
 
-                const SizedBox(height: 20),
+const SizedBox(height: 16),
 
-                _buildPaymentOption(),
+TextField(
+  controller: _amountController,
+  keyboardType: TextInputType.number,
+  decoration: InputDecoration(
+    labelText: 'Payment Amount',
+    hintText:
+        'Maximum RM${outstanding.toStringAsFixed(2)}',
+    border: const OutlineInputBorder(),
+  ),
+),
+
+const SizedBox(height: 20),
+
+_buildPaymentOption(),
 
                 const SizedBox(height: 24),
 

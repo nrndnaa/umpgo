@@ -12,8 +12,9 @@ import 'package:umpgo_frontend/widgets/app_header.dart';
 
 import 'package:umpgo_frontend/screens/OpenRegistration/mainOR.dart';
 
-import 'package:umpgo_frontend/screens/TuitionFee/pay_feestudent.dart';
 import 'package:umpgo_frontend/screens/TuitionFee/payment_historystudent.dart';
+
+import 'package:umpgo_frontend/screens/TuitionFee/student_financial_detail.dart';
 
 class StudentDashboard extends StatelessWidget {
   final StudentModel student;
@@ -66,37 +67,33 @@ class StudentDashboard extends StatelessWidget {
         // CHECK OUTSTANDING BALANCE
         if (context.mounted) {
 
-          // Student still has unpaid balance
-          if (fee.outstanding > 0) {
+  if (fee.outstanding <= 0) {
 
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => PayFeeStudent(
-                  student: student,
-                  fee: fee,
-                ),
-              ),
-            );
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PaymentHistoryStudent(
+          student: student,
+          fee: fee,
+        ),
+      ),
+    );
 
-          }
+  } else {
 
-          // Student already paid fully
-          else {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => StudentFinancialDetail(
+          student: student,
+          fee: fee,
+        ),
+      ),
+    );
 
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) =>
-                    PaymentHistoryStudent(
-                  student: student,
-                  fee: fee,
-                ),
-              ),
-            );
+  }
 
-          }
-        }
+}
 
       }
 

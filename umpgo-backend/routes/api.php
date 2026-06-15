@@ -36,3 +36,8 @@ Route::get('/payments', [TuitionFeeController::class, 'getPayments']);
 
 //TRY STUDENT_DETAIL
 Route::get('/fee-record/{studentID}', [TuitionFeeController::class, 'getFeeRecord']);
+
+Route::get(
+    '/payment-history/{studentID}',
+    [TuitionFeeController::class, 'getPaymentHistory']
+);
