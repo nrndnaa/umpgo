@@ -58,16 +58,7 @@ class StudentSeeder extends Seeder
         }
 
         DB::table('student')->insert([
-            [
-                'matricID' => 'CB23090',
-                'name' => 'Nurin Irdina',
-                'email' => 'nurin@student.ump.edu.my',
-                'password' => Hash::make('pass123'),
-                'yearOfStudy' => 'Year 3',
-                'programme' => 'Software Engineering',
-                'status' => 'Active',
-                'outstandingBalance' => 0.00,
-            ],
+           
             [
                 'matricID'           => 'CB23083',
                 'name'               => 'Anis Najla',

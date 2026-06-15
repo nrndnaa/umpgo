@@ -31,4 +31,17 @@ class StudentModel {
       outstandingBalance: double.parse(json['outstandingBalance'].toString()),
     );
   }
+
+  factory StudentModel.empty() {
+  return StudentModel(
+    studentID: 0,
+    matricID: '',
+    name: '',
+    email: '',
+    yearOfStudy: '',
+    programme: '',
+    status: '',
+    outstandingBalance: 0.0,
+  );
+}
 }

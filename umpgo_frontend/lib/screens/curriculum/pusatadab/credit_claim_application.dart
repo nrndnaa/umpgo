@@ -10,8 +10,7 @@ class CreditClaimApplication extends StatefulWidget {
   const CreditClaimApplication({super.key});
 
   @override
-  State<CreditClaimApplication> createState() =>
-      _CreditClaimApplicationState();
+  State<CreditClaimApplication> createState() => _CreditClaimApplicationState();
 }
 
 class _CreditClaimApplicationState extends State<CreditClaimApplication> {
@@ -82,9 +81,9 @@ class _CreditClaimApplicationState extends State<CreditClaimApplication> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: $e')));
       }
     } finally {
       if (mounted) setState(() => loading = false);
@@ -103,16 +102,23 @@ class _CreditClaimApplicationState extends State<CreditClaimApplication> {
       body: Column(
         children: [
           // Breadcrumb
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            color: const Color(0xFFFFD700),
-            child: const Text(
-              'Menu > Credit Claim Application',
-              style: TextStyle(
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFD700),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Text(
+                'Menu > Credit Claim Application',
+                style: const TextStyle(
                   color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14),
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                ),
+              ),
             ),
           ),
 
@@ -120,8 +126,10 @@ class _CreditClaimApplicationState extends State<CreditClaimApplication> {
             padding: EdgeInsets.all(16),
             child: Align(
               alignment: Alignment.centerLeft,
-              child: Text('Approved Credit Application',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              child: Text(
+                'Approved Credit Application',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
             ),
           ),
 
@@ -138,8 +146,10 @@ class _CreditClaimApplicationState extends State<CreditClaimApplication> {
                 value: selectedSemester.isEmpty ? null : selectedSemester,
                 isExpanded: true,
                 underline: const SizedBox(),
-                hint: const Text('Select Semester',
-                    style: TextStyle(fontSize: 12)),
+                hint: const Text(
+                  'Select Semester',
+                  style: TextStyle(fontSize: 12),
+                ),
                 items: semesters.map((semester) {
                   return DropdownMenuItem<String>(
                     value: semester,
@@ -156,93 +166,98 @@ class _CreditClaimApplicationState extends State<CreditClaimApplication> {
           const SizedBox(height: 12),
 
           // Student List
-          Expanded(
+          Flexible(
             child: loading
                 ? const Center(child: CircularProgressIndicator())
                 : filteredStudents.isEmpty
-                    ? const Center(child: Text('No credit claims found'))
-                    : SingleChildScrollView(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: const Color(0xFF5B9BD5)),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Table(
-                            columnWidths: const {
-                              0: FixedColumnWidth(40),
-                              1: FixedColumnWidth(100),
-                              2: FlexColumnWidth(),
-                            },
+                ? const Center(child: Text('No credit claims found'))
+                : SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: const Color(0xFFE0E0E0)),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Table(
+                        columnWidths: const {
+                          0: FixedColumnWidth(40),
+                          1: FixedColumnWidth(100),
+                          2: FlexColumnWidth(),
+                        },
+                        children: [
+                          TableRow(
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFF5F5F5),
+                            ),
                             children: [
-                              TableRow(
-                                decoration: const BoxDecoration(
-                                    color: Color(0xFFF5F5F5)),
-                                children: [
-                                  _tableHeader('No.'),
-                                  _tableHeader('Matric ID'),
-                                  _tableHeader('Student Name'),
-                                ],
+                              _tableHeader('No.'),
+                              _tableHeader('Matric ID'),
+                              _tableHeader('Student Name'),
+                            ],
+                          ),
+                          ...filteredStudents.asMap().entries.map((entry) {
+                            final index = entry.key;
+                            final student = entry.value;
+                            return TableRow(
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
                               ),
-                              ...filteredStudents.asMap().entries.map((entry) {
-                                final index = entry.key;
-                                final student = entry.value;
-                                return TableRow(
-                                  decoration: BoxDecoration(
-                                    color: index % 2 == 0
-                                        ? Colors.white
-                                        : Colors.grey.shade50,
-                                  ),
-                                  children: [
-                                    _tableCell('${index + 1}.'),
-                                    _tableCell(student['matricID'] ?? ''),
-                                    GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                CreditClaimApplicationDetails(
+                              children: [
+                                _tableCell('${index + 1}.'),
+                                _tableCell(student['matricID'] ?? ''),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            CreditClaimApplicationDetails(
                                               student: student,
                                               semester: selectedSemester,
                                             ),
-                                          ),
-                                        );
-                                      },
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8),
-                                        child: Text(
-                                          student['name'] ?? '',
-                                          style: const TextStyle(
-                                            fontSize: 12,
-                                            color: Color(0xFF5B9BD5),
-                                            decoration: TextDecoration.underline,
-                                          ),
-                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8),
+                                    child: Text(
+                                      student['name'] ?? '',
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: Color(0xFF5B9BD5),
+                                        decoration: TextDecoration.underline,
                                       ),
                                     ),
-                                  ],
-                                );
-                              }),
-                            ],
-                          ),
-                        ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          }),
+                        ],
                       ),
+                    ),
+                  ),
           ),
 
           // Back Button
           Padding(
             padding: const EdgeInsets.all(16),
-            child: SizedBox(
-              width: 120,
-              child: ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFFD700),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)),
+            child: Center(
+              child: SizedBox(
+                width: 120,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF5B9BD5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: const Text(
+                    'Back',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
-                child: const Text('Back', style: TextStyle(color: Colors.black)),
               ),
             ),
           ),
@@ -255,8 +270,10 @@ class _CreditClaimApplicationState extends State<CreditClaimApplication> {
   Widget _tableHeader(String text) {
     return Padding(
       padding: const EdgeInsets.all(8),
-      child: Text(text,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+      child: Text(
+        text,
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+      ),
     );
   }
 

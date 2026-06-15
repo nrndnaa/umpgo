@@ -23,25 +23,26 @@ class _CurriculumMenuState extends State<CurriculumMenu> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            color: const Color(0xFF5B9BD5),
-            child: const Text(
-              'Menu > Curriculum',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14),
-            ),
-          ),
           Padding(
             padding: const EdgeInsets.all(16),
-            child: Text(
-              'Welcome ${widget.student.name}',
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+            child: Container(
+              width: double.infinity, // 🔥 THIS is what makes it static
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: const Color(0xFF5B9BD5),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: const Text(
+                "Menu > Curriculum",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                ),
+              ),
             ),
           ),
+
           const SizedBox(height: 10),
           Expanded(
             child: Padding(
@@ -103,10 +104,13 @@ class _CurriculumMenuState extends State<CurriculumMenu> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF5B9BD5),
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                       ),
-                      child: const Text('Back',
-                          style: TextStyle(color: Colors.white)),
+                      child: const Text(
+                        'Back',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ),
                 ],
@@ -130,19 +134,28 @@ class _CurriculumMenuState extends State<CurriculumMenu> {
         width: double.infinity,
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: const Color(0xFFE8F1FA),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0xFF5B9BD5), width: 1),
+          color: const Color(0xFFD6E8F8),
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 6,
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
         child: Column(
           children: [
             Icon(icon, size: 48, color: const Color(0xFF5B9BD5)),
             const SizedBox(height: 8),
-            Text(title,
-                style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87)),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
           ],
         ),
       ),

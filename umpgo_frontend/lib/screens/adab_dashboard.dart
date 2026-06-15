@@ -1,18 +1,18 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:umpgo_frontend/domain/pusatadab_model.dart';
-import 'package:umpgo_frontend/config/api.dart';
+import 'dart:convert';
+import '../../config/api.dart';
+import '../../domain/pusatadab_model.dart';
+import 'curriculum/pusatadab/module_list.dart';
+import 'curriculum/pusatadab/credit_claim_application.dart';
+import '../../widgets/app_header.dart';
+import '../../widgets/adab_nav.dart';
 import 'package:umpgo_frontend/domain/student_model.dart';
-import 'package:umpgo_frontend/screens/Curriculum/student/curriculum_menu.dart';
-import 'package:umpgo_frontend/widgets/stud_nav.dart';
-import 'OpenRegistration/mainOR.dart';
 
 class AdabDashboard extends StatefulWidget {
   final PusatAdabModel adab;
-  final StudentModel student; // ← add this
+  final StudentModel student; // keep this
   const AdabDashboard({super.key, required this.adab, required this.student});
-
   @override
   State<AdabDashboard> createState() => _AdabDashboardState();
 }
@@ -46,7 +46,7 @@ class _AdabDashboardState extends State<AdabDashboard> {
         });
       }
     } catch (e) {
-      debugPrint('Error: $e');
+      print('Error: $e');
     } finally {
       if (mounted) setState(() => loading = false);
     }
@@ -128,7 +128,7 @@ class _AdabDashboardState extends State<AdabDashboard> {
                       Expanded(
                         child: _buildNavTile(
                           icon: Icons.assignment_outlined,
-                          label: 'Module List',
+                          label: 'Module\nList',
                           onTap: () {
                             Navigator.push(
                               context,
@@ -136,7 +136,9 @@ class _AdabDashboardState extends State<AdabDashboard> {
                                 builder: (context) =>
                                     ModuleList(adab: widget.adab),
                               ),
-                            );
+                            ).then((_) {
+                              fetchDashboardStats(); //
+                            });
                           },
                         ),
                       ),
@@ -159,159 +161,68 @@ class _AdabDashboardState extends State<AdabDashboard> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildNavTile(
-                          icon: Icons.sports_basketball_outlined,
-                          label: 'Attendance',
-                          onTap: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Coming soon!')),
-                            );
-                          },
-                        ),
+                  Center(
+                    child: SizedBox(
+                      width: (MediaQuery.of(context).size.width - 48) / 2,
+                      child: _buildNavTile(
+                        icon: Icons.sports_basketball_outlined,
+                        label: 'Attendance\n',
+                        onTap: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Coming soon!')),
+                          );
+                        },
                       ),
-                      const SizedBox(width: 16),
-                      const Expanded(child: SizedBox()),
-                    ],
+                    ),
                   ),
                 ],
               ),
             ),
-
-            // Welcome text
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Welcome, Nurin Irdina",
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 12),
-
-            // Banner
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Container(
-                height: 90,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: Colors.blue[200],
-                ),
-                child: const Center(
-                  child: Text(
-                    "UMPGo Banner",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 14),
-
-            // Cards
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  children: [
-                    DashboardCard(
-                      icon: Icons.account_balance_wallet,
-                      title: "Tuition Fee",
-                      onTap: () {},
-                    ),
-                    DashboardCard(
-                      icon: Icons.menu_book,
-                      title: "Open Registration",
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                MainOR(student: widget.student),
-                          ),
-                        );
-                      },
-                    ),
-                    DashboardCard(
-                      icon: Icons.calendar_month,
-                      title: "Class Attendance",
-                      onTap: () {},
-                    ),
-                    DashboardCard(
-                      icon: Icons.assignment,
-                      title: "Curriculum",
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                CurriculumMenu(student: widget.student),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            const StudNav(),
-          ],
-        ),
-      ),
+      bottomNavigationBar: const AdabNav(),
     );
   }
-}
 
-class DashboardCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final VoidCallback onTap;
+  Widget _buildStatItem({required String value, required String label}) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+        ),
+        Text(
+          label,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 12, color: Colors.black87,  fontWeight: FontWeight.bold),
+        ),
+      ],
+    );
+  }
 
-  const DashboardCard({
-    super.key,
-    required this.icon,
-    required this.title,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: Material(
-        color: const Color(0xFFD8F1FF),
-        borderRadius: BorderRadius.circular(12),
-        elevation: 2,
-        child: InkWell(
-          onTap: onTap,
+  Widget _buildNavTile({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        constraints: const BoxConstraints(minHeight: 110),
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFFF9C4),
           borderRadius: BorderRadius.circular(12),
-          child: Padding(
-            // ← moved child here
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(icon, size: 48, color: Colors.black87),
-                const SizedBox(height: 8),
-                Text(
-                  title, // ← was `label` (undefined)
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 48, color: Colors.black87),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
             ),
-          ),
+          ],
         ),
       ),
     );

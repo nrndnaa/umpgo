@@ -73,7 +73,8 @@ class LoginController {
         return data['message'] ?? 'Login failed. Please try again.';
       }
     } catch (e) {
-      return 'Error: $e'; // shows the actual exception
+        print('LOGIN ERROR: $e'); // add this
+      return 'Could not connect to server. Check your network.';
     }
   }
 
@@ -103,7 +104,7 @@ class LoginController {
         break;
       case 'Pusat Adab':
         final adab = PusatAdabModel.fromJson(userData);
-        dashboard = AdabDashboard(adab: adabData, student: studentData)
+        dashboard = AdabDashboard(adab: adab, student: StudentModel.empty());
         break;
       default:
         return;

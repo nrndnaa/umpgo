@@ -3,7 +3,6 @@ class KoqModule {
   final int adabID;
   final String code;
   final String name;
-  final String category;
   final int catsPoint;
   final int maxSlots;
   final int filledSlots;
@@ -17,7 +16,6 @@ class KoqModule {
     required this.adabID,
     required this.code,
     required this.name,
-    required this.category,
     required this.catsPoint,
     required this.maxSlots,
     required this.filledSlots,
@@ -33,7 +31,6 @@ class KoqModule {
       adabID: json['adabID'],
       code: json['code'],
       name: json['name'],
-      category: json['category'],
       catsPoint: json['catsPoint'],
       maxSlots: json['maxSlots'],
       filledSlots: json['filledSlots'],

@@ -28,6 +28,7 @@ Route::get('/my-enrollments/{studentID}', [OpenRegistrationController::class, 'g
 
 // Module Routes
 Route::get('/modules', [KoqController::class, 'getModules']);
+Route::get('/modules/all', [KoqController::class, 'getAllModules']); 
 Route::post('/modules', [KoqController::class, 'addModule']);
 Route::put('/modules/{id}', [KoqController::class, 'updateModule']);
 Route::delete('/modules/{id}', [KoqController::class, 'deleteModule']);

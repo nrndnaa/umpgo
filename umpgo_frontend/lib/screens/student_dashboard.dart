@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:umpgo_frontend/domain/student_model.dart';
-import 'package:umpgo_frontend/screens/Curriculum/student/curriculum_menu.dart';
+import 'package:umpgo_frontend/screens/curriculum/student/curriculum_menu.dart';
 import 'package:umpgo_frontend/widgets/stud_nav.dart';
 import 'package:umpgo_frontend/widgets/app_header.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:umpgo_frontend/config/api.dart';
 import 'package:umpgo_frontend/domain/student_model.dart';
 import 'OpenRegistration/mainOR.dart';
 

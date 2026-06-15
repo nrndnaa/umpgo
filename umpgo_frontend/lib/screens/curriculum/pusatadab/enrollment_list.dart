@@ -33,7 +33,9 @@ class _EnrollmentListState extends State<EnrollmentList> {
     setState(() => loading = true);
     try {
       final response = await http.get(
-        Uri.parse('${ApiConfig.baseUrl}/modules/enrollments/${widget.moduleID}'),
+        Uri.parse(
+          '${ApiConfig.baseUrl}/modules/enrollments/${widget.moduleID}',
+        ),
       );
       if (response.statusCode == 200) {
         setState(() {
@@ -42,9 +44,9 @@ class _EnrollmentListState extends State<EnrollmentList> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: $e')));
       }
     } finally {
       if (mounted) setState(() => loading = false);
@@ -59,16 +61,23 @@ class _EnrollmentListState extends State<EnrollmentList> {
       body: Column(
         children: [
           // Breadcrumb
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            color: const Color(0xFFFFD700),
-            child: Text(
-              'Menu > Module List > ${widget.moduleName} > Enrollment List',
-              style: const TextStyle(
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFD700),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Text(
+                'Menu > Module List > ${widget.moduleName} > Enrollment List',
+                style: const TextStyle(
                   color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14),
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                ),
+              ),
             ),
           ),
 
@@ -77,64 +86,82 @@ class _EnrollmentListState extends State<EnrollmentList> {
             padding: EdgeInsets.all(16),
             child: Align(
               alignment: Alignment.centerLeft,
-              child: Text('Enrollment List',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+              child: Text(
+                'Enrollment List',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
             ),
           ),
 
           // Table
-          Expanded(
+          Flexible(
             child: loading
                 ? const Center(child: CircularProgressIndicator())
                 : students.isEmpty
-                    ? const Center(child: Text('No students enrolled yet'))
-                    : SingleChildScrollView(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Table(
-                          border: TableBorder.all(color: Colors.grey.shade300),
-                          columnWidths: const {
-                            0: FixedColumnWidth(40),
-                            1: FixedColumnWidth(100),
-                            2: FlexColumnWidth(),
-                          },
-                          children: [
-                            TableRow(
-                              decoration: const BoxDecoration(
-                                  color: Color(0xFFF5F5F5)),
-                              children: [
-                                _tableHeader('No.'),
-                                _tableHeader('Matric ID'),
-                                _tableHeader('Student Name'),
-                              ],
+                ? const Center(child: Text('No students enrolled yet'))
+                : SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: const Color(0xFFE0E0E0)),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Table(
+                        columnWidths: const {
+                          0: FixedColumnWidth(40),
+                          1: FixedColumnWidth(100),
+                          2: FlexColumnWidth(),
+                        },
+                        children: [
+                          TableRow(
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFF5F5F5),
                             ),
-                            ...students.asMap().entries.map((entry) {
-                              final index = entry.key;
-                              final student = entry.value;
-                              return TableRow(children: [
+                            children: [
+                              _tableHeader('No.'),
+                              _tableHeader('Matric ID'),
+                              _tableHeader('Student Name'),
+                            ],
+                          ),
+                          ...students.asMap().entries.map((entry) {
+                            final index = entry.key;
+                            final student = entry.value;
+                            return TableRow(
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                              ),
+                              children: [
                                 _tableCell('${index + 1}.'),
                                 _tableCell(student['matricID'] ?? ''),
                                 _tableCell(student['name'] ?? ''),
-                              ]);
-                            }),
-                          ],
-                        ),
+                              ],
+                            );
+                          }),
+                        ],
                       ),
+                    ),
+                  ),
           ),
 
           // Back Button
           Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-            child: SizedBox(
-              width: 120,
-              child: ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFFD700),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)),
+            padding: const EdgeInsets.all(16),
+            child: Center(
+              child: SizedBox(
+                width: 120,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF5B9BD5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: const Text(
+                    'Back',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
-                child: const Text('Back',
-                    style: TextStyle(color: Colors.black)),
               ),
             ),
           ),
@@ -147,8 +174,10 @@ class _EnrollmentListState extends State<EnrollmentList> {
   Widget _tableHeader(String text) {
     return Padding(
       padding: const EdgeInsets.all(8),
-      child: Text(text,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+      child: Text(
+        text,
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+      ),
     );
   }
 

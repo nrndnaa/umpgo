@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../../config/api.dart';
+import '../../../domain/pusatadab_model.dart';
 import '../../../widgets/app_header.dart';
 import '../../../widgets/adab_nav.dart';
 
 class ModuleForm extends StatefulWidget {
   final Map<String, dynamic>? module;
-  const ModuleForm({super.key, this.module});
+  final PusatAdabModel adab;
 
+  const ModuleForm({super.key, required this.adab, this.module});
   @override
   State<ModuleForm> createState() => _ModuleFormState();
 }
@@ -45,6 +47,8 @@ class _ModuleFormState extends State<ModuleForm> {
       catsController.text = widget.module!['catsPoint']?.toString() ?? '';
       slotsController.text = widget.module!['maxSlots']?.toString() ?? '';
       groupLinkController.text = widget.module!['groupLink'] ?? '';
+    } else {
+      catsController.text = '2';
     }
   }
 
@@ -88,6 +92,7 @@ class _ModuleFormState extends State<ModuleForm> {
       controller.text =
           '${picked.hour.toString().padLeft(2, '0')}:'
           '${picked.minute.toString().padLeft(2, '0')}';
+      '00';
     }
   }
 
@@ -115,6 +120,7 @@ class _ModuleFormState extends State<ModuleForm> {
 
     try {
       final body = jsonEncode({
+        'adabID': widget.adab.adabID,
         'name': moduleNameController.text,
         'code': moduleCodeController.text,
         'startDate': startDateController.text,
@@ -123,8 +129,8 @@ class _ModuleFormState extends State<ModuleForm> {
         'endTime': endTimeController.text,
         'campus': campusController.text,
         'venue': venueController.text,
-        'catsPoint': int.parse(catsController.text),
-        'maxSlots': int.parse(slotsController.text),
+        'catsPoint': int.tryParse(catsController.text) ?? 0,
+        'maxSlots': int.tryParse(slotsController.text) ?? 0,
         'filledSlots': 0,
         'groupLink': groupLinkController.text,
       });
@@ -133,7 +139,9 @@ class _ModuleFormState extends State<ModuleForm> {
 
       if (isEdit) {
         response = await http.put(
-          Uri.parse('${ApiConfig.baseUrl}/modules/${widget.module!['moduleID']}'),
+          Uri.parse(
+            '${ApiConfig.baseUrl}/modules/${widget.module!['moduleID']}',
+          ),
           headers: {'Content-Type': 'application/json'},
           body: body,
         );
@@ -144,29 +152,53 @@ class _ModuleFormState extends State<ModuleForm> {
           body: body,
         );
       }
-
+      if (int.tryParse(catsController.text) == null ||
+          int.tryParse(slotsController.text) == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('CATS and Slots must be numbers!'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(isEdit
-                  ? 'Module updated successfully!'
-                  : 'Module added successfully!'),
-              backgroundColor: Colors.green,
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text(
+                '✅\nModule has been saved!',
+                textAlign: TextAlign.center,
+              ),
+              actionsAlignment: MainAxisAlignment.center,
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context, true);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF5B9BD5),
+                  ),
+                  child: const Text(
+                    'OK',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
             ),
           );
-          Navigator.pop(context, true);
         }
       } else {
-        throw Exception('Status: ${response.statusCode}, Body: ${response.body}');
+        throw Exception(
+          'Status: ${response.statusCode}, Body: ${response.body}',
+        );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
         );
       }
     } finally {
@@ -182,16 +214,24 @@ class _ModuleFormState extends State<ModuleForm> {
       body: Column(
         children: [
           // Breadcrumb
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            color: const Color(0xFFFFD700),
-            child: const Text(
-              'Menu > Module List',
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFD700),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Text(
+                isEdit
+                    ? 'Menu > Module List > Edit Module'
+                    : 'Menu > Module List > Add Module',
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                ),
               ),
             ),
           ),
@@ -229,20 +269,37 @@ class _ModuleFormState extends State<ModuleForm> {
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        Expanded(child: _buildField('Module:', moduleNameController)),
+                        Expanded(
+                          child: _buildField('Module:', moduleNameController),
+                        ),
                         const SizedBox(width: 12),
-                        Expanded(child: _buildField('Module Code:', moduleCodeController)),
+                        Expanded(
+                          child: _buildField(
+                            'Module Code:',
+                            moduleCodeController,
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 12),
                     Row(
                       children: [
                         Expanded(
-                          child: _buildDateField('Start Class Date:', startDateController, () => pickDate(startDateController), 'yyyy-mm-dd'),
+                          child: _buildDateField(
+                            'Start Class Date:',
+                            startDateController,
+                            () => pickDate(startDateController),
+                            'yyyy-mm-dd',
+                          ),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
-                          child: _buildDateField('Start Class Time:', startTimeController, () => pickTime(startTimeController), '00:00'),
+                          child: _buildDateField(
+                            'Start Class Time:',
+                            startTimeController,
+                            () => pickTime(startTimeController),
+                            '00:00',
+                          ),
                         ),
                       ],
                     ),
@@ -250,18 +307,30 @@ class _ModuleFormState extends State<ModuleForm> {
                     Row(
                       children: [
                         Expanded(
-                          child: _buildDateField('End Class Date:', endDateController, () => pickDate(endDateController), 'yyyy-mm-dd'),
+                          child: _buildDateField(
+                            'End Class Date:',
+                            endDateController,
+                            () => pickDate(endDateController),
+                            'yyyy-mm-dd',
+                          ),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
-                          child: _buildDateField('End Class Time:', endTimeController, () => pickTime(endTimeController), '00:00'),
+                          child: _buildDateField(
+                            'End Class Time:',
+                            endTimeController,
+                            () => pickTime(endTimeController),
+                            '00:00',
+                          ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        Expanded(child: _buildField('Campus:', campusController)),
+                        Expanded(
+                          child: _buildField('Campus:', campusController),
+                        ),
                         const SizedBox(width: 12),
                         Expanded(child: _buildField('Venue:', venueController)),
                       ],
@@ -270,16 +339,29 @@ class _ModuleFormState extends State<ModuleForm> {
                     Row(
                       children: [
                         Expanded(
-                          child: _buildField('Number of CATS:', catsController, hint: '0', keyboardType: TextInputType.number),
+                          child: _buildField(
+                            'Number of CATS:',
+                            catsController,
+                            hint: '0',
+                            keyboardType: TextInputType.number,
+                          ),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
-                          child: _buildField('Number of Slots:', slotsController, hint: '0', keyboardType: TextInputType.number),
+                          child: _buildField(
+                            'Number of Slots:',
+                            slotsController,
+                            hint: '0',
+                            keyboardType: TextInputType.number,
+                          ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 12),
-                    _buildField('WhatsApp/Telegram Group Link:', groupLinkController),
+                    _buildField(
+                      'WhatsApp/Telegram Group Link:',
+                      groupLinkController,
+                    ),
                     const SizedBox(height: 20),
                     SizedBox(
                       width: double.infinity,
@@ -295,7 +377,7 @@ class _ModuleFormState extends State<ModuleForm> {
                         child: loading
                             ? const SizedBox(
                                 height: 20,
-                                width: 20,
+                                width: 6,
                                 child: CircularProgressIndicator(
                                   color: Colors.white,
                                   strokeWidth: 2,
@@ -303,7 +385,10 @@ class _ModuleFormState extends State<ModuleForm> {
                               )
                             : const Text(
                                 'Save',
-                                style: TextStyle(color: Colors.white, fontSize: 16),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
                               ),
                       ),
                     ),
@@ -321,12 +406,15 @@ class _ModuleFormState extends State<ModuleForm> {
               child: ElevatedButton(
                 onPressed: () => Navigator.pop(context),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFFD700),
+                  backgroundColor: const Color(0xFF5B9BD5),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
-                child: const Text('Back', style: TextStyle(color: Colors.black)),
+                child: const Text(
+                  'Back',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ),
           ),
@@ -345,7 +433,10 @@ class _ModuleFormState extends State<ModuleForm> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+        ),
         const SizedBox(height: 4),
         TextField(
           controller: controller,
@@ -357,7 +448,10 @@ class _ModuleFormState extends State<ModuleForm> {
               borderRadius: BorderRadius.circular(6),
               borderSide: BorderSide(color: Colors.grey.shade300),
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 10,
+              vertical: 8,
+            ),
             isDense: true,
           ),
         ),
@@ -374,7 +468,10 @@ class _ModuleFormState extends State<ModuleForm> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+        ),
         const SizedBox(height: 4),
         GestureDetector(
           onTap: onTap,
@@ -388,7 +485,10 @@ class _ModuleFormState extends State<ModuleForm> {
                   borderRadius: BorderRadius.circular(6),
                   borderSide: BorderSide(color: Colors.grey.shade300),
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 8,
+                ),
                 isDense: true,
               ),
             ),
