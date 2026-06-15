@@ -10,7 +10,7 @@ class DueDateSetting extends Model
 
     protected $primaryKey = 'dueDateID';
 
-    public $timestamps = false;
+   
 
     protected $fillable = [
         'semester',

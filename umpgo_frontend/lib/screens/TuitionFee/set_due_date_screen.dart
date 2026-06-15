@@ -16,17 +16,17 @@ class _SetDueDateScreenState extends State<SetDueDateScreen> {
   static const Color bgGrey = Color(0xFFF5F5F5);
 
   // Dropdown state
-  String _selectedSemester = '2 (2025/2026)';
+  String _selectedSemester = 'Semester 2 (2025/2026)';
   int _selectedDay = 23;
   int _selectedMonth = 3;
   int _selectedYear = 2026;
   String _selectedBlock = 'Automatic Block';
 
   final List<String> _semesters = [
-    '1 (2025/2026)',
-    '2 (2025/2026)',
-    '1 (2026/2027)',
-  ];
+  'Semester 1 (2025/2026)',
+  'Semester 2 (2025/2026)',
+  'Semester 1 (2026/2027)',
+];
 
   final List<String> _blockOptions = [
     'Automatic Block',
