@@ -117,7 +117,10 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
               try {
                 final response = await http.post(
                   Uri.parse(ApiConfig.registerModule),
-                  headers: {'Content-Type': 'application/json'},
+                  headers: {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json',
+},
                   body: jsonEncode({
                     'moduleID': moduleID,
                     'studentID': widget.studentID,
