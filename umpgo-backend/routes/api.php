@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TuitionFeeController;
 use App\Http\Controllers\OpenRegistrationController;
 use App\Http\Controllers\KoqController;
 use App\Http\Controllers\AttendanceController;
@@ -28,7 +29,7 @@ Route::get('/my-enrollments/{studentID}', [OpenRegistrationController::class, 'g
 
 // Module Routes
 Route::get('/modules', [KoqController::class, 'getModules']);
-Route::get('/modules/all', [KoqController::class, 'getAllModules']); 
+Route::get('/modules/all', [KoqController::class, 'getAllModules']);
 Route::post('/modules', [KoqController::class, 'addModule']);
 Route::put('/modules/{id}', [KoqController::class, 'updateModule']);
 Route::delete('/modules/{id}', [KoqController::class, 'deleteModule']);
@@ -60,3 +61,43 @@ Route::get('/student/dashboard', [OpenRegistrationController::class, 'dashboard'
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/attendance/session', [AttendanceController::class, 'createSession']);
 Route::post('/attendance/checkin', [AttendanceController::class, 'checkIn']);
+Route::get('/student/dashboard', [OpenRegistrationController::class, 'dashboard']);
+
+
+
+
+
+
+// AUTH
+Route::post('/login', [AuthController::class, 'login']);
+
+
+
+// DUE DATE
+Route::post('/set-due-date', [TuitionFeeController::class, 'setDueDate']);
+
+
+
+
+// FEE RECORD
+Route::post('/create-fee-record', [TuitionFeeController::class, 'createFeeRecord']);
+Route::get('/fee-records', [TuitionFeeController::class, 'getFeeRecords']);
+
+
+
+// PAYMENT
+Route::post('/make-payment', [TuitionFeeController::class, 'makePayment']);
+Route::get('/payments', [TuitionFeeController::class, 'getPayments']);
+
+//TRY STUDENT_DETAIL
+Route::get('/fee-record/{studentID}', [TuitionFeeController::class, 'getFeeRecord']);
+
+Route::get(
+    '/payment-history/{studentID}',
+    [TuitionFeeController::class, 'getPaymentHistory']
+);
+
+Route::get(
+    '/treasury/students',
+    [TuitionFeeController::class, 'getStudentList']
+);

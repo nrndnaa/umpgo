@@ -58,7 +58,7 @@ class StudentSeeder extends Seeder
         }
 
         DB::table('student')->insert([
-           
+
             [
                 'matricID'           => 'CB23083',
                 'name'               => 'Anis Najla',
@@ -109,6 +109,27 @@ class StudentSeeder extends Seeder
                 'status'             => 'Active',
                 'outstandingBalance' => 0.00,
             ],
+        ]);
+
+        $studentID = DB::table('student')->insertGetId([
+            'matricID' => 'CB23107',
+            'name' => 'isha',
+            'email' => 'isha@student.ump.edu.my',
+            'password' => Hash::make('pass123'),
+            'yearOfStudy' => 'Year 1',
+            'programme' => 'Software Engineering',
+            'status' => 'Active',
+            'outstandingBalance' => 1500.00,
+        ]);
+
+        DB::table('feerecord')->insert([
+            'studentID' => $studentID,
+            'treasuryID' => 1,
+            'semester' => 'Semester 2 (2025/2026)',
+            'totalFee' => 1500.00,
+            'paidAmount' => 0.00,
+
+            'feeStatus' => 'Active',
         ]);
     }
 }

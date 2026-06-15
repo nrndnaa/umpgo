@@ -6,7 +6,13 @@ class StudentModel {
   final String yearOfStudy;
   final String programme;
   final String status;
+<<<<<<< HEAD
   final double outstandingBalance; // ← changed
+=======
+  final double outstanding;
+
+
+>>>>>>> tuitionFee
 
   StudentModel({
     required this.studentID,
@@ -16,11 +22,12 @@ class StudentModel {
     required this.yearOfStudy,
     required this.programme,
     required this.status,
-    required this.outstandingBalance,
+    required this.outstanding,
   });
 
   factory StudentModel.fromJson(Map<String, dynamic> json) {
     return StudentModel(
+<<<<<<< HEAD
       studentID: json['studentID'],
       matricID: json['matricID'],
       name: json['name'],
@@ -29,6 +36,24 @@ class StudentModel {
       programme: json['programme'],
       status: json['status'],
       outstandingBalance: double.parse(json['outstandingBalance'].toString()),
+=======
+      studentID: int.tryParse(json['studentID'].toString()) ?? 0,
+
+      matricID: json['matricID']?.toString() ?? '',
+
+      name: json['name']?.toString() ?? '',
+
+      email: json['email']?.toString() ?? '',
+
+      yearOfStudy: json['yearOfStudy']?.toString() ?? '',
+
+      programme: json['programme']?.toString() ?? '',
+
+      status: json['status']?.toString() ?? '',
+
+      outstanding:
+          double.tryParse(json['outstandingBalance'].toString()) ?? 0.0,
+>>>>>>> tuitionFee
     );
   }
 

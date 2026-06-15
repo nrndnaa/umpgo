@@ -72,10 +72,17 @@ class LoginController {
       } else {
         return data['message'] ?? 'Login failed. Please try again.';
       }
+<<<<<<< HEAD
     } catch (e) {
         print('LOGIN ERROR: $e'); // add this
       return 'Could not connect to server. Check your network.';
     }
+=======
+  }  catch (e) {
+  print(e);
+  return 'Error: $e';
+}
+>>>>>>> tuitionFee
   }
 
   static void _navigateToDashboard(
