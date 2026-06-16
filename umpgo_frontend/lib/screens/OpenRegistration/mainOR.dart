@@ -255,7 +255,7 @@ class _MainORState extends State<MainOR> {
     }
 
     if (!_isOpen) {
-      return _ClosedScreen();
+      return _ClosedScreen(student: widget.student);
     }
 
     return Scaffold(
@@ -286,7 +286,7 @@ class _MainORState extends State<MainOR> {
                 ),
               ),
             ),
-            const StudNav(),
+            StudNav(student: widget.student),
           ],
         ),
       ),
@@ -1151,6 +1151,8 @@ class _OutlineButton extends StatelessWidget {
 }
 
 class _ClosedScreen extends StatelessWidget {
+  final StudentModel student;
+  const _ClosedScreen({required this.student});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1227,7 +1229,7 @@ class _ClosedScreen extends StatelessWidget {
                 ),
               ),
             ),
-            const StudNav(),
+            StudNav(student: student),
           ],
         ),
       ),

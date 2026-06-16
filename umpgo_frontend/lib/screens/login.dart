@@ -72,10 +72,17 @@ class LoginController {
       } else {
         return data['message'] ?? 'Login failed. Please try again.';
       }
+<<<<<<< HEAD
     } catch (e) {
         print('LOGIN ERROR: $e'); // add this
       return 'Could not connect to server. Check your network.';
     }
+=======
+  }  catch (e) {
+  print(e);
+  return 'Error: $e';
+}
+>>>>>>> tuitionFee
   }
 
   static void _navigateToDashboard(
@@ -104,7 +111,17 @@ class LoginController {
         break;
       case 'Pusat Adab':
         final adab = PusatAdabModel.fromJson(userData);
+<<<<<<< HEAD
         dashboard = AdabDashboard(adab: adab, student: StudentModel.empty());
+=======
+        final student = StudentModel.fromJson(
+          userData,
+        ); // ← parse student from same userData
+        dashboard = AdabDashboard(
+          adab: adab,
+          student: student,
+        ); // ← semicolon + student
+>>>>>>> openRegistration
         break;
       default:
         return;

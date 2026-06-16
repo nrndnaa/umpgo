@@ -222,6 +222,81 @@ class _AdabDashboardState extends State<AdabDashboard> {
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
             ),
+<<<<<<< HEAD
+=======
+
+            const SizedBox(height: 12),
+
+            // Banner
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Container(
+                height: 90,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: Colors.blue[200],
+                ),
+                child: const Center(
+                  child: Text(
+                    "UMPGo Banner",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 14),
+
+            // Cards
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  children: [
+                    DashboardCard(
+                      icon: Icons.account_balance_wallet,
+                      title: "Tuition Fee",
+                      onTap: () {},
+                    ),
+                    DashboardCard(
+                      icon: Icons.menu_book,
+                      title: "Open Registration",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                MainOR(student: widget.student),
+                          ),
+                        );
+                      },
+                    ),
+                    DashboardCard(
+                      icon: Icons.calendar_month,
+                      title: "Class Attendance",
+                      onTap: () {},
+                    ),
+                    DashboardCard(
+                      icon: Icons.assignment,
+                      title: "Curriculum",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                CurriculumMenu(student: widget.student),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            StudNav(student: widget.student),
+>>>>>>> openRegistration
           ],
         ),
       ),
