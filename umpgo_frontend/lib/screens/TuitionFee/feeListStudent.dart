@@ -154,7 +154,7 @@ bool isLoading = true;
       child: const Text(
         'Menu > View Lists',
         style: TextStyle(
-          color: Colors.white,
+          color: Color.fromARGB(255, 10, 10, 10),
           fontWeight: FontWeight.w600,
           fontSize: 14,
         ),
@@ -204,6 +204,8 @@ bool isLoading = true;
             BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 3)),
           ],
         ),
+
+
         child: Column(
           children: [
             const SizedBox(height: 14),
@@ -215,25 +217,66 @@ bool isLoading = true;
               ),
             ),
             const SizedBox(height: 10),
+
             Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    _buildTableSection(records: _paidList, showAction: true),
-                    if (_blockedList.isNotEmpty) ...[
-                      const SizedBox(height: 8),
-                      _buildSectionLabel('Blocked'),
-                      _buildTableSection(records: _blockedList, showAction: false),
-                    ],
-                    const SizedBox(height: 12),
-                    _buildPagination(),
-                    const SizedBox(height: 10),
-                    _buildSummaryRow(),
-                    const SizedBox(height: 14),
-                  ],
-                ),
-              ),
+  child: Container(
+    margin: const EdgeInsets.symmetric(
+      horizontal: 12,
+      vertical: 8,
+    ),
+    padding: const EdgeInsets.all(12),
+
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(10),
+
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.08),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
+
+    child: SingleChildScrollView(
+      child: Column(
+        children: [
+
+          _buildTableSection(
+            records: _paidList,
+            showAction: true,
+          ),
+
+          if (_blockedList.isNotEmpty) ...[
+            const SizedBox(height: 8),
+
+            _buildSectionLabel(
+              'Blocked',
             ),
+
+            _buildTableSection(
+              records: _blockedList,
+              showAction: false,
+            ),
+          ],
+
+          const SizedBox(height: 12),
+
+          _buildPagination(),
+
+          const SizedBox(height: 10),
+
+          _buildSummaryRow(),
+
+          const SizedBox(height: 14),
+
+        ],
+      ),
+    ),
+  ),
+),
+
           ],
         ),
       ),

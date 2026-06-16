@@ -110,13 +110,13 @@ class TuitionFeeController extends Controller
         'paymentMethod' => 'required',
     ]);
 
-    $feeRecord = FeeRecord::find($request->feeID);
+    $feeRecord = FeeRecord::find($request->feeID); //request data from fee id
 
     if (!$feeRecord) {
         return response()->json([
             'success' => false,
             'message' => 'Fee record not found.'
-        ], 404);
+        ], 404);  // Return error if fee record does not exist
     }
 
     $outstanding =
@@ -225,7 +225,8 @@ public function getFeeRecord($studentID)
 
     $payments = Payment::where(
         'feeID',
-        $feeRecord->feeID
+        $feeRecord->feeID    // Retrieve all payment transactions
+                             // linked to the student's fee record
     )
     ->orderBy('paid_at', 'desc')
     ->get();
@@ -235,6 +236,7 @@ public function getFeeRecord($studentID)
 
 public function getStudentList()
 {
+    // Join student table with fee record table
     $students = Student::leftJoin(
             'feerecord',
             'student.studentID',
@@ -252,8 +254,10 @@ public function getStudentList()
     'feerecord.dueDate'
 )
         ->get()
+          // Calculate balance and access status
 ->map(function ($student) {
 
+// Outstanding balance
     $balance =
         ($student->totalFee ?? 0)
         -

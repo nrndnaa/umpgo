@@ -3,6 +3,9 @@ import 'package:umpgo_frontend/domain/treasury_model.dart';
 import 'package:umpgo_frontend/widgets/app_header.dart';
 import 'package:umpgo_frontend/screens/TuitionFee/set_due_date_screen.dart';
 import 'package:umpgo_frontend/screens/TuitionFee/feeListStudent.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart';
 
 // REMOVE THIS if TreasuryModel does not exist yet
 // import 'package:umpgo_frontend/models/treasury_model.dart';
@@ -23,6 +26,95 @@ class _TreasuryDashboardState extends State<TreasuryDashboard> {
   static const Color primaryPurple = Color(0xFFD161E9);
   static const Color lightPurple = Color(0xFFE9ADFF);
   static const Color bgGrey = Color(0xFFF5F5F5);
+  int totalCount = 0;
+int paidCount = 0;
+int blockedCount = 0;
+String currentDueDate = '';
+String currentSemester = '';
+String get baseUrl {
+  if (kIsWeb) {
+    return 'http://127.0.0.1:8000';
+  } else {
+    return 'http://10.0.2.2:8000';
+  }
+}
+@override
+void initState() {
+  super.initState();
+  loadStats();
+  loadDueDate();
+}
+
+Future<void> loadDueDate() async {
+  try {
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/due-dates'),
+    );
+
+    if (response.statusCode == 200) {
+
+      final List data =
+          jsonDecode(response.body);
+
+      if (data.isNotEmpty) {
+
+        final latest = data.last;
+
+        setState(() {
+          currentDueDate =
+              latest['dueDate'] ?? '';
+
+          currentSemester =
+              latest['semester'] ?? '';
+        });
+      }
+    }
+  } catch (e) {
+    print('Due Date Error: $e');
+  }
+}
+Future<void> loadStats() async {
+  try {
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/treasury/students'),
+    );
+
+    if (response.statusCode == 200) {
+
+      final List data =
+          jsonDecode(response.body);
+
+      setState(() {
+
+        totalCount = data.length;
+
+        paidCount = data.where(
+          (e) =>
+              e['status']
+                  .toString()
+                  .toUpperCase() ==
+              'PAID',
+        ).length;
+
+        blockedCount = data.where(
+          (e) =>
+              e['status']
+                  .toString()
+                  .toUpperCase() ==
+              'NO',
+        ).length;
+
+      });
+    }
+
+  } catch (e) {
+
+    print('Dashboard Stats Error: $e');
+
+  }
+}
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -71,9 +163,9 @@ class _TreasuryDashboardState extends State<TreasuryDashboard> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildStatusCard("6182", "Paid"),
-                _buildStatusCard("114", "Block"),
-                _buildStatusCard("6296", "Total"),
+                _buildStatusCard('$paidCount', "Paid"),
+_buildStatusCard('$blockedCount', "Block"),
+_buildStatusCard('$totalCount', "Total"),
               ],
             ),
 
@@ -107,12 +199,12 @@ class _TreasuryDashboardState extends State<TreasuryDashboard> {
             const SizedBox(height: 15),
 
             // Set Due Date button
-            _buildDateButton(
-              date: "23.3.2026",
-              semester: "Semester 2 (2025/2026)",
-              label: "Set Due Date",
-              color: lightPurple,
-              onTap: () {
+_buildDateButton(
+  date: currentDueDate,
+  semester: currentSemester,
+  label: "Set Due Date",
+  color: lightPurple,
+  onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
