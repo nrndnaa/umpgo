@@ -103,10 +103,10 @@ class LoginController {
         dashboard = TreasuryDashboard(treasury: treasury);
         break;
       case 'Pusat Adab':
-        final adab = PusatAdabModel.fromJson(userData);
-        dashboard = AdabDashboard(adab: adab, student: StudentModel.empty());
-        break;
-      default:
+         final adab = PusatAdabModel.fromJson(userData);
+         dashboard = AdabDashboard(adab: adab); 
+         break;
+        default:
         return;
     }
 

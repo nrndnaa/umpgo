@@ -7,12 +7,15 @@ import 'curriculum/pusatadab/module_list.dart';
 import 'curriculum/pusatadab/credit_claim_application.dart';
 import '../../widgets/app_header.dart';
 import '../../widgets/adab_nav.dart';
-import 'package:umpgo_frontend/domain/student_model.dart';
 
 class AdabDashboard extends StatefulWidget {
   final PusatAdabModel adab;
-  final StudentModel student; // keep this
-  const AdabDashboard({super.key, required this.adab, required this.student});
+
+  const AdabDashboard({
+    super.key, 
+    required this.adab
+  });
+
   @override
   State<AdabDashboard> createState() => _AdabDashboardState();
 }
@@ -21,7 +24,7 @@ class _AdabDashboardState extends State<AdabDashboard> {
   bool loading = false;
   int totalActivities = 0;
   int totalEnrollment = 0;
-  String attendancePercentage = '0%';
+  String attendancePercentage = '0';
   int approvedClaims = 0;
 
   @override
@@ -39,11 +42,11 @@ class _AdabDashboardState extends State<AdabDashboard> {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         setState(() {
-          totalActivities = data['totalActivities'];
-          totalEnrollment = data['totalEnrollment'];
-          attendancePercentage = data['attendancePercentage'];
-          approvedClaims = data['approvedClaims'];
-        });
+  totalActivities = int.tryParse('${data['totalActivities']}') ?? 0;
+  totalEnrollment = int.tryParse('${data['totalEnrollment']}') ?? 0;
+  attendancePercentage = '${data['attendancePercentage'] ?? '0'}';
+  approvedClaims = int.tryParse('${data['approvedClaims']}') ?? 0;
+});
       }
     } catch (e) {
       print('Error: $e');
@@ -133,11 +136,10 @@ class _AdabDashboardState extends State<AdabDashboard> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    ModuleList(adab: widget.adab),
+                                builder: (context) => ModuleList(adab: widget.adab),
                               ),
                             ).then((_) {
-                              fetchDashboardStats(); //
+                              fetchDashboardStats(); 
                             });
                           },
                         ),
@@ -151,8 +153,7 @@ class _AdabDashboardState extends State<AdabDashboard> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    const CreditClaimApplication(),
+                                builder: (context) => const CreditClaimApplication(),
                               ),
                             );
                           },
@@ -178,7 +179,7 @@ class _AdabDashboardState extends State<AdabDashboard> {
                 ],
               ),
             ),
-      bottomNavigationBar: const AdabNav(),
+      bottomNavigationBar: const AdabNav(), // Menggunakan AdabNav mengikut menu asal
     );
   }
 
@@ -192,7 +193,7 @@ class _AdabDashboardState extends State<AdabDashboard> {
         Text(
           label,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 12, color: Colors.black87,  fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 12, color: Colors.black87, fontWeight: FontWeight.bold),
         ),
       ],
     );
