@@ -10,8 +10,13 @@ import '../../widgets/adab_nav.dart';
 
 class AdabDashboard extends StatefulWidget {
   final PusatAdabModel adab;
+<<<<<<< Updated upstream
   const AdabDashboard({super.key, required this.adab});
 
+=======
+  final StudentModel student;
+  const AdabDashboard({super.key, required this.adab, required this.student});
+>>>>>>> Stashed changes
   @override
   State<AdabDashboard> createState() => _AdabDashboardState();
 }
@@ -84,35 +89,15 @@ class _AdabDashboardState extends State<AdabDashboard> {
                       children: [
                         Row(
                           children: [
-                            Expanded(
-                              child: _buildStatItem(
-                                value: '$totalActivities',
-                                label: 'Total Curriculum\nActivities',
-                              ),
-                            ),
-                            Expanded(
-                              child: _buildStatItem(
-                                value: '$totalEnrollment',
-                                label: 'Total\nEnrollment',
-                              ),
-                            ),
+                            Expanded(child: _buildStatItem(value: '$totalActivities', label: 'Total Curriculum\nActivities')),
+                            Expanded(child: _buildStatItem(value: '$totalEnrollment', label: 'Total\nEnrollment')),
                           ],
                         ),
                         const SizedBox(height: 16),
                         Row(
                           children: [
-                            Expanded(
-                              child: _buildStatItem(
-                                value: attendancePercentage,
-                                label: 'Attendance\nPercentage',
-                              ),
-                            ),
-                            Expanded(
-                              child: _buildStatItem(
-                                value: '$approvedClaims',
-                                label: 'Approved Credit\nClaims',
-                              ),
-                            ),
+                            Expanded(child: _buildStatItem(value: attendancePercentage, label: 'Attendance\nPercentage')),
+                            Expanded(child: _buildStatItem(value: '$approvedClaims', label: 'Approved Credit\nClaims')),
                           ],
                         ),
                       ],
@@ -127,6 +112,7 @@ class _AdabDashboardState extends State<AdabDashboard> {
                           label: 'Module List',
                           onTap: () {
                             Navigator.push(
+<<<<<<< Updated upstream
                           context,
                             MaterialPageRoute(
                           builder: (context) => ModuleList(adab: widget.adab),
@@ -134,6 +120,11 @@ class _AdabDashboardState extends State<AdabDashboard> {
                           ).then((_) {
                             fetchDashboardStats(); // 
                             });
+=======
+                              context,
+                              MaterialPageRoute(builder: (context) => ModuleList(adab: widget.adab)),
+                            ).then((_) => fetchDashboardStats());
+>>>>>>> Stashed changes
                           },
                         ),
                       ),
@@ -145,9 +136,13 @@ class _AdabDashboardState extends State<AdabDashboard> {
                           onTap: () {
                             Navigator.push(
                               context,
+<<<<<<< Updated upstream
                               MaterialPageRoute(
                                 builder: (context) => const CreditClaimApplication(),
                               ),
+=======
+                              MaterialPageRoute(builder: (context) => const CreditClaimApplication()),
+>>>>>>> Stashed changes
                             );
                           },
                         ),
@@ -182,20 +177,21 @@ class _AdabDashboardState extends State<AdabDashboard> {
   Widget _buildStatItem({required String value, required String label}) {
     return Column(
       children: [
+<<<<<<< Updated upstream
         Text(value,
             style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
         Text(label,
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 12, color: Colors.black87)),
+=======
+        Text(value, style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+        Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12, color: Colors.black87, fontWeight: FontWeight.bold)),
+>>>>>>> Stashed changes
       ],
     );
   }
 
-  Widget _buildNavTile({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-  }) {
+  Widget _buildNavTile({required IconData icon, required String label, required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -209,10 +205,14 @@ class _AdabDashboardState extends State<AdabDashboard> {
           children: [
             Icon(icon, size: 48, color: Colors.black87),
             const SizedBox(height: 8),
+<<<<<<< Updated upstream
             Text(label,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                     fontSize: 13, fontWeight: FontWeight.w600)),
+=======
+            Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+>>>>>>> Stashed changes
           ],
         ),
       ),

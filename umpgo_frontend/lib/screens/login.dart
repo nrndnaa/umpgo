@@ -61,8 +61,13 @@ class LoginController {
       } else {
         return data['message'] ?? 'Login failed. Please try again.';
       }
+<<<<<<< Updated upstream
     } catch (e) {
         print('LOGIN ERROR: $e'); // add this
+=======
+} catch (e) {
+      print('LOGIN ERROR: $e');
+>>>>>>> Stashed changes
       return 'Could not connect to server. Check your network.';
     }
   }
@@ -93,7 +98,11 @@ class LoginController {
         break;
       case 'Pusat Adab':
         final adab = PusatAdabModel.fromJson(userData);
+<<<<<<< Updated upstream
         dashboard = AdabDashboard(adab: adab);
+=======
+dashboard = AdabDashboard(adab: adab, student: StudentModel.empty());
+>>>>>>> Stashed changes
         break;
       default:
         return;

@@ -59,3 +59,68 @@ Route::get('/dashboard/stats', [KoqController::class, 'getDashboardStats']);
 
 Route::post('/attendance/session', [AttendanceController::class, 'createSession']);
 Route::post('/attendance/checkin', [AttendanceController::class, 'checkIn']);
+<<<<<<< Updated upstream
+=======
+Route::get('/student/dashboard', [OpenRegistrationController::class, 'dashboard']);
+
+
+
+
+
+
+// AUTH
+Route::post('/login', [AuthController::class, 'login']);
+
+
+
+// DUE DATE
+Route::post('/set-due-date', [TuitionFeeController::class, 'setDueDate']);
+
+
+
+
+// FEE RECORD
+Route::post('/create-fee-record', [TuitionFeeController::class, 'createFeeRecord']);
+Route::get('/fee-records', [TuitionFeeController::class, 'getFeeRecords']);
+
+
+
+// PAYMENT
+Route::post('/make-payment', [TuitionFeeController::class, 'makePayment']);
+Route::get('/payments', [TuitionFeeController::class, 'getPayments']);
+
+//TRY STUDENT_DETAIL
+Route::get('/fee-record/{studentID}', [TuitionFeeController::class, 'getFeeRecord']);
+
+Route::get(
+    '/payment-history/{studentID}',
+    [TuitionFeeController::class, 'getPaymentHistory']
+);
+
+Route::get(
+    '/treasury/students',
+    [TuitionFeeController::class, 'getStudentList']
+);
+
+// Attendance - Student
+Route::post('/attendance/validate-code', [AttendanceController::class, 'validateCode']);
+Route::post('/attendance/checkin', [AttendanceController::class, 'checkIn']);
+
+// Attendance - Lecturer/Adab
+Route::post('/attendance/session/create', [AttendanceController::class, 'createSession']);
+Route::post('/attendance/session/end', [AttendanceController::class, 'endSession']);
+Route::get('/attendance/session/active', [AttendanceController::class, 'getActiveSession']);
+Route::get('/attendance/session/{sessionID}', [AttendanceController::class, 'getSessionDetail']);
+Route::get('/attendance/sessions', [AttendanceController::class, 'getAllSessions']);
+Route::post('/attendance/session/{sessionID}/edit', [AttendanceController::class, 'editAttendance']);
+
+// Sections & Modules
+Route::get('/lecturer/{lecturerID}/sections', [AttendanceController::class, 'getLecturerSections']);
+Route::get('/student/{studentID}/sections', [AttendanceController::class, 'getStudentSections']);
+Route::get('/adab/{adabID}/modules', [AttendanceController::class, 'getAdabModules']);
+Route::get('/student/{studentID}/modules', [AttendanceController::class, 'getStudentModules']);
+
+// Student enrollments (Nurin's)
+Route::get('/students/{studentID}/enrollments', [OpenRegistrationController::class, 'getMyEnrollments']);
+Route::get('/students/{studentID}/koq-bookings', [KoqController::class, 'getMyBookings']);
+>>>>>>> Stashed changes

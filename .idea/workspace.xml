@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="53cdd09a-ce34-4852-ae91-f946d00dbee7" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/umpgo-backend/app/Http/Controllers/AttendanceController.php" beforeDir="false" afterPath="$PROJECT_DIR$/umpgo-backend/app/Http/Controllers/AttendanceController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/umpgo-backend/app/Models/Section.php" beforeDir="false" afterPath="$PROJECT_DIR$/umpgo-backend/app/Models/Section.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/umpgo-backend/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/umpgo-backend/routes/api.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/umpgo_frontend/lib/config/api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/umpgo_frontend/lib/config/api.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/umpgo_frontend/lib/domain/student_model.dart" beforeDir="false" afterPath="$PROJECT_DIR$/umpgo_frontend/lib/domain/student_model.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/umpgo_frontend/lib/screens/TuitionFee/pay_feestudent.dart" beforeDir="false" afterPath="$PROJECT_DIR$/umpgo_frontend/lib/screens/TuitionFee/pay_feestudent.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/umpgo_frontend/lib/screens/TuitionFee/payment_historystudent.dart" beforeDir="false" afterPath="$PROJECT_DIR$/umpgo_frontend/lib/screens/TuitionFee/payment_historystudent.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/umpgo_frontend/lib/screens/TuitionFee/payment_historystudent22.dart" beforeDir="false" afterPath="$PROJECT_DIR$/umpgo_frontend/lib/screens/TuitionFee/payment_historystudent22.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/umpgo_frontend/lib/screens/adab_dashboard.dart" beforeDir="false" afterPath="$PROJECT_DIR$/umpgo_frontend/lib/screens/adab_dashboard.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/umpgo_frontend/lib/screens/curriculum/student/credit_claim.dart" beforeDir="false" afterPath="$PROJECT_DIR$/umpgo_frontend/lib/screens/curriculum/student/credit_claim.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/umpgo_frontend/lib/screens/curriculum/student/koq_module_booking.dart" beforeDir="false" afterPath="$PROJECT_DIR$/umpgo_frontend/lib/screens/curriculum/student/koq_module_booking.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/umpgo_frontend/lib/screens/curriculum/student/my_koq_booking.dart" beforeDir="false" afterPath="$PROJECT_DIR$/umpgo_frontend/lib/screens/curriculum/student/my_koq_booking.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/umpgo_frontend/lib/screens/login.dart" beforeDir="false" afterPath="$PROJECT_DIR$/umpgo_frontend/lib/screens/login.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/umpgo_frontend/lib/screens/student_dashboard.dart" beforeDir="false" afterPath="$PROJECT_DIR$/umpgo_frontend/lib/screens/student_dashboard.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/umpgo_frontend/lib/services/api_services.dart" beforeDir="false" afterPath="$PROJECT_DIR$/umpgo_frontend/lib/services/api_services.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/umpgo_frontend/linux/flutter/generated_plugin_registrant.cc" beforeDir="false" afterPath="$PROJECT_DIR$/umpgo_frontend/linux/flutter/generated_plugin_registrant.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/umpgo_frontend/linux/flutter/generated_plugins.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/umpgo_frontend/linux/flutter/generated_plugins.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/umpgo_frontend/macos/Flutter/GeneratedPluginRegistrant.swift" beforeDir="false" afterPath="$PROJECT_DIR$/umpgo_frontend/macos/Flutter/GeneratedPluginRegistrant.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/umpgo_frontend/windows/flutter/generated_plugin_registrant.cc" beforeDir="false" afterPath="$PROJECT_DIR$/umpgo_frontend/windows/flutter/generated_plugin_registrant.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/umpgo_frontend/windows/flutter/generated_plugins.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/umpgo_frontend/windows/flutter/generated_plugins.cmake" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "ainulmrdhiahh"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/nrndnaa/umpgo.git",
+    "accountId": "9d869eb3-232a-4da9-a971-6326ed43408a"
+  }
+}]]></component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 6
+}]]></component>
+  <component name="ProjectId" id="3FDnm4QdDvKeCPqcG860Hn16fL2" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "dart.analysis.tool.window.visible": "false",
+    "git-widget-placeholder": "master",
+    "kotlin-language-version-configured": "true",
+    "show.migrate.to.gradle.popup": "false"
+  }
+}]]></component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="53cdd09a-ce34-4852-ae91-f946d00dbee7" name="Changes" comment="" />
+      <created>1781618665930</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1781618665930</updated>
+    </task>
+    <servers />
+  </component>
+</project>

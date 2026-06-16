@@ -2,8 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:umpgo_frontend/domain/student_model.dart';
 import 'package:umpgo_frontend/widgets/stud_nav.dart';
 import 'package:umpgo_frontend/widgets/app_header.dart';
+<<<<<<< Updated upstream
 import 'OpenRegistration/mainOR.dart';
 import 'curriculum/student/curriculum_menu.dart';
+=======
+
+import 'package:umpgo_frontend/screens/OpenRegistration/mainOR.dart';
+
+import 'package:umpgo_frontend/screens/TuitionFee/payment_historystudent.dart';
+import 'package:umpgo_frontend/screens/TuitionFee/student_financial_detail.dart';
+import 'package:umpgo_frontend/screens/Attendance/SubjectList.dart';
+>>>>>>> Stashed changes
 
 class StudentDashboard extends StatelessWidget {
   final StudentModel student; // ← add this
@@ -69,7 +78,26 @@ class StudentDashboard extends StatelessWidget {
                         ),
                       ),
                     ),
+<<<<<<< Updated upstream
                     
+=======
+
+// Attendance
+_DashCard(
+  icon: Icons.calendar_month_rounded,
+  title: "Class Attendance",
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SubjectList(student: student),
+      ),
+    );
+  },
+),
+
+// Curriculum
+>>>>>>> Stashed changes
                     _DashCard(
                       icon: Icons.description_rounded,
                       title: "Curriculum",
