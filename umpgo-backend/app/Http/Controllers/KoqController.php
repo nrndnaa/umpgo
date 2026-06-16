@@ -7,38 +7,43 @@ use App\Models\KoqModule;
 use App\Models\ModuleEnrollment;
 use App\Models\CreditClaim;
 use App\Models\Student;
+use Carbon\Carbon;
 
 class KoqController extends Controller
 {
     // ─── STUDENT - MODULE BROWSING ──────────────────────────────
 
     public function getModules(Request $request)
-    {
-        $studentID = $request->query('studentID');
+{
+    $studentID = $request->query('studentID');
 
-        $modules = KoqModule::withCount('enrollments as filledSlots')
+    // 1. Dapatkan tarikh semester semasa
+    $now = Carbon::now();
+    if ($now->month >= 3 && $now->month <= 8) {
+        $start = Carbon::create($now->year, 3, 1)->startOfDay();
+        $end = Carbon::create($now->year, 8, 31)->endOfDay();
+    } else {
+        $start = Carbon::create($now->month >= 9 ? $now->year : $now->year - 1, 9, 1)->startOfDay();
+        $end = Carbon::create($now->month >= 9 ? $now->year + 1 : $now->year, 2, 28)->endOfDay();
+    }
+
+    // 2. Ambil data + Tapis semester & status
+    return response()->json(
+        KoqModule::withCount('enrollments as filledSlots')
+            ->whereBetween('startDate', [$start, $end]) // Tapis semester di sini
             ->get()
             ->filter(function ($module) use ($studentID) {
-                // Hide full modules
-                if ($module->filledSlots >= $module->maxSlots) {
-                    return false;
-                }
-                // Hide already registered modules
+                if ($module->filledSlots >= $module->maxSlots) return false;
                 if ($studentID) {
-                    $alreadyRegistered = ModuleEnrollment::where('moduleID', $module->moduleID)
+                    return !ModuleEnrollment::where('moduleID', $module->moduleID)
                         ->where('studentID', $studentID)
                         ->exists();
-                    if ($alreadyRegistered) {
-                        return false;
-                    }
                 }
                 return true;
             })
-            ->values();
-
-        return response()->json($modules);
-    }
-
+            ->values()
+    );
+}
     public function getStudentCats($studentID)
     {
         $totalCats = ModuleEnrollment::where('moduleenrollment.studentID', $studentID)
@@ -124,7 +129,16 @@ if ($currentSlots >= $module->maxSlots) {
         // 5. Update filledSlots
         $module->increment('filledSlots');
 
-        return response()->json(['message' => 'Successfully registered!', 'data' => $enrollment]);
+        $currentSemesterCount = ModuleEnrollment::where('studentID', $request->studentID)
+            ->whereBetween('enrolled_At', [$semStart, $semEnd])
+            ->count();
+
+        // Tukar return response untuk hantar data 'currentSemesterCount' ke Flutter
+        return response()->json([
+            'message' => 'Successfully registered!', 
+            'data' => $enrollment,
+            'currentSemesterCount' => $currentSemesterCount // <-- Hantar ke frontend
+        ]);
     }
 
     // ─── STUDENT - MY BOOKINGS ──────────────────────────────────
@@ -204,17 +218,30 @@ if ($currentSlots >= $module->maxSlots) {
         $month = date('n');
         $year  = date('Y');
 
+        // 1. Kekalkan if-else asal anda
         if ($month >= 9) {
+            $semStart = $year . '-09-01';
+            $semEnd   = ($year + 1) . '-02-28';
             $semester = 'SEMESTER I ACADEMIC SESSION ' . $year . '/' . ($year + 1);
         } elseif ($month <= 2) {
+            $semStart = ($year - 1) . '-09-01';
+            $semEnd   = $year . '-02-28';
             $semester = 'SEMESTER I ACADEMIC SESSION ' . ($year - 1) . '/' . $year;
         } else {
+            $semStart = $year . '-03-01';
+            $semEnd   = $year . '-08-31';
             $semester = 'SEMESTER II ACADEMIC SESSION ' . ($year - 1) . '/' . $year;
         }
 
-        $totalActivities      = KoqModule::count();
-        $totalEnrollment      = ModuleEnrollment::count();
-        $presentCount         = ModuleEnrollment::where('attendanceStatus', 'PRESENT')->count();
+        
+        $totalActivities = KoqModule::whereBetween('startDate', [$semStart, $semEnd])->count();
+        
+        $totalEnrollment = ModuleEnrollment::whereBetween('enrolled_At', [$semStart, $semEnd])->count();
+        
+        $presentCount = ModuleEnrollment::whereBetween('enrolled_At', [$semStart, $semEnd])
+            ->where('attendanceStatus', 'PRESENT')
+            ->count();
+
         $attendancePercentage = $totalEnrollment > 0
             ? round(($presentCount / $totalEnrollment) * 100) . '%'
             : '0%';

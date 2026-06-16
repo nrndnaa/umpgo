@@ -42,6 +42,11 @@ class StudentSeeder extends Seeder
             ['matricID' => 'CB23028', 'name' => 'Nurul Syazwani',     'email' => 'syazwani@student.ump.edu.my',   'yearOfStudy' => 'Year 1', 'programme' => 'Multimedia Software'],
             ['matricID' => 'CB23029', 'name' => 'Irfan Zikri',        'email' => 'irfan@student.ump.edu.my',      'yearOfStudy' => 'Year 3', 'programme' => 'Computer System & Networking'],
             ['matricID' => 'CB23030', 'name' => 'Ameera Husna',       'email' => 'ameera@student.ump.edu.my',     'yearOfStudy' => 'Year 2', 'programme' => 'Software Engineering'],
+            ['matricID' => 'CB23083', 'name' => 'Anis Najla',     'email' => 'cb23083@student.ump.edu.my',  'yearOfStudy' => 'Year 3', 'programme' => 'Cybersecurity'],
+            ['matricID' => 'CB23084', 'name' => 'Zhang Linghe',   'email' => 'cb23084@student.ump.edu.my',  'yearOfStudy' => 'Year 2', 'programme' => 'Multimedia and Graphic'],
+            ['matricID' => 'CB23085', 'name' => 'Tian Xi Wei',    'email' => 'cb23085@student.ump.edu.my',  'yearOfStudy' => 'Year 1', 'programme' => 'Network'],
+            ['matricID' => 'CB23086', 'name' => 'Ainul Mardhiah', 'email' => 'cb23086@student.ump.edu.my',  'yearOfStudy' => 'Year 2', 'programme' => 'Cybersecurity'],
+            ['matricID' => 'CB23087', 'name' => 'Sharmila',       'email' => 'cb23087@student.ump.edu.my',  'yearOfStudy' => 'Year 1', 'programme' => 'Multimedia and Graphic'],
         ];
 
         foreach ($students as $student) {
@@ -57,79 +62,5 @@ class StudentSeeder extends Seeder
             ]);
         }
 
-        DB::table('student')->insert([
-
-            [
-                'matricID'           => 'CB23083',
-                'name'               => 'Anis Najla',
-                'email'              => 'cb23083@student.ump.edu.my',
-                'password'           => bcrypt('pass123'),
-                'yearOfStudy'        => '3',
-                'programme'          => 'Cybersecurity',
-                'status'             => 'Active',
-                'outstandingBalance' => 0.00,
-            ],
-            [
-                'matricID'           => 'CB23084',
-                'name'               => 'Zhang Linghe',
-                'email'              => 'cb23084@student.ump.edu.my',
-                'password'           => bcrypt('pass123'),
-                'yearOfStudy'        => '2',
-                'programme'          => 'Multimedia and Graphic',
-                'status'             => 'Active',
-                'outstandingBalance' => 0.00,
-            ],
-            [
-                'matricID'           => 'CB23085',
-                'name'               => 'Tian Xi Wei',
-                'email'              => 'cb23085@student.ump.edu.my',
-                'password'           => bcrypt('pass123'),
-                'yearOfStudy'        => '1',
-                'programme'          => 'Network',
-                'status'             => 'Active',
-                'outstandingBalance' => 0.00,
-            ],
-            [
-                'matricID'           => 'CB23086',
-                'name'               => 'Ainul Mardhiah',
-                'email'              => 'cb23086@student.ump.edu.my',
-                'password'           => bcrypt('pass123'),
-                'yearOfStudy'        => '2',
-                'programme'          => 'Cybersecurity',
-                'status'             => 'Active',
-                'outstandingBalance' => 0.00,
-            ],
-            [
-                'matricID'           => 'CB23087',
-                'name'               => 'Sharmila',
-                'email'              => 'cb23087@student.ump.edu.my',
-                'password'           => bcrypt('pass123'),
-                'yearOfStudy'        => '1',
-                'programme'          => 'Multimedia and Graphic',
-                'status'             => 'Active',
-                'outstandingBalance' => 0.00,
-            ],
-        ]);
-
-        $studentID = DB::table('student')->insertGetId([
-            'matricID' => 'CB23107',
-            'name' => 'isha',
-            'email' => 'isha@student.ump.edu.my',
-            'password' => Hash::make('pass123'),
-            'yearOfStudy' => 'Year 1',
-            'programme' => 'Software Engineering',
-            'status' => 'Active',
-            'outstandingBalance' => 1500.00,
-        ]);
-
-        DB::table('feerecord')->insert([
-            'studentID' => $studentID,
-            'treasuryID' => 1,
-            'semester' => 'Semester 2 (2025/2026)',
-            'totalFee' => 1500.00,
-            'paidAmount' => 0.00,
-
-            'feeStatus' => 'Active',
-        ]);
-    }
+       }
 }

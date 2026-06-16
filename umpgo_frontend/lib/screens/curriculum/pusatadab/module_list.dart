@@ -76,11 +76,11 @@ class _ModuleListState extends State<ModuleList> {
             final y = startDate.year;
 
             String moduleSemester;
-            if (m >= 7 && m <= 12) {
-              // Sem I: July–December
+            if (m >= 9) {
               moduleSemester = 'SEMESTER I ACADEMIC SESSION $y/${y + 1}';
+            } else if (m <= 2) {
+              moduleSemester = 'SEMESTER I ACADEMIC SESSION ${y - 1}/$y';
             } else {
-              // Sem II: January–June
               moduleSemester = 'SEMESTER II ACADEMIC SESSION ${y - 1}/$y';
             }
 

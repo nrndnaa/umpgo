@@ -23,111 +23,103 @@ class _CurriculumMenuState extends State<CurriculumMenu> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Breadcrumb Header Banner
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            color: const Color(0xFF5B9BD5),
-            child: const Text(
-              'Menu > Curriculum',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Container(
+              width: double.infinity, 
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: const Color(0xFF5B9BD5),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: const Text(
+                "Menu > Curriculum",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                ),
               ),
             ),
           ),
 
-          // Main Menu Content (Scrollable to prevent overflow)
+          const SizedBox(height: 10),
           Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 children: [
-                  const SizedBox(height: 10),
-
                   _buildMenuCard(
                     icon: Icons.book_outlined,
                     title: 'KoQ Module Booking',
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => KoQModuleBooking(
-                          studentID: widget.student.studentID,
-                          matricID: widget.student.matricID,
-                          student: widget.student,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => KoQModuleBooking(
+                            studentID: widget.student.studentID,
+                            matricID: widget.student.matricID,
+                          ),
                         ),
-                      ),
-                    ),
+                      );
+                    },
                   ),
-
                   const SizedBox(height: 16),
-
                   _buildMenuCard(
                     icon: Icons.calendar_month_outlined,
                     title: 'My KoQ Booking',
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MyKoQBooking(
-                          studentID: widget.student.studentID,
-                          matricID: widget.student.matricID,
-                          student: widget.student,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MyKoQBooking(
+                            studentID: widget.student.studentID,
+                            matricID: widget.student.matricID,
+                          ),
                         ),
-                      ),
-                    ),
+                      );
+                    },
                   ),
-
                   const SizedBox(height: 16),
-
                   _buildMenuCard(
                     icon: Icons.assignment_outlined,
                     title: 'Credit Claim',
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CreditClaim(
-                          studentID: widget.student.studentID,
-                          matricID: widget.student.matricID,
-                          student: widget.student,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CreditClaim(
+                            studentID: widget.student.studentID,
+                            matricID: widget.student.matricID,
+                          ),
                         ),
-                      ),
-                    ),
+                      );
+                    },
                   ),
-
-                  const SizedBox(height: 32),
-
-                  // Back Button
+                  const SizedBox(height: 24),
                   SizedBox(
-                    width: 140,
-                    height: 44,
+                    width: 120,
                     child: ElevatedButton(
                       onPressed: () => Navigator.pop(context),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF5B9BD5),
-                        elevation: 0,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                       ),
                       child: const Text(
                         'Back',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                        ),
+                        style: TextStyle(color: Colors.white),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
                 ],
               ),
             ),
           ),
         ],
       ),
-      bottomNavigationBar: StudNav(student: widget.student),
+      bottomNavigationBar: const StudNav(),
     );
   }
 
@@ -140,26 +132,24 @@ class _CurriculumMenuState extends State<CurriculumMenu> {
       onTap: onTap,
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+        padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           color: const Color(0xFFD6E8F8),
           borderRadius: BorderRadius.circular(15),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 6,
+              offset: const Offset(0, 3),
             ),
           ],
         ),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 44, color: const Color(0xFF5B9BD5)),
-            const SizedBox(height: 12),
+            Icon(icon, size: 48, color: const Color(0xFF5B9BD5)),
+            const SizedBox(height: 8),
             Text(
               title,
-              textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
