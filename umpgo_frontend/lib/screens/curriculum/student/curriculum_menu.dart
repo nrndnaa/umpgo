@@ -26,7 +26,7 @@ class _CurriculumMenuState extends State<CurriculumMenu> {
           Padding(
             padding: const EdgeInsets.all(16),
             child: Container(
-              width: double.infinity, // 🔥 THIS is what makes it static
+              width: double.infinity, 
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                 color: const Color(0xFF5B9BD5),

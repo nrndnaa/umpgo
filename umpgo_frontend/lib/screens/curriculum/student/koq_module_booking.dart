@@ -111,10 +111,12 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
                   }),
                 );
                 if (response.statusCode == 200) {
+                  final responseData = jsonDecode(response.body);
+                  
+                  final registeredCount = responseData['currentSemesterCount'] ?? 1;
                   setState(() {
                     bookedModuleIDs.add(moduleID);
                   });
-                  final registeredCount = bookedModuleIDs.length;
                   ScaffoldMessenger.of(pageContext).showSnackBar(
                     SnackBar(
                       content: Text(
