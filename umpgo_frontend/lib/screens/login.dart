@@ -72,10 +72,10 @@ class LoginController {
       } else {
         return data['message'] ?? 'Login failed. Please try again.';
       }
-    } catch (e) {
-        print('LOGIN ERROR: $e'); // add this
-      return 'Could not connect to server. Check your network.';
-    }
+  }  catch (e) {
+  print(e);
+  return 'Error: $e';
+}
   }
 
   static void _navigateToDashboard(
@@ -107,6 +107,9 @@ class LoginController {
          dashboard = AdabDashboard(adab: adab); 
          break;
         default:
+        dashboard = AdabDashboard(adab: adab, student: StudentModel.empty());
+        break;
+      default:
         return;
     }
 

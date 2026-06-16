@@ -11,10 +11,9 @@ import 'package:umpgo_frontend/widgets/stud_nav.dart';
 import 'package:umpgo_frontend/widgets/app_header.dart';
 
 import 'package:umpgo_frontend/screens/OpenRegistration/mainOR.dart';
-import 'package:umpgo_frontend/screens/curriculum/student/curriculum_menu.dart';
 
-//import 'package:umpgo_frontend/screens/TuitionFee/payment_historystudent.dart';
-//import 'package:umpgo_frontend/screens/TuitionFee/student_financial_detail.dart';
+import 'package:umpgo_frontend/screens/TuitionFee/payment_historystudent.dart';
+import 'package:umpgo_frontend/screens/TuitionFee/student_financial_detail.dart';
 
 class StudentDashboard extends StatelessWidget {
   final StudentModel student;
@@ -50,7 +49,7 @@ class StudentDashboard extends StatelessWidget {
 
         final fee = FeeRecord.fromJson(jsonDecode(response.body));
 
-        /* CHECK OUTSTANDING BALANCE
+        // CHECK OUTSTANDING BALANCE
         if (context.mounted) {
           if (fee.outstanding <= 0) {
             Navigator.push(
@@ -68,8 +67,8 @@ class StudentDashboard extends StatelessWidget {
                     StudentFinancialDetail(student: student, fee: fee),
               ),
             );
-          } 
-        } */
+          }
+        }
       }
       // NO FEE RECORD
       else {
@@ -88,6 +87,7 @@ class StudentDashboard extends StatelessWidget {
       print(e);
 
       if (context.mounted) {
+        // Close loading safely
         if (Navigator.canPop(context)) {
           Navigator.pop(context);
         }
@@ -135,8 +135,10 @@ class StudentDashboard extends StatelessWidget {
                     // Banner Image
                     ClipRRect(
                       borderRadius: BorderRadius.circular(15),
+
                       child: Image.network(
                         'https://www.studymalaysiainfo.com/wp-content/uploads/2016/11/Uni-Pahang-1.jpg',
+
                         height: 150,
                         width: double.infinity,
                         fit: BoxFit.cover,
@@ -148,7 +150,9 @@ class StudentDashboard extends StatelessWidget {
                     // Tuition Fee
                     _DashCard(
                       icon: Icons.school_rounded,
+
                       title: "Tuition Fee",
+
                       onTap: () => _goToTuitionFee(context),
                     ),
 
@@ -160,22 +164,27 @@ class StudentDashboard extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => MainOR(student: student),
+                            builder: (_) => MainOR(
+                              student: student,
+                            ), //  Passed successfully!
                           ),
                         );
                       },
                     ),
 
-                    // Class Attendance
+                    // Attendance
                     _DashCard(
                       icon: Icons.calendar_month_rounded,
+
                       title: "Class Attendance",
+
                       onTap: () {},
                     ),
 
                     // Curriculum
                     _DashCard(
                       icon: Icons.description_rounded,
+
                       title: "Curriculum",
                       onTap: () {
                         Navigator.push(
@@ -195,8 +204,7 @@ class StudentDashboard extends StatelessWidget {
           ],
         ),
       ),
-
-        bottomNavigationBar: const StudNav(),
+      bottomNavigationBar: StudNav(student: student),
     );
   }
 }
@@ -222,11 +230,15 @@ class _DashCard extends StatelessWidget {
 
       decoration: BoxDecoration(
         color: const Color(0xFFD6E8F8),
+
         borderRadius: BorderRadius.circular(15),
+
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.08),
+
             blurRadius: 6,
+
             offset: const Offset(0, 3),
           ),
         ],
@@ -234,18 +246,26 @@ class _DashCard extends StatelessWidget {
 
       child: Material(
         color: Colors.transparent,
+
         child: InkWell(
           onTap: onTap,
+
           borderRadius: BorderRadius.circular(15),
+
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 25),
+
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
+
               children: [
                 Icon(icon, size: 50, color: const Color(0xFF1E6FBF)),
+
                 const SizedBox(height: 12),
+
                 Text(
                   title,
+
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,

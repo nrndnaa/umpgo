@@ -1,13 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:umpgo_frontend/domain/treasury_model.dart';
 import 'package:umpgo_frontend/widgets/app_header.dart';
+import 'package:umpgo_frontend/screens/TuitionFee/set_due_date_screen.dart';
+import 'package:umpgo_frontend/screens/TuitionFee/feeListStudent.dart';
 
-class TreasuryDashboard extends StatelessWidget {
-   final TreasuryModel treasury;
+// REMOVE THIS if TreasuryModel does not exist yet
+// import 'package:umpgo_frontend/models/treasury_model.dart';
 
-  const TreasuryDashboard({super.key, required this.treasury});
+class TreasuryDashboard extends StatefulWidget {
+  final TreasuryModel treasury;
 
-  // Theme Colors from your image
+  const TreasuryDashboard({
+    super.key,
+    required this.treasury,
+  });
+
+  @override
+  State<TreasuryDashboard> createState() => _TreasuryDashboardState();
+}
+
+class _TreasuryDashboardState extends State<TreasuryDashboard> {
   static const Color primaryPurple = Color(0xFFD161E9);
   static const Color lightPurple = Color(0xFFE9ADFF);
   static const Color bgGrey = Color(0xFFF5F5F5);
@@ -16,7 +28,7 @@ class TreasuryDashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgGrey,
-      appBar: const AppHeader(), // Using your existing header
+      appBar: const AppHeader(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -24,26 +36,35 @@ class TreasuryDashboard extends StatelessWidget {
           children: [
             const Text(
               "Welcome, Irfah Misarah",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
             ),
+
             const SizedBox(height: 15),
 
             // Campus Image Banner
             ClipRRect(
               borderRadius: BorderRadius.circular(15),
               child: Image.network(
-                'https://www.studymalaysiainfo.com/wp-content/uploads/2016/11/Uni-Pahang-1.jpg', // Replace with your UMPSA gate image
+                'https://www.studymalaysiainfo.com/wp-content/uploads/2016/11/Uni-Pahang-1.jpg',
                 height: 150,
                 width: double.infinity,
                 fit: BoxFit.cover,
               ),
             ),
+
             const SizedBox(height: 25),
 
             const Text(
               "Current Status",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
+
             const SizedBox(height: 20),
 
             // Status Cards Row
@@ -55,36 +76,59 @@ class TreasuryDashboard extends StatelessWidget {
                 _buildStatusCard("6296", "Total"),
               ],
             ),
+
             const SizedBox(height: 30),
 
             const Text(
               "Category",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
+
             const SizedBox(height: 15),
 
-            // Large Category Buttons
+            // List of Subject button
             _buildCategoryButton(
-              icon: Icons.person_search, // Matches the student-with-money icon
-              label: "List of Subject",
+              icon: Icons.person_search,
+              label: "List Students",
               color: lightPurple,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const ListOfSubjectScreen(),
+                  ),
+                );
+              },
             ),
+
             const SizedBox(height: 15),
 
+            // Set Due Date button
             _buildDateButton(
               date: "23.3.2026",
               semester: "Semester 2 (2025/2026)",
               label: "Set Due Date",
               color: lightPurple,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => SetDueDateScreen(),
+                  ),
+                );
+              },
             ),
           ],
         ),
       ),
+
       bottomNavigationBar: _buildTreasuryNav(),
     );
   }
 
-  // Widget for the 3 small status boxes
   Widget _buildStatusCard(String count, String label) {
     return Container(
       width: 100,
@@ -92,8 +136,12 @@ class TreasuryDashboard extends StatelessWidget {
       decoration: BoxDecoration(
         color: primaryPurple,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 4,
+            offset: Offset(0, 2),
+          ),
         ],
       ),
       child: Column(
@@ -119,81 +167,104 @@ class TreasuryDashboard extends StatelessWidget {
     );
   }
 
-  // Widget for the "List of Subject" button
   Widget _buildCategoryButton({
     required IconData icon,
     required String label,
     required Color color,
+    required VoidCallback onTap,
   }) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
-        ],
-      ),
-      child: Column(
-        children: [
-          Icon(icon, size: 50, color: Colors.black),
-          const SizedBox(height: 10),
-          Text(
-            label,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-        ],
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 4,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Icon(
+              icon,
+              size: 50,
+              color: Colors.black,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  // Widget for the Date button
   Widget _buildDateButton({
     required String date,
     required String semester,
     required String label,
     required Color color,
+    required VoidCallback onTap,
   }) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
-        ],
-      ),
-      child: Column(
-        children: [
-          Text(
-            date,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.red,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 4,
+              offset: Offset(0, 2),
             ),
-          ),
-          Text(
-            semester,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Colors.red,
+          ],
+        ),
+        child: Column(
+          children: [
+            Text(
+              date,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.red,
+              ),
             ),
-          ),
-          const SizedBox(height: 5),
-          Text(
-            label,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-        ],
+            Text(
+              semester,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.red,
+              ),
+            ),
+            const SizedBox(height: 5),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  // Custom Nav Bar for Treasury
   Widget _buildTreasuryNav() {
     return Container(
       margin: const EdgeInsets.all(15),

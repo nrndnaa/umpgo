@@ -62,7 +62,5 @@ class StudentSeeder extends Seeder
             ]);
         }
 
-        
-        
-    }
+       }
 }

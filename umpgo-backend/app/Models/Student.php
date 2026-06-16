@@ -14,23 +14,14 @@ class Student extends Authenticatable
         'name',
         'email',
         'password',
-        'programme',
-        'faculty',
         'yearOfStudy',
+        'programme',
         'status',
+        'outstandingBalance',
     ];
 
-    protected $hidden = [
-        'password',
-    ];
-
-    public function enrollments()
+    public function feeRecords()
     {
-        return $this->hasMany(Enrollment::class, 'studentID', 'studentID');
-    }
-
-    public function creditClaim()
-    {
-        return $this->hasOne(CreditClaim::class, 'studentID', 'studentID');
+        return $this->hasMany(FeeRecord::class, 'studentID');
     }
 }

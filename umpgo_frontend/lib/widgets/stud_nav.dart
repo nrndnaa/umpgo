@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:umpgo_frontend/domain/student_model.dart';
+import 'package:umpgo_frontend/screens/student_dashboard.dart';
 
 class StudNav extends StatelessWidget {
-  const StudNav({super.key});
+  final StudentModel student;
+
+  const StudNav({super.key, required this.student});
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +23,13 @@ class StudNav extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.home),
               onPressed: () {
-                // Pop all routes back to dashboard
-                Navigator.popUntil(context, (route) => route.isFirst);
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => StudentDashboard(student: student),
+                  ),
+                  (route) => false,
+                );
               },
             ),
             IconButton(icon: const Icon(Icons.settings), onPressed: () {}),
