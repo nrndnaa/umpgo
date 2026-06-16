@@ -186,8 +186,14 @@ class StudentDashboard extends StatelessWidget {
                       icon: Icons.description_rounded,
 
                       title: "Curriculum",
-
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => CurriculumMenu(student: student),
+                          ),
+                        );
+                      },
                     ),
 
                     const SizedBox(height: 10),
