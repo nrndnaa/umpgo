@@ -155,34 +155,40 @@ Widget _buildWarningBanner() {
   );
 }
 
-  Widget _buildBreadcrumb() {
-    return Container(
-      width: double.infinity,
-      color: primaryBlue,
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 10,
+Widget _buildBreadcrumb() {
+  return Container(
+    width: double.infinity,
+    margin: const EdgeInsets.only(
+      left: 8,
+      right: 8,
+      top: 10,
+      bottom: 10,
+    ),
+    padding: const EdgeInsets.symmetric(
+      horizontal: 18,
+      vertical: 10,
+    ),
+    decoration: BoxDecoration(
+      color: const Color.fromARGB(255, 116, 190, 255),
+      borderRadius: BorderRadius.circular(15),
+      boxShadow: const [
+        BoxShadow(
+          color: Colors.black12,
+          blurRadius: 3,
+          offset: Offset(0, 2),
+        ),
+      ],
+    ),
+    child: const Text(
+      'Menu > Tuition Fee',
+      style: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        color: Colors.black,
       ),
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 8,
-        ),
-        decoration: BoxDecoration(
-          color: lightBlue,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: const Text(
-          'Menu > Tuition Fee',
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ),
-    );
-  }
-
+    ),
+  );
+}
   Widget _buildDetailCard(double outstanding) {
 
     return Container(

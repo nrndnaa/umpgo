@@ -144,23 +144,32 @@ bool isLoading = true;
 
   // ── Breadcrumb ─────────────────────────────────────────────────────────────
   Widget _buildBreadcrumb() {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-      decoration: BoxDecoration(
-        color: primaryPurple,
-        borderRadius: BorderRadius.circular(8),
+  return Container(
+    width: double.infinity,
+    margin: const EdgeInsets.fromLTRB(
+      8,
+      12,
+      8,
+      0,
+    ),
+    padding: const EdgeInsets.symmetric(
+      horizontal: 16,
+      vertical: 10,
+    ),
+    decoration: BoxDecoration(
+      color: primaryPurple,
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: const Text(
+      'Menu > View Lists',
+      style: TextStyle(
+        color: Colors.black,
+        fontWeight: FontWeight.w600,
+        fontSize: 14,
       ),
-      child: const Text(
-        'Menu > View Lists',
-        style: TextStyle(
-          color: Color.fromARGB(255, 10, 10, 10),
-          fontWeight: FontWeight.w600,
-          fontSize: 14,
-        ),
-      ),
-    );
-  }
+    ),
+  );
+}
 
   // ── Search bar ─────────────────────────────────────────────────────────────
   Widget _buildSearchBar() {
@@ -293,9 +302,9 @@ bool isLoading = true;
         0: FixedColumnWidth(28),  // No.
         1: FixedColumnWidth(72),  // Matric ID
         2: FlexColumnWidth(),      // Name
-        3: FixedColumnWidth(52),  // Status
+        3: FixedColumnWidth(75),  // Status
         4: FixedColumnWidth(58),  // Balance
-        5: FixedColumnWidth(42),  // Action
+        5: FixedColumnWidth(80),  // Action
       },
       children: [
         _buildTableHeader(showAction: showAction),
@@ -359,24 +368,39 @@ bool isLoading = true;
       );
 
   Widget _statusBadge(String status) {
-    final isPaid = status.toUpperCase() == 'PAID';
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-      decoration: BoxDecoration(
-        color: isPaid ? Colors.green : Colors.red,
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Text(
-        status.toUpperCase(),
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 10,
-          fontWeight: FontWeight.bold,
+  final isPaid = status.toUpperCase() == 'PAID';
+
+  return Container(
+    padding: const EdgeInsets.symmetric(
+      horizontal: 10,
+      vertical: 4,
+    ),
+    decoration: BoxDecoration(
+      color: isPaid
+          ? const Color(0xFFE7F6E7)
+          : const Color(0xFFF8E3E3),
+      borderRadius: BorderRadius.circular(20),
+      boxShadow: const [
+        BoxShadow(
+          color: Colors.black12,
+          blurRadius: 3,
+          offset: Offset(0, 1),
         ),
-        textAlign: TextAlign.center,
+      ],
+    ),
+    child: Text(
+      status.toUpperCase(),
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        color: isPaid
+            ? Colors.green.shade700
+            : Colors.red.shade700,
+        fontSize: 10,
+        fontWeight: FontWeight.bold,
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _viewButton(StudentFeeRecord r) {
     return GestureDetector(
@@ -398,21 +422,31 @@ bool isLoading = true;
           ),
         );
       },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        decoration: BoxDecoration(
-          color: primaryPurple,
-          borderRadius: BorderRadius.circular(6),
-        ),
-        child: const Text(
-          'View',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 11,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
+child: Container(
+  width: 55,
+  height: 24,
+  alignment: Alignment.center,
+
+  decoration: BoxDecoration(
+    color: const Color(0xFF4CAF50),
+    borderRadius: BorderRadius.circular(20),
+       boxShadow: const [
+         BoxShadow(
+      color: Colors.black12,
+      blurRadius: 3,
+      offset: Offset(0, 1),
+    ),
+  ],
+),
+         child: const Text(
+    'View',
+    style: TextStyle(
+      color: Colors.white,
+      fontSize: 10,
+      fontWeight: FontWeight.bold,
+    ),
+  ),
+),
     );
   }
 
