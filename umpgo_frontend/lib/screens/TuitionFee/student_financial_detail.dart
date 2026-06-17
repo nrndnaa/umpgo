@@ -30,6 +30,34 @@ class _StudentFinancialDetailState
   static const Color dueYellow = Color(0xFFFFD700);
   static const Color payBlue = Color(0xFF42A5F5);
 
+bool showWarning = false;
+
+@override
+void initState() {
+  super.initState();
+
+  final outstanding =
+      widget.fee.totalFee - widget.fee.paidAmount;
+
+  if (outstanding > 0) {
+
+    showWarning = true;
+
+    Future.delayed(
+      const Duration(seconds: 3),
+      () {
+        if (mounted) {
+          setState(() {
+            showWarning = false;
+          });
+        }
+      },
+    );
+  }
+}
+
+
+
   @override
   Widget build(BuildContext context) {
 
@@ -42,12 +70,15 @@ class _StudentFinancialDetailState
         child: Column(
           children: [
 
-            const AppHeader(),
+        const AppHeader(),
 
-            _buildBreadcrumb(),
+_buildBreadcrumb(),
 
-            Expanded(
-              child: SingleChildScrollView(
+if (showWarning)
+  _buildWarningBanner(),
+
+Expanded(
+  child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 20,
                   vertical: 20,
@@ -63,6 +94,66 @@ class _StudentFinancialDetailState
       ),
     );
   }
+
+Widget _buildWarningBanner() {
+  return Container(
+    margin: const EdgeInsets.symmetric(
+      horizontal: 55,
+      vertical: 10,
+    ),
+    padding: const EdgeInsets.symmetric(
+      horizontal: 16,
+      vertical: 12,
+    ),
+    decoration: BoxDecoration(
+      color: const Color(0xFFF8DCDC),
+      borderRadius: BorderRadius.circular(12),
+      boxShadow: const [
+        BoxShadow(
+          color: Colors.black12,
+          blurRadius: 4,
+          offset: Offset(0, 2),
+        ),
+      ],
+    ),
+    child: Column(
+      children: [
+        const Icon(
+          Icons.warning_amber_rounded,
+          color: Colors.red,
+          size: 35,
+        ),
+
+        const SizedBox(height: 4),
+
+        RichText(
+          textAlign: TextAlign.center,
+          text: TextSpan(
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: 14,
+            ),
+            children: [
+              const TextSpan(
+                text: 'Pay Your Fee before ',
+              ),
+              TextSpan(
+                text: widget.fee.dueDate,
+                style: const TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const TextSpan(
+                text: ' !',
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
+}
 
   Widget _buildBreadcrumb() {
     return Container(
@@ -105,17 +196,17 @@ class _StudentFinancialDetailState
         vertical: 24,
       ),
       child: Column(
-        children: [
+  children: [
 
-          const Text(
-            'Student Financial Detail',
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+    const Text(
+      'Student Financial Detail',
+      style: TextStyle(
+        fontSize: 17,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
 
-          const SizedBox(height: 20),
+    const SizedBox(height: 20),
 
           Container(
             width: double.infinity,

@@ -206,16 +206,58 @@ class _SetDueDateScreenState extends State<SetDueDateScreen> {
 
     if (response.statusCode == 201) {
 
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Due date set successfully!'),
-            backgroundColor: Color(0xFFD161E9),
-          ),
-        );
+if (mounted) {
 
-        Navigator.pop(context);
-      }
+  await showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (_) => AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+
+          const Icon(
+            Icons.check_circle_outline,
+            color: Colors.green,
+            size: 60,
+          ),
+
+          const SizedBox(height: 12),
+
+          const Text(
+            'Due Date Has Been Set !',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          SizedBox(
+            width: 100,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('OK'),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+
+  Navigator.pop(context);
+}
 
     } else {
 

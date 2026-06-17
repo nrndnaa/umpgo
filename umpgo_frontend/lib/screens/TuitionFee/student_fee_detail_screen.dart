@@ -41,115 +41,156 @@ class StudentFeeDetailScreen extends StatelessWidget {
       backgroundColor: bgGrey,
       appBar: const AppHeader(),
       body: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-          child: Container(
-            decoration: BoxDecoration(
-              color: lightPurple,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 8,
-                  offset: Offset(0, 4),
+  child: Padding(
+    padding: const EdgeInsets.symmetric(
+      horizontal: 20,
+      vertical: 24,
+    ),
+
+    child: Container(
+      decoration: BoxDecoration(
+        color: lightPurple,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 8,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+
+      padding: const EdgeInsets.all(12),
+
+      child: Container(
+        width: double.infinity,
+
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+        ),
+
+        padding: const EdgeInsets.all(18),
+
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+
+            // Student Card
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 14,
+              ),
+              decoration: BoxDecoration(
+                color: cardWhite,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: primaryPurple.withOpacity(0.3),
                 ),
-              ],
-            ),
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // ── Student identity card ──────────────────────────────────
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 14),
-                  decoration: BoxDecoration(
-                    color: cardWhite,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: primaryPurple.withOpacity(0.3)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.person_outline,
+                    size: 42,
+                    color: Colors.black54,
                   ),
-                  child: Row(
+
+                  const SizedBox(width: 14),
+
+                  Column(
+                    crossAxisAlignment:
+                        CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.person_outline,
-                          size: 42, color: Colors.black54),
-                      const SizedBox(width: 14),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            detail.matricId,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 3),
-                          Text(
-                            detail.name,
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
+                      Text(
+                        detail.matricId,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight:
+                              FontWeight.bold,
+                        ),
+                      ),
+
+                      const SizedBox(height: 3),
+
+                      Text(
+                        detail.name,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight:
+                              FontWeight.w600,
+                        ),
                       ),
                     ],
                   ),
-                ),
-
-                const SizedBox(height: 20),
-
-                // ── Fee detail rows ────────────────────────────────────────
-                _buildDetailRow(
-                  'Total Fee :',
-                  'RM${detail.totalFee.toStringAsFixed(2)}',
-                ),
-                const SizedBox(height: 10),
-                _buildDetailRow(
-                  'Paid Amount :',
-                  'RM ${detail.paidAmount.toStringAsFixed(2)}',
-                ),
-                const SizedBox(height: 10),
-                _buildDetailRow(
-                  'Outstanding Balance :',
-                  'RM ${detail.outstandingBalance.toStringAsFixed(2)}',
-                ),
-                const SizedBox(height: 10),
-                _buildDetailRow('Date :', detail.date),
-                const SizedBox(height: 10),
-                _buildDetailRow('Semester', ': ${detail.semester}'),
-
-                const SizedBox(height: 28),
-
-                // ── Back button ────────────────────────────────────────────
-                SizedBox(
-                  width: 140,
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: primaryPurple,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      elevation: 2,
-                    ),
-                    child: const Text(
-                      'Back',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
+
+            const SizedBox(height: 20),
+
+            _buildDetailRow(
+              'Total Fee :',
+              'RM${detail.totalFee.toStringAsFixed(2)}',
+            ),
+
+            const SizedBox(height: 10),
+
+            _buildDetailRow(
+              'Paid Amount :',
+              'RM${detail.paidAmount.toStringAsFixed(2)}',
+            ),
+
+            const SizedBox(height: 10),
+
+            _buildDetailRow(
+              'Outstanding Balance :',
+              'RM${detail.outstandingBalance.toStringAsFixed(2)}',
+            ),
+
+            const SizedBox(height: 10),
+
+            _buildDetailRow(
+              'Date :',
+              detail.date,
+            ),
+
+            const SizedBox(height: 10),
+
+            _buildDetailRow(
+              'Semester :',
+              detail.semester,
+            ),
+
+            const SizedBox(height: 28),
+
+            SizedBox(
+              width: 140,
+              child: ElevatedButton(
+                onPressed: () =>
+                    Navigator.pop(context),
+
+                style:
+                    ElevatedButton.styleFrom(
+                  backgroundColor:
+                      primaryPurple,
+                  foregroundColor:
+                      Colors.white,
+                ),
+
+                child: const Text(
+                  'Back',
+                ),
+              ),
+            ),
+          ],
         ),
       ),
+    ),
+  ),
+),
       bottomNavigationBar: _buildNav(context),
     );
   }

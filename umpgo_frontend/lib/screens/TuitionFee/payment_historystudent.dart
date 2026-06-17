@@ -12,6 +12,8 @@ import 'package:umpgo_frontend/domain/payment_model.dart';
 import 'package:umpgo_frontend/widgets/app_header.dart';
 import 'package:umpgo_frontend/widgets/stud_nav.dart';
 
+import 'package:umpgo_frontend/screens/TuitionFee/payreceipt.dart';
+
 class PaymentHistoryStudent extends StatefulWidget {
   final StudentModel student;
   final FeeRecord fee;
@@ -250,63 +252,38 @@ class _PaymentHistoryStudentState
                         ),
 
                         DataCell(
-                          ElevatedButton(
-                            style:
-                                ElevatedButton
-                                    .styleFrom(
-                              backgroundColor:
-                                  Colors.green,
-                            ),
+                          SizedBox(
+  width: 55,
+  height: 30,
+  child: ElevatedButton(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Colors.green,
+      padding: EdgeInsets.zero,
+    ),
 
-                            onPressed: () {
+                           onPressed: () {
 
-                              showDialog(
-                                context:
-                                    context,
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => PayReceipt(
+        student: widget.student,
+        fee: widget.fee,
+        payment: payment,
+      ),
+    ),
+  );
 
-                                builder: (_) =>
-                                    AlertDialog(
-                                  title:
-                                      const Text(
-                                    'Payment Detail',
-                                  ),
-
-                                  content:
-                                      Column(
-                                    mainAxisSize:
-                                        MainAxisSize
-                                            .min,
-
-                                    children: [
-
-                                      Text(
-                                        'Amount: RM${payment.amount.toStringAsFixed(2)}',
-                                      ),
-
-                                      Text(
-                                        'Method: ${payment.paymentMethod}',
-                                      ),
-
-                                      Text(
-                                        'Status: ${payment.paymentStatus}',
-                                      ),
-
-                                      Text(
-                                        'Date: ${payment.paidAt}',
-                                      ),
-
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-
-                            child:
-                                const Text(
-                              'View',
-                            ),
+},
+                            child: const Text(
+  'View',
+  style: TextStyle(
+    fontSize: 10,
+  ),
+),
                           ),
                         ),
+                        )
 
                       ],
                     );
