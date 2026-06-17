@@ -4,6 +4,7 @@ import 'package:umpgo_frontend/domain/section_model.dart';
 import 'package:umpgo_frontend/widgets/app_header.dart';
 import 'package:umpgo_frontend/widgets/reg_nav.dart';
 import 'package:umpgo_frontend/screens/OpenRegistration/listNameOR.dart';
+import 'package:umpgo_frontend/domain/facultyregistrar_model.dart';
 
 // ─── Theme ────────────────────────────────────────────────────────────────────
 class _C {
@@ -21,7 +22,12 @@ class _C {
 // ─── Screen ───────────────────────────────────────────────────────────────────
 class ListSectionOR extends StatelessWidget {
   final Subject subject;
-  const ListSectionOR({super.key, required this.subject});
+  final FacultyRegistrar registrar;
+  const ListSectionOR({
+    super.key,
+    required this.subject,
+    required this.registrar,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -150,14 +156,16 @@ class ListSectionOR extends StatelessWidget {
                             itemCount: subject.sections.length,
                             separatorBuilder: (_, __) =>
                                 const SizedBox(height: 12),
-                            itemBuilder: (_, i) =>
-                                _SectionCard(section: subject.sections[i]),
+                            itemBuilder: (_, i) => _SectionCard(
+                              section: subject.sections[i],
+                              registrar: registrar, // ← add this
+                            ),
                           ),
                   ),
                 ],
               ),
             ),
-            const RegNav(),
+            RegNav(registrar: registrar),
           ],
         ),
       ),
@@ -228,10 +236,14 @@ class _Breadcrumb extends StatelessWidget {
 }
 
 // ─── Section card ─────────────────────────────────────────────────────────────
+// ─── Section card ─────────────────────────────────────────────────────────────
 class _SectionCard extends StatelessWidget {
   final SectionModel section;
-  const _SectionCard({required this.section});
-
+  final FacultyRegistrar registrar; // ← add this
+  const _SectionCard({
+    required this.section,
+    required this.registrar, // ← add this
+  });
   @override
   Widget build(BuildContext context) {
     final isFull = section.isFull;
@@ -315,7 +327,12 @@ class _SectionCard extends StatelessWidget {
               ),
               onPressed: () => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => ListNameOR(section: section)),
+                MaterialPageRoute(
+                  builder: (_) => ListNameOR(
+                    section: section,
+                    registrar: registrar, // ← add this
+                  ),
+                ),
               ),
               child: const Text(
                 "Details",

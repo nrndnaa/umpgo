@@ -11,10 +11,7 @@ import '../../widgets/adab_nav.dart';
 class AdabDashboard extends StatefulWidget {
   final PusatAdabModel adab;
 
-  const AdabDashboard({
-    super.key, 
-    required this.adab
-  });
+  const AdabDashboard({super.key, required this.adab});
 
   @override
   State<AdabDashboard> createState() => _AdabDashboardState();
@@ -42,11 +39,11 @@ class _AdabDashboardState extends State<AdabDashboard> {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         setState(() {
-  totalActivities = int.tryParse('${data['totalActivities']}') ?? 0;
-  totalEnrollment = int.tryParse('${data['totalEnrollment']}') ?? 0;
-  attendancePercentage = '${data['attendancePercentage'] ?? '0'}';
-  approvedClaims = int.tryParse('${data['approvedClaims']}') ?? 0;
-});
+          totalActivities = int.tryParse('${data['totalActivities']}') ?? 0;
+          totalEnrollment = int.tryParse('${data['totalEnrollment']}') ?? 0;
+          attendancePercentage = '${data['attendancePercentage'] ?? '0'}';
+          approvedClaims = int.tryParse('${data['approvedClaims']}') ?? 0;
+        });
       }
     } catch (e) {
       print('Error: $e');
@@ -136,10 +133,11 @@ class _AdabDashboardState extends State<AdabDashboard> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ModuleList(adab: widget.adab),
+                                builder: (context) =>
+                                    ModuleList(adab: widget.adab),
                               ),
                             ).then((_) {
-                              fetchDashboardStats(); 
+                              fetchDashboardStats();
                             });
                           },
                         ),
@@ -153,7 +151,8 @@ class _AdabDashboardState extends State<AdabDashboard> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const CreditClaimApplication(),
+                                builder: (context) =>
+                                    const CreditClaimApplication(),
                               ),
                             );
                           },
@@ -179,7 +178,8 @@ class _AdabDashboardState extends State<AdabDashboard> {
                 ],
               ),
             ),
-      bottomNavigationBar: const AdabNav(), // Menggunakan AdabNav mengikut menu asal
+      bottomNavigationBar:
+          const AdabNav(), // Menggunakan AdabNav mengikut menu asal
     );
   }
 
@@ -193,7 +193,11 @@ class _AdabDashboardState extends State<AdabDashboard> {
         Text(
           label,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 12, color: Colors.black87, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            fontSize: 12,
+            color: Colors.black87,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ],
     );
@@ -223,81 +227,6 @@ class _AdabDashboardState extends State<AdabDashboard> {
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
             ),
-<<<<<<< HEAD
-=======
-
-            const SizedBox(height: 12),
-
-            // Banner
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Container(
-                height: 90,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: Colors.blue[200],
-                ),
-                child: const Center(
-                  child: Text(
-                    "UMPGo Banner",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 14),
-
-            // Cards
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  children: [
-                    DashboardCard(
-                      icon: Icons.account_balance_wallet,
-                      title: "Tuition Fee",
-                      onTap: () {},
-                    ),
-                    DashboardCard(
-                      icon: Icons.menu_book,
-                      title: "Open Registration",
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                MainOR(student: widget.student),
-                          ),
-                        );
-                      },
-                    ),
-                    DashboardCard(
-                      icon: Icons.calendar_month,
-                      title: "Class Attendance",
-                      onTap: () {},
-                    ),
-                    DashboardCard(
-                      icon: Icons.assignment,
-                      title: "Curriculum",
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                CurriculumMenu(student: widget.student),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            StudNav(student: widget.student),
->>>>>>> openRegistration
           ],
         ),
       ),

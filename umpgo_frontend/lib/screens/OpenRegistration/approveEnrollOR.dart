@@ -304,7 +304,7 @@ class _ApproveEnrollORState extends State<ApproveEnrollOR> {
                       ),
                     ),
             ),
-            const RegNav(),
+            RegNav(registrar: widget.registrar),
           ],
         ),
       ),

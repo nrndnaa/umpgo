@@ -2,17 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../../config/api.dart';
+import '../../../domain/student_model.dart';
 import '../../../widgets/app_header.dart';
 import '../../../widgets/stud_nav.dart';
 
 class KoQModuleBooking extends StatefulWidget {
-  final int studentID;
-  final String matricID;
-  const KoQModuleBooking({
-    super.key,
-    required this.studentID,
-    required this.matricID,
-  });
+  final StudentModel student;
+  const KoQModuleBooking({super.key, required this.student});
   @override
   State<KoQModuleBooking> createState() => _KoQModuleBookingState();
 }
@@ -35,7 +31,7 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
     setState(() => loading = true);
     try {
       final response = await http.get(
-        Uri.parse('${ApiConfig.modules}?studentID=${widget.studentID}'),
+        Uri.parse('${ApiConfig.modules}?studentID=${widget.student.studentID}'),
       );
       if (response.statusCode == 200) {
         setState(() {
@@ -58,7 +54,7 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
     try {
       final response = await http.get(
         Uri.parse(
-          '${ApiConfig.baseUrl}/modules/mybookings/${widget.studentID}',
+          '${ApiConfig.baseUrl}/modules/mybookings/${widget.student.studentID}',
         ),
       );
       if (response.statusCode == 200) {
@@ -78,7 +74,6 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
     setState(() {
       filteredModules = modules.where((module) {
         final title = (module['name'] ?? '').toString().toLowerCase();
-
         return title.contains(query.toLowerCase());
       }).toList();
     });
@@ -102,18 +97,18 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
                 final response = await http.post(
                   Uri.parse(ApiConfig.registerModule),
                   headers: {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json',
-},
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                  },
                   body: jsonEncode({
                     'moduleID': moduleID,
-                    'studentID': widget.studentID,
+                    'studentID': widget.student.studentID,
                   }),
                 );
                 if (response.statusCode == 200) {
                   final responseData = jsonDecode(response.body);
-                  
-                  final registeredCount = responseData['currentSemesterCount'] ?? 1;
+                  final registeredCount =
+                      responseData['currentSemesterCount'] ?? 1;
                   setState(() {
                     bookedModuleIDs.add(moduleID);
                   });
@@ -141,7 +136,9 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
                 ).showSnackBar(SnackBar(content: Text('Error: $e')));
               }
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF5B9BD5)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF5B9BD5),
+            ),
             child: const Text('Confirm', style: TextStyle(color: Colors.white)),
           ),
           ElevatedButton(
@@ -184,7 +181,6 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
               ),
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 30),
             child: TextField(
@@ -206,7 +202,6 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
             ),
           ),
           const SizedBox(height: 10),
-
           Expanded(
             child: loading
                 ? const Center(child: CircularProgressIndicator())
@@ -240,7 +235,7 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
           ),
         ],
       ),
-      bottomNavigationBar: const StudNav(),
+      bottomNavigationBar: StudNav(student: widget.student),
     );
   }
 

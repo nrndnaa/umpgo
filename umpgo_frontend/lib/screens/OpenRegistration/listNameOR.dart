@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:umpgo_frontend/domain/section_model.dart';
 import 'package:umpgo_frontend/widgets/app_header.dart';
 import 'package:umpgo_frontend/widgets/reg_nav.dart';
+import 'package:umpgo_frontend/domain/facultyregistrar_model.dart';
 
 class ListNameOR extends StatelessWidget {
   final SectionModel section;
-  const ListNameOR({super.key, required this.section});
+  final FacultyRegistrar registrar;
+  const ListNameOR({super.key, required this.section, required this.registrar});
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +135,7 @@ class ListNameOR extends StatelessWidget {
                 ],
               ),
             ),
-            const RegNav(),
+            RegNav(registrar: registrar),
           ],
         ),
       ),

@@ -72,10 +72,10 @@ class LoginController {
       } else {
         return data['message'] ?? 'Login failed. Please try again.';
       }
-  }  catch (e) {
-  print(e);
-  return 'Error: $e';
-}
+    } catch (e) {
+      print(e);
+      return 'Error: $e';
+    }
   }
 
   static void _navigateToDashboard(
@@ -103,11 +103,9 @@ class LoginController {
         dashboard = TreasuryDashboard(treasury: treasury);
         break;
       case 'Pusat Adab':
-         final adab = PusatAdabModel.fromJson(userData);
-         dashboard = AdabDashboard(adab: adab); 
-         break;
-        default:
-        dashboard = AdabDashboard(adab: adab, student: StudentModel.empty());
+        final adab = PusatAdabModel.fromJson(userData);
+        final student = StudentModel.fromJson(userData);
+        dashboard = AdabDashboard(adab: adab);
         break;
       default:
         return;

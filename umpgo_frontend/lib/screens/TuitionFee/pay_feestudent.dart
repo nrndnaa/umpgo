@@ -13,18 +13,13 @@ class PayFeeStudent extends StatefulWidget {
   final StudentModel student;
   final FeeRecord fee;
 
-  const PayFeeStudent({
-    super.key,
-    required this.student,
-    required this.fee,
-  });
+  const PayFeeStudent({super.key, required this.student, required this.fee});
 
   @override
   State<PayFeeStudent> createState() => _PayFeeStudentState();
 }
 
 class _PayFeeStudentState extends State<PayFeeStudent> {
-
   static const Color primaryBlue = Color(0xFF1E6FBF);
   static const Color lightBlue = Color(0xFFD6E8F8);
   static const Color cardBg = Color(0xFFE8F4FD);
@@ -34,9 +29,7 @@ class _PayFeeStudentState extends State<PayFeeStudent> {
   String? _selectedBank;
   bool _isPaying = false;
 
-final TextEditingController _amountController =
-    TextEditingController();
-  
+  final TextEditingController _amountController = TextEditingController();
 
   final List<String> _banks = [
     'Maybank2u',
@@ -51,242 +44,194 @@ final TextEditingController _amountController =
     'UOB',
   ];
 
-Future<void> _submitPayment() async {
-
-  if (_selectedMethod == PaymentMethod.fpx &&
-    _selectedBank == null) {
-
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(
-      content: Text('Please select a bank'),
-      backgroundColor: Colors.orange,
-    ),
-  );
-
-  return;
-}
-
-   
-  
-
-  final outstanding =
-      widget.fee.totalFee - widget.fee.paidAmount;
-
-  final enteredAmount =
-      double.tryParse(_amountController.text) ?? 0;
-
-  if (enteredAmount <= 0) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Please enter a valid payment amount'),
-        backgroundColor: Colors.orange,
-      ),
-    );
-    return;
-  }
-
-if (enteredAmount > outstanding) {
-
-  showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-
-            const Icon(
-              Icons.cancel_outlined,
-              color: Colors.red,
-              size: 70,
-            ),
-
-            const SizedBox(height: 15),
-
-            const Text(
-              'Payment Fail',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-
-            const SizedBox(height: 10),
-
-            Text(
-              'Maximum payment amount is\nRM${outstanding.toStringAsFixed(2)}',
-              textAlign: TextAlign.center,
-            ),
-
-            const SizedBox(height: 15),
-
-            SizedBox(
-              width: 90,
-              height: 35,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      const Color(0xFF42A5F5),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(20),
-                  ),
-                ),
-                child: const Text('OK'),
-              ),
-            ),
-
-          ],
-        ),
-      );
-    },
-  );
-
-  return;
-}
-
-  setState(() => _isPaying = true);
-
-  try {
-
-    final response = await http.post(
-      Uri.parse('${ApiConfig.baseUrl}/make-payment'),
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        'studentID': widget.student.studentID,
-        'feeID': widget.fee.feeID,
-        'amount': enteredAmount,
-        'paymentMethod':
-            _selectedMethod == PaymentMethod.fpx
-                ? 'FPX'
-                : 'Credit/Debit Card',
-        'bank': _selectedBank ?? '',
-      }),
-    );
-
-    print(response.body);
-
-    if (!mounted) return;
-
-    final data = jsonDecode(response.body);
-
-    if (response.statusCode == 200 &&
-    data['success'] == true) {
-
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (context) {
-      return AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-
-            const Icon(
-              Icons.check_circle,
-              color: Color(0xFF4CAF50),
-              size: 80,
-            ),
-
-            const SizedBox(height: 15),
-
-            const Text(
-              'Payment Success',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-
-            const SizedBox(height: 15),
-
-            SizedBox(
-              width: 90,
-              height: 35,
-              child: ElevatedButton(
-                onPressed: () {
-
-                  Navigator.pop(context);
-
-                  Navigator.popUntil(
-                    context,
-                    (route) => route.isFirst,
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      const Color(0xFF42A5F5),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(20),
-                  ),
-                ),
-                child: const Text('Ok'),
-              ),
-            ),
-
-          ],
-        ),
-      );
-    },
-  );
-}
-    else {
-
+  Future<void> _submitPayment() async {
+    if (_selectedMethod == PaymentMethod.fpx && _selectedBank == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            data['message'] ?? 'Payment failed.',
-          ),
-          backgroundColor: Colors.red,
+        const SnackBar(
+          content: Text('Please select a bank'),
+          backgroundColor: Colors.orange,
         ),
       );
+
+      return;
     }
 
-  } catch (e) {
+    final outstanding = widget.fee.totalFee - widget.fee.paidAmount;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Error: $e'),
-        backgroundColor: Colors.red,
-      ),
-    );
+    final enteredAmount = double.tryParse(_amountController.text) ?? 0;
 
-  } finally {
-
-    if (mounted) {
-      setState(() => _isPaying = false);
+    if (enteredAmount <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter a valid amount'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
     }
 
+    if (enteredAmount > outstanding) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.cancel_outlined, color: Colors.red, size: 70),
+
+                const SizedBox(height: 15),
+
+                const Text(
+                  'Payment Fail',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+
+                const SizedBox(height: 10),
+
+                Text(
+                  'Maximum payment amount is\nRM${outstanding.toStringAsFixed(2)}',
+                  textAlign: TextAlign.center,
+                ),
+
+                const SizedBox(height: 15),
+
+                SizedBox(
+                  width: 90,
+                  height: 35,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF42A5F5),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: const Text('OK'),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+
+      return;
+    }
+
+    setState(() => _isPaying = true);
+
+    try {
+      final response = await http.post(
+        Uri.parse('${ApiConfig.baseUrl}/make-payment'),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'studentID': widget.student.studentID,
+          'feeID': widget.fee.feeID,
+          'amount': enteredAmount,
+          'paymentMethod': _selectedMethod == PaymentMethod.fpx
+              ? 'FPX'
+              : 'Credit/Debit Card',
+          'bank': _selectedBank ?? '',
+        }),
+      );
+
+      print(response.body);
+
+      if (!mounted) return;
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && data['success'] == true) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.check_circle,
+                    color: Color(0xFF4CAF50),
+                    size: 80,
+                  ),
+
+                  const SizedBox(height: 15),
+
+                  const Text(
+                    'Payment Success',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 15),
+
+                  SizedBox(
+                    width: 90,
+                    height: 35,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+
+                        Navigator.popUntil(context, (route) => route.isFirst);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF42A5F5),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: const Text('Ok'),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(data['message'] ?? 'Payment failed.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isPaying = false);
+      }
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
-
-    final outstanding =
-        widget.fee.totalFee - widget.fee.paidAmount;
+    final outstanding = widget.fee.totalFee - widget.fee.paidAmount;
 
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
-
             const AppHeader(),
 
             _buildBreadcrumb(),
@@ -301,70 +246,45 @@ if (enteredAmount > outstanding) {
               ),
             ),
 
-            const StudNav(),
-
+            StudNav(student: widget.student),
           ],
         ),
       ),
     );
   }
 
-Widget _buildBreadcrumb() {
-  return Container(
-    width: double.infinity,
-    margin: const EdgeInsets.only(
-      left: 8,
-      right: 8,
-      top: 10,
-      bottom: 10,
-    ),
-    padding: const EdgeInsets.symmetric(
-      horizontal: 18,
-      vertical: 10,
-    ),
-    decoration: BoxDecoration(
-      color: const Color.fromARGB(255, 116, 190, 255),
-      borderRadius: BorderRadius.circular(15),
-      boxShadow: const [
-        BoxShadow(
-          color: Colors.black12,
-          blurRadius: 3,
-          offset: Offset(0, 2),
+  Widget _buildBreadcrumb() {
+    return Container(
+      width: double.infinity,
+      color: primaryBlue,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: lightBlue,
+          borderRadius: BorderRadius.circular(20),
         ),
-      ],
-    ),
-    child: const Text(
-      'Menu > Tuition Fee > Pay Fee',
-      style: TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.w500,
-        color: Colors.black,
+        child: const Text(
+          'Menu > Tuition Fee > Pay Fee',
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildPaymentCard(double outstanding) {
-
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
         color: cardBg,
         borderRadius: BorderRadius.circular(18),
       ),
-      padding: const EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 24,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       child: Column(
         children: [
-
           const Text(
             'Payment Detail',
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 20),
@@ -375,62 +295,44 @@ Widget _buildBreadcrumb() {
               color: Colors.white,
               borderRadius: BorderRadius.circular(14),
             ),
-            padding: const EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: 24,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
             child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 _buildStudentHeader(),
 
                 const SizedBox(height: 20),
 
+                _buildInfoRow('Name :', widget.student.name.toUpperCase()),
+
+                _buildInfoRow('Matric ID :', widget.student.matricID),
+
+                _buildInfoRow('Programme :', widget.student.programme),
+
                 _buildInfoRow(
-                  'Name :',
-                  widget.student.name.toUpperCase(),
+                  'Payment Total :',
+                  'RM${outstanding.toStringAsFixed(2)}',
                 ),
 
-                _buildInfoRow(
-                  'Matric ID :',
-                  widget.student.matricID,
+                const SizedBox(height: 16),
+
+                TextField(
+                  controller: _amountController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: 'Payment Amount',
+                    hintText: 'Maximum RM${outstanding.toStringAsFixed(2)}',
+                    border: const OutlineInputBorder(),
+                  ),
                 ),
 
-                _buildInfoRow(
-                  'Programme :',
-                  widget.student.programme,
-                ),
+                const SizedBox(height: 20),
 
-                _buildInfoRow(
-  'Payment Total :',
-  'RM${outstanding.toStringAsFixed(2)}',
-),
-
-const SizedBox(height: 16),
-
-TextField(
-  controller: _amountController,
-  keyboardType: TextInputType.number,
-  decoration: InputDecoration(
-    labelText: 'Payment Amount',
-    hintText:
-        'Maximum RM${outstanding.toStringAsFixed(2)}',
-    border: const OutlineInputBorder(),
-  ),
-),
-
-const SizedBox(height: 20),
-
-_buildPaymentOption(),
+                _buildPaymentOption(),
 
                 const SizedBox(height: 24),
 
-                Center(
-                  child: _buildPayButton(),
-                ),
-
+                Center(child: _buildPayButton()),
               ],
             ),
           ),
@@ -440,80 +342,47 @@ _buildPaymentOption(),
   }
 
   Widget _buildStudentHeader() {
-
     return Row(
       children: [
-
         Container(
           width: 56,
           height: 56,
-          decoration: BoxDecoration(
-            color: lightBlue,
-            shape: BoxShape.circle,
-          ),
-          child: const Icon(
-            Icons.person_outline,
-            size: 32,
-          ),
+          decoration: BoxDecoration(color: lightBlue, shape: BoxShape.circle),
+          child: const Icon(Icons.person_outline, size: 32),
         ),
 
         const SizedBox(width: 16),
 
         Text(
           widget.student.matricID,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-
       ],
     );
   }
 
-  Widget _buildInfoRow(
-      String label,
-      String value,
-      ) {
-
+  Widget _buildInfoRow(String label, String value) {
     return Column(
       children: [
-
         Padding(
-          padding: const EdgeInsets.symmetric(
-            vertical: 10,
-          ),
+          padding: const EdgeInsets.symmetric(vertical: 10),
           child: Row(
             children: [
-
-              Text(
-                label,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+              Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
 
               const SizedBox(width: 8),
 
-              Expanded(
-                child: Text(value),
-              ),
-
+              Expanded(child: Text(value)),
             ],
           ),
         ),
 
-        Divider(
-          height: 1,
-          color: Colors.grey.shade300,
-        ),
-
+        Divider(height: 1, color: Colors.grey.shade300),
       ],
     );
   }
 
   Widget _buildPaymentOption() {
-
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(14),
@@ -522,15 +391,11 @@ _buildPaymentOption(),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           const Text(
             'Payment Option :',
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-            ),
+            style: TextStyle(fontWeight: FontWeight.w600),
           ),
 
           const SizedBox(height: 12),
@@ -543,22 +408,16 @@ _buildPaymentOption(),
                 _selectedMethod = v!;
               });
             },
-            title: const Text(
-              'Internet Banking (FPX)',
-            ),
+            title: const Text('Internet Banking (FPX)'),
           ),
 
-          if (_selectedMethod ==
-              PaymentMethod.fpx)
+          if (_selectedMethod == PaymentMethod.fpx)
             DropdownButton<String>(
               value: _selectedBank,
               hint: const Text('Select Bank'),
               isExpanded: true,
               items: _banks.map((bank) {
-                return DropdownMenuItem(
-                  value: bank,
-                  child: Text(bank),
-                );
+                return DropdownMenuItem(value: bank, child: Text(bank));
               }).toList(),
               onChanged: (v) {
                 setState(() {
@@ -568,45 +427,37 @@ _buildPaymentOption(),
             ),
 
           RadioListTile<PaymentMethod>(
-            value:
-                PaymentMethod.creditDebitCard,
+            value: PaymentMethod.creditDebitCard,
             groupValue: _selectedMethod,
             onChanged: (v) {
               setState(() {
                 _selectedMethod = v!;
               });
             },
-            title: const Text(
-              'Credit / Debit Card',
-            ),
+            title: const Text('Credit / Debit Card'),
           ),
-
         ],
       ),
     );
   }
 
   Widget _buildPayButton() {
-
     return SizedBox(
       width: 120,
       height: 40,
       child: ElevatedButton(
-        onPressed:
-            _isPaying ? null : _submitPayment,
+        onPressed: _isPaying ? null : _submitPayment,
         style: ElevatedButton.styleFrom(
           backgroundColor: payBlue,
           shape: RoundedRectangleBorder(
-            borderRadius:
-                BorderRadius.circular(25),
+            borderRadius: BorderRadius.circular(25),
           ),
         ),
         child: _isPaying
             ? const SizedBox(
                 width: 18,
                 height: 18,
-                child:
-                    CircularProgressIndicator(
+                child: CircularProgressIndicator(
                   strokeWidth: 2,
                   color: Colors.white,
                 ),
@@ -614,8 +465,7 @@ _buildPaymentOption(),
             : const Text(
                 'Pay',
                 style: TextStyle(
-                  fontWeight:
-                      FontWeight.bold,
+                  fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
               ),

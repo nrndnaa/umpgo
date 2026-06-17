@@ -403,7 +403,7 @@ class _ApproveDetailsORState extends State<ApproveDetailsOR> {
                       ),
                     ),
             ),
-            const RegNav(),
+            RegNav(registrar: widget.registrar),
           ],
         ),
       ),

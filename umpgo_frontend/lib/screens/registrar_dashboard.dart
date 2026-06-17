@@ -103,7 +103,9 @@ class RegistrarDashboard extends StatelessWidget {
                 ),
               ),
             ),
-            const RegNav(), // Your existing nav (styled with teal in your widgets)
+            RegNav(
+              registrar: registrar,
+            ), // Your existing nav (styled with teal in your widgets)
           ],
         ),
       ),

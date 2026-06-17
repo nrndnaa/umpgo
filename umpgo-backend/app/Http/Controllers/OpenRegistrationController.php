@@ -54,16 +54,26 @@ class OpenRegistrationController extends Controller
     public function checkOpenRegistrationStatus(Request $request)
     {
         $year = $request->query('year');
-        $today = now()->toDateString();
-        $currentTime = now()->toTimeString();
+        $now = now();
 
         $session = DB::table('registrationsession')
             ->where('eligableYear', $year)
-            ->whereDate('startDate', '<=', $today)
-            ->whereDate('endDate', '>=', $today)
-            ->whereTime('startTime', '<=', $currentTime)
-            ->whereTime('endTime', '>=', $currentTime)
-            ->first();
+            ->get()
+            ->first(function ($s) use ($now) {
+                $startDate = \Carbon\Carbon::parse($s->startDate)->startOfDay();
+                $endDate   = \Carbon\Carbon::parse($s->endDate)->endOfDay();
+
+                // Is today within the date range?
+                if (!$now->between($startDate, $endDate)) {
+                    return false;
+                }
+
+                // Is current time within daily open hours?
+                $openTime  = \Carbon\Carbon::parse($now->toDateString() . ' ' . $s->startTime);
+                $closeTime = \Carbon\Carbon::parse($now->toDateString() . ' ' . $s->endTime);
+
+                return $now->between($openTime, $closeTime);
+            });
 
         return response()->json([
             'success' => true,
@@ -74,7 +84,7 @@ class OpenRegistrationController extends Controller
 
 
     // GET /api/subjects
-    public function igetAllSubjects()
+    public function getAllSubjects()
     {
         $subjects = Subject::with(['sections' => function ($query) {
             $query->withCount('enrollments as enrolled');
@@ -390,20 +400,32 @@ class OpenRegistrationController extends Controller
     public function checkSession($yearOfStudy)
     {
         $now = now();
-        $today = $now->toDateString();
-        $time  = $now->toTimeString();
 
-        $session = \App\Models\RegistrationSession::where('eligableYear', $yearOfStudy)
-            ->where('startDate', '<=', $today)
-            ->where('endDate',   '>=', $today)
-            ->where('startTime', '<=', $time)
-            ->where('endTime',   '>=', $time)
-            ->first();
+        $session = DB::table('registrationsession')
+            ->where(function ($q) use ($yearOfStudy) {
+                $q->where('eligableYear', $yearOfStudy)
+                    ->orWhere('eligableYear', 'All Year');
+            })
+            ->get()
+            ->first(function ($s) use ($now) {
+                $startDate = \Carbon\Carbon::parse($s->startDate)->startOfDay();
+                $endDate   = \Carbon\Carbon::parse($s->endDate)->endOfDay();
 
-        if ($session) {
-            return response()->json(['open' => true,  'session' => $session]);
-        } else {
-            return response()->json(['open' => false, 'session' => null]);
-        }
+                // Is today within the date range?
+                if (!$now->between($startDate, $endDate)) {
+                    return false;
+                }
+
+                // Is current time within daily open hours?
+                $openTime  = \Carbon\Carbon::parse($now->toDateString() . ' ' . $s->startTime);
+                $closeTime = \Carbon\Carbon::parse($now->toDateString() . ' ' . $s->endTime);
+
+                return $now->between($openTime, $closeTime);
+            });
+
+        return response()->json([
+            'open'    => $session !== null,
+            'session' => $session,
+        ]);
     }
 }

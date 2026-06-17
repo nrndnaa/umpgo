@@ -71,7 +71,7 @@ class _PaymentHistoryStudentState extends State<PaymentHistoryStudent> {
               ),
             ),
 
-            const StudNav(),
+            StudNav(student: widget.student),
           ],
         ),
       ),

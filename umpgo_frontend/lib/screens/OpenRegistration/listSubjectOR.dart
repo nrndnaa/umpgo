@@ -158,6 +158,7 @@ class _ListSubjectORState extends State<ListSubjectOR> {
                   const SizedBox(height: 10),
 
                   // ── Body ───────────────────────────────────────────────────
+                  // ── Body ───────────────────────────────────────────────────
                   Expanded(
                     child: _isLoading
                         ? const Center(
@@ -177,15 +178,17 @@ class _ListSubjectORState extends State<ListSubjectOR> {
                               itemCount: _filtered.length,
                               separatorBuilder: (_, __) =>
                                   const SizedBox(height: 14),
-                              itemBuilder: (_, i) =>
-                                  _SubjectCard(subject: _filtered[i]),
+                              itemBuilder: (_, i) => _SubjectCard(
+                                subject: _filtered[i],
+                                registrar: widget.registrar,
+                              ),
                             ),
                           ),
                   ),
                 ],
               ),
             ),
-            const RegNav(),
+            RegNav(registrar: widget.registrar),
           ],
         ),
       ),
@@ -289,7 +292,8 @@ class _SearchBar extends StatelessWidget {
 // ─── Subject card ─────────────────────────────────────────────────────────────
 class _SubjectCard extends StatelessWidget {
   final Subject subject;
-  const _SubjectCard({required this.subject});
+  final FacultyRegistrar registrar;
+  const _SubjectCard({required this.subject, required this.registrar});
 
   @override
   Widget build(BuildContext context) {
@@ -378,7 +382,8 @@ class _SubjectCard extends StatelessWidget {
               onPressed: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => ListSectionOR(subject: subject),
+                  builder: (_) =>
+                      ListSectionOR(subject: subject, registrar: registrar),
                 ),
               ),
               child: const Text(

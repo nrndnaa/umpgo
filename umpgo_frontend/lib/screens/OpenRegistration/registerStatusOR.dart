@@ -334,7 +334,7 @@ class _RegisterStatusORState extends State<RegisterStatusOR> {
                       ),
                     ),
             ),
-            const RegNav(),
+            RegNav(registrar: widget.registrar),
           ],
         ),
       ),

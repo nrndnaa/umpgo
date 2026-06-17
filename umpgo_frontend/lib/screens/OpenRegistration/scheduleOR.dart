@@ -584,11 +584,10 @@ class _ScheduleORState extends State<ScheduleOR> {
                 ),
               ),
             ),
-
-            const RegNav(),
           ],
         ),
       ),
+      bottomNavigationBar: RegNav(registrar: widget.registrar),
     );
   }
 }

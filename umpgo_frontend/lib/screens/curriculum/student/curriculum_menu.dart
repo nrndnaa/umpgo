@@ -26,7 +26,7 @@ class _CurriculumMenuState extends State<CurriculumMenu> {
           Padding(
             padding: const EdgeInsets.all(16),
             child: Container(
-              width: double.infinity, 
+              width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                 color: const Color(0xFF5B9BD5),
@@ -49,6 +49,7 @@ class _CurriculumMenuState extends State<CurriculumMenu> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 children: [
+                  // 1. KoQ Module Booking Card
                   _buildMenuCard(
                     icon: Icons.book_outlined,
                     title: 'KoQ Module Booking',
@@ -56,15 +57,15 @@ class _CurriculumMenuState extends State<CurriculumMenu> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => KoQModuleBooking(
-                            studentID: widget.student.studentID,
-                            matricID: widget.student.matricID,
-                          ),
+                          builder: (context) =>
+                              KoQModuleBooking(student: widget.student),
                         ),
                       );
                     },
                   ),
                   const SizedBox(height: 16),
+
+                  // 2. My KoQ Booking Card
                   _buildMenuCard(
                     icon: Icons.calendar_month_outlined,
                     title: 'My KoQ Booking',
@@ -72,15 +73,15 @@ class _CurriculumMenuState extends State<CurriculumMenu> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => MyKoQBooking(
-                            studentID: widget.student.studentID,
-                            matricID: widget.student.matricID,
-                          ),
+                          builder: (context) =>
+                              MyKoQBooking(student: widget.student),
                         ),
                       );
                     },
                   ),
                   const SizedBox(height: 16),
+
+                  // 3. Credit Claim Card
                   _buildMenuCard(
                     icon: Icons.assignment_outlined,
                     title: 'Credit Claim',
@@ -88,15 +89,15 @@ class _CurriculumMenuState extends State<CurriculumMenu> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => CreditClaim(
-                            studentID: widget.student.studentID,
-                            matricID: widget.student.matricID,
-                          ),
+                          builder: (context) =>
+                              CreditClaim(student: widget.student),
                         ),
                       );
                     },
                   ),
                   const SizedBox(height: 24),
+
+                  // Back Button
                   SizedBox(
                     width: 120,
                     child: ElevatedButton(
@@ -119,7 +120,7 @@ class _CurriculumMenuState extends State<CurriculumMenu> {
           ),
         ],
       ),
-      bottomNavigationBar: const StudNav(),
+      bottomNavigationBar: StudNav(student: widget.student),
     );
   }
 
