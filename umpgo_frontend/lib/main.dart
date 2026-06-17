@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:umpgo_frontend/screens/login.dart';
-import 'package:umpgo_frontend/screens/Attendance/checkin.dart';
 
 void main() {
   runApp(const UMPGoApp());
@@ -18,7 +17,7 @@ class UMPGoApp extends StatelessWidget {
         useMaterial3: true,
         fontFamily: 'Inter',
       ),
-      home: const CheckInScreen(studentID: 12345),  // ← must be LoginScreen not LoginController
+      home: const LoginScreen(),
     );
   }
 }

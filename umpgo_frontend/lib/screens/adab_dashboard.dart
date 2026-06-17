@@ -1,22 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../../config/api.dart';
-import '../../domain/pusatadab_model.dart';
-import 'curriculum/pusatadab/module_list.dart';
-import 'curriculum/pusatadab/credit_claim_application.dart';
-import '../../widgets/app_header.dart';
-import '../../widgets/adab_nav.dart';
+import 'package:umpgo_frontend/config/api.dart';
+import 'package:umpgo_frontend/domain/pusatadab_model.dart';
+import 'package:umpgo_frontend/screens/curriculum/pusatadab/module_list.dart';
+import 'package:umpgo_frontend/screens/curriculum/pusatadab/credit_claim_application.dart';
+import 'package:umpgo_frontend/widgets/app_header.dart';
+import 'package:umpgo_frontend/widgets/adab_nav.dart';
+import 'package:umpgo_frontend/screens/Attendance/attendanceMenu.dart';
 
 class AdabDashboard extends StatefulWidget {
   final PusatAdabModel adab;
-<<<<<<< Updated upstream
   const AdabDashboard({super.key, required this.adab});
 
-=======
-  final StudentModel student;
-  const AdabDashboard({super.key, required this.adab, required this.student});
->>>>>>> Stashed changes
   @override
   State<AdabDashboard> createState() => _AdabDashboardState();
 }
@@ -25,7 +21,7 @@ class _AdabDashboardState extends State<AdabDashboard> {
   bool loading = false;
   int totalActivities = 0;
   int totalEnrollment = 0;
-  String attendancePercentage = '0%';
+  String attendancePercentage = '0';
   int approvedClaims = 0;
 
   @override
@@ -43,10 +39,10 @@ class _AdabDashboardState extends State<AdabDashboard> {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         setState(() {
-          totalActivities = data['totalActivities'];
-          totalEnrollment = data['totalEnrollment'];
-          attendancePercentage = data['attendancePercentage'];
-          approvedClaims = data['approvedClaims'];
+          totalActivities = int.tryParse('${data['totalActivities']}') ?? 0;
+          totalEnrollment = int.tryParse('${data['totalEnrollment']}') ?? 0;
+          attendancePercentage = '${data['attendancePercentage'] ?? '0'}';
+          approvedClaims = int.tryParse('${data['approvedClaims']}') ?? 0;
         });
       }
     } catch (e) {
@@ -109,23 +105,10 @@ class _AdabDashboardState extends State<AdabDashboard> {
                       Expanded(
                         child: _buildNavTile(
                           icon: Icons.assignment_outlined,
-                          label: 'Module List',
-                          onTap: () {
-                            Navigator.push(
-<<<<<<< Updated upstream
-                          context,
-                            MaterialPageRoute(
-                          builder: (context) => ModuleList(adab: widget.adab),
-                            ),
-                          ).then((_) {
-                            fetchDashboardStats(); // 
-                            });
-=======
-                              context,
-                              MaterialPageRoute(builder: (context) => ModuleList(adab: widget.adab)),
-                            ).then((_) => fetchDashboardStats());
->>>>>>> Stashed changes
-                          },
+                          label: 'Module\nList',
+                          onTap: () => Navigator.push(context,
+                            MaterialPageRoute(builder: (_) => ModuleList(adab: widget.adab)),
+                          ).then((_) => fetchDashboardStats()),
                         ),
                       ),
                       const SizedBox(width: 16),
@@ -133,39 +116,31 @@ class _AdabDashboardState extends State<AdabDashboard> {
                         child: _buildNavTile(
                           icon: Icons.card_membership_outlined,
                           label: 'Credit Claim\nApplication',
-                          onTap: () {
-                            Navigator.push(
-                              context,
-<<<<<<< Updated upstream
-                              MaterialPageRoute(
-                                builder: (context) => const CreditClaimApplication(),
-                              ),
-=======
-                              MaterialPageRoute(builder: (context) => const CreditClaimApplication()),
->>>>>>> Stashed changes
-                            );
-                          },
+                          onTap: () => Navigator.push(context,
+                            MaterialPageRoute(builder: (_) => const CreditClaimApplication()),
+                          ),
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildNavTile(
-                          icon: Icons.sports_basketball_outlined,
-                          label: 'Attendance',
-                          onTap: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Coming soon!')),
-                            );
-                          },
+                  Center(
+                    child: SizedBox(
+                      width: (MediaQuery.of(context).size.width - 48) / 2,
+                      child: _buildNavTile(
+                        icon: Icons.sports_basketball_outlined,
+                        label: 'Attendance',
+                        onTap: () => Navigator.push(context,
+                          MaterialPageRoute(
+                            builder: (_) => AttendanceMenu(
+                              userID: widget.adab.adabID,
+                              userName: widget.adab.name,
+                              isAdab: true,
+                            ),
+                          ),
                         ),
                       ),
-                      const SizedBox(width: 16),
-                      const Expanded(child: SizedBox()),
-                    ],
+                    ),
                   ),
                 ],
               ),
@@ -177,16 +152,9 @@ class _AdabDashboardState extends State<AdabDashboard> {
   Widget _buildStatItem({required String value, required String label}) {
     return Column(
       children: [
-<<<<<<< Updated upstream
-        Text(value,
-            style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-        Text(label,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 12, color: Colors.black87)),
-=======
         Text(value, style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-        Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12, color: Colors.black87, fontWeight: FontWeight.bold)),
->>>>>>> Stashed changes
+        Text(label, textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 12, color: Colors.black87, fontWeight: FontWeight.bold)),
       ],
     );
   }
@@ -195,6 +163,7 @@ class _AdabDashboardState extends State<AdabDashboard> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        constraints: const BoxConstraints(minHeight: 110),
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: const Color(0xFFFFF9C4),
@@ -205,14 +174,8 @@ class _AdabDashboardState extends State<AdabDashboard> {
           children: [
             Icon(icon, size: 48, color: Colors.black87),
             const SizedBox(height: 8),
-<<<<<<< Updated upstream
-            Text(label,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                    fontSize: 13, fontWeight: FontWeight.w600)),
-=======
-            Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
->>>>>>> Stashed changes
+            Text(label, textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
           ],
         ),
       ),

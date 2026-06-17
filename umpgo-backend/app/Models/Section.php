@@ -4,10 +4,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Section extends Model
 {
-<<<<<<< Updated upstream
-    //
-}
-=======
     protected $table = 'section';
     protected $primaryKey = 'sectionID';
 
@@ -26,4 +22,3 @@ class Section extends Model
         return $this->belongsTo(Lecturer::class, 'lecturerID', 'lecturerID');
     }
 }
->>>>>>> Stashed changes

@@ -16,22 +16,6 @@ class StudentModel {
     required this.yearOfStudy,
     required this.programme,
     required this.status,
-<<<<<<< Updated upstream
-    required this.outstandingBalance,
-  });
-
-  factory StudentModel.fromJson(Map<String, dynamic> json) {
-  return StudentModel(
-    studentID:          int.parse(json['studentID'].toString()),
-    matricID:           json['matricID'],
-    name:               json['name'],
-    email:              json['email'],
-    yearOfStudy:        json['yearOfStudy'],
-    programme:          json['programme'],
-    status:             json['status'],
-    outstandingBalance: double.parse(json['outstandingBalance'].toString()),  );
-}
-=======
     this.outstandingBalance = 0.0,
   });
 
@@ -44,10 +28,7 @@ class StudentModel {
       yearOfStudy: json['yearOfStudy']?.toString() ?? '',
       programme: json['programme'] ?? '',
       status: json['status'] ?? 'active',
-      outstandingBalance: double.tryParse(
-            json['outstandingBalance']?.toString() ?? '0',
-          ) ??
-          0.0,
+      outstandingBalance: double.tryParse(json['outstandingBalance']?.toString() ?? '0') ?? 0.0,
     );
   }
 
@@ -63,5 +44,4 @@ class StudentModel {
       outstandingBalance: 0.0,
     );
   }
->>>>>>> Stashed changes
 }

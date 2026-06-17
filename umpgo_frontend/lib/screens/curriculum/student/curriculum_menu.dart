@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:umpgo_frontend/domain/student_model.dart';
-import 'koq_module_booking.dart';
+import 'koq_module_booking.dart' hide Text;
 import 'my_koq_booking.dart';
 import 'credit_claim.dart';
 import '../../../widgets/app_header.dart';

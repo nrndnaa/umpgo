@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:umpgo_frontend/domain/student_model.dart';
 
 class StudNav extends StatelessWidget {
-  const StudNav({super.key});
+  final StudentModel? student;
+  const StudNav({super.key, this.student});
 
   @override
   Widget build(BuildContext context) {
@@ -13,13 +15,16 @@ class StudNav extends StatelessWidget {
           color: const Color(0xFFD8F1FF),
           borderRadius: BorderRadius.circular(16),
         ),
-        child: const Row(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            Icon(Icons.home),
-            Icon(Icons.settings),
-            Icon(Icons.notifications_none),
-            Icon(Icons.person_outline),
+            IconButton(
+              icon: const Icon(Icons.home),
+              onPressed: () => Navigator.popUntil(context, (route) => route.isFirst),
+            ),
+            const Icon(Icons.settings),
+            const Icon(Icons.notifications_none),
+            const Icon(Icons.person_outline),
           ],
         ),
       ),

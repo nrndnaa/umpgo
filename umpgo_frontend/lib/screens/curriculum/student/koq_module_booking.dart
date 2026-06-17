@@ -4,27 +4,18 @@ import 'dart:convert';
 import '../../../config/api.dart';
 import '../../../widgets/app_header.dart';
 import '../../../widgets/stud_nav.dart';
-<<<<<<< Updated upstream
-=======
 import 'package:umpgo_frontend/domain/student_model.dart';
->>>>>>> Stashed changes
 
 class KoQModuleBooking extends StatefulWidget {
   final int studentID;
   final String matricID;
-<<<<<<< Updated upstream
-=======
   final StudentModel student;
 
->>>>>>> Stashed changes
   const KoQModuleBooking({
     super.key,
     required this.studentID,
     required this.matricID,
-<<<<<<< Updated upstream
-=======
     required this.student,
->>>>>>> Stashed changes
   });
 
   @override
@@ -81,8 +72,6 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
     } catch (_) {}
   }
 
-<<<<<<< Updated upstream
-=======
   void searchModules(String query) {
     setState(() {
       filteredModules = modules.where((module) {
@@ -92,21 +81,17 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
     });
   }
 
->>>>>>> Stashed changes
   void registerModule(int moduleID) {
-    final pageContext = context; // save page context ✅
+    final pageContext = context; // save page context Ã¢Å“â€¦
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-<<<<<<< Updated upstream
         title: const Text('Confirm Registration'),
         content: const Text(
           'Are you sure you want to register for this module?',
         ),
-=======
         title: const Text('Do you want to Confirm Registration', textAlign: TextAlign.center),
         actionsAlignment: MainAxisAlignment.center,
->>>>>>> Stashed changes
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -118,7 +103,6 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
               try {
                 final response = await http.post(
                   Uri.parse(ApiConfig.registerModule),
-<<<<<<< Updated upstream
                   headers: {'Content-Type': 'application/json'},
                   body: jsonEncode({
                     'moduleID': moduleID,
@@ -129,13 +113,11 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
                   setState(() {
                     bookedModuleIDs.add(moduleID);
                   });
-=======
                   headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
                   body: jsonEncode({'moduleID': moduleID, 'studentID': widget.studentID}),
                 );
                 if (response.statusCode == 200) {
                   setState(() => bookedModuleIDs.add(moduleID));
->>>>>>> Stashed changes
                   final registeredCount = bookedModuleIDs.length;
                   ScaffoldMessenger.of(pageContext).showSnackBar(SnackBar(
                     content: Text('Successfully Registered! ($registeredCount/2)'),
@@ -150,7 +132,6 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
                   fetchModules();
                 }
               } catch (e) {
-<<<<<<< Updated upstream
                 ScaffoldMessenger.of(
                   pageContext,
                 ).showSnackBar(SnackBar(content: Text('Error: $e')));
@@ -159,7 +140,6 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
             style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
             child: const Text('Confirm', style: TextStyle(color: Colors.white)),
           ),
-=======
                 ScaffoldMessenger.of(pageContext).showSnackBar(
                   SnackBar(content: Text('Error: $e')),
                 );
@@ -173,7 +153,6 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
             style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF5B9BD5)),
             child: const Text('Back', style: TextStyle(color: Colors.white)),
           ),
->>>>>>> Stashed changes
         ],
       ),
     );
@@ -188,7 +167,6 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
       appBar: const AppHeader(),
       body: Column(
         children: [
-<<<<<<< Updated upstream
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -202,7 +180,6 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
               ),
             ),
           ),
-=======
           Padding(
             padding: const EdgeInsets.all(16),
             child: Container(
@@ -239,7 +216,6 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
             ),
           ),
           const SizedBox(height: 10),
->>>>>>> Stashed changes
           Expanded(
             child: loading
                 ? const Center(child: CircularProgressIndicator())
@@ -318,7 +294,6 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-<<<<<<< Updated upstream
                 onPressed: (isBooked || isFullyBooked)
                     ? null
                     : () => registerModule(module['moduleID']),
@@ -332,13 +307,11 @@ class _KoQModuleBookingState extends State<KoQModuleBooking> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
-=======
                 onPressed: (isBooked || isFullyBooked) ? null : () => registerModule(module['moduleID']),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isBooked ? Colors.red : isFullyBooked ? Colors.red : Colors.green,
                   disabledBackgroundColor: Colors.red,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
->>>>>>> Stashed changes
                 ),
                 child: Text(
                   isBooked ? 'Booked' : isFullyBooked ? 'Full' : 'Register',

@@ -1,9 +1,9 @@
-// ignore: file_names
+﻿// ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:umpgo_frontend/widgets/stud_nav.dart';
 import 'package:umpgo_frontend/widgets/app_header.dart';
 
-// ─── Theme constants ────────────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Theme constants ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 class _C {
   static const bg = Color(0xFFF4F7FB);
   static const primary = Color(0xFF1E6FBF);
@@ -23,7 +23,7 @@ class _C {
   static const headerBg = Color(0xFF1E6FBF);
 }
 
-// ─── Root screen ────────────────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Root screen ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 class MainOR extends StatelessWidget {
   const MainOR({super.key});
 
@@ -65,7 +65,7 @@ class MainOR extends StatelessWidget {
   }
 }
 
-// ─── Breadcrumb banner ───────────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Breadcrumb banner ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 class _Breadcrumb extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -122,7 +122,7 @@ class _Breadcrumb extends StatelessWidget {
   }
 }
 
-// ─── Student info card ───────────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Student info card ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 class _StudentInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -146,7 +146,7 @@ class _StudentInfoCard extends StatelessWidget {
           _infoTile(
             Icons.calendar_month_rounded,
             "Semester",
-            "Semester II  •  2025 / 2026",
+            "Semester II  ΓÇó  2025 / 2026",
           ),
         ],
       ),
@@ -199,7 +199,7 @@ class _StudentInfoCard extends StatelessWidget {
   }
 }
 
-// ─── Add subject card ────────────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Add subject card ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 class _AddSubjectCard extends StatefulWidget {
   @override
   State<_AddSubjectCard> createState() => _AddSubjectCardState();
@@ -239,7 +239,7 @@ class _AddSubjectCardState extends State<_AddSubjectCard> {
                       fontWeight: FontWeight.w600,
                     ),
                     decoration: const InputDecoration(
-                      hintText: "Search by subject code or name…",
+                      hintText: "Search by subject code or nameΓÇª",
                       hintStyle: TextStyle(color: _C.textMuted, fontSize: 13),
                       border: InputBorder.none,
                       isDense: true,
@@ -364,7 +364,7 @@ class _AddSubjectCardState extends State<_AddSubjectCard> {
   }
 }
 
-// ─── Registered subjects card ────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Registered subjects card ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 class _RegisteredSubjectsCard extends StatelessWidget {
   final _subjects = const [
     ["BCS3133", "Software Engineering Practices"],
@@ -514,7 +514,7 @@ class _RegisteredSubjectsCard extends StatelessWidget {
   }
 }
 
-// ─── Subject status card ─────────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Subject status card ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 class _SubjectStatusCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -579,7 +579,7 @@ class _SubjectStatusCard extends StatelessWidget {
   }
 }
 
-// ─── Shared small widgets ────────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Shared small widgets ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 
 class _Card extends StatelessWidget {
   final Widget child;

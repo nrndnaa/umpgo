@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
@@ -6,30 +6,21 @@ import '../../../config/api.dart';
 import 'credit_claim.dart';
 import '../../../widgets/app_header.dart';
 import '../../../widgets/stud_nav.dart';
-<<<<<<< Updated upstream
-=======
 import 'package:umpgo_frontend/domain/student_model.dart';
->>>>>>> Stashed changes
 
 class MyKoQBooking extends StatefulWidget {
   final int studentID;
   final String matricID;
-<<<<<<< Updated upstream
-=======
   final StudentModel student;
 
->>>>>>> Stashed changes
   const MyKoQBooking({
     super.key,
     required this.studentID,
     required this.matricID,
-<<<<<<< Updated upstream
   });
-=======
     required this.student,
   });
 
->>>>>>> Stashed changes
   @override
   State<MyKoQBooking> createState() => _MyKoQBookingState();
 }
@@ -73,11 +64,8 @@ class _MyKoQBookingState extends State<MyKoQBooking> {
               'groupLink': module['groupLink'] ?? '',
             });
           }
-<<<<<<< Updated upstream
           setState(() => bookedModules = result);
-=======
           bookedModules = result;
->>>>>>> Stashed changes
         });
       }
     } catch (e) {
@@ -275,11 +263,8 @@ class _MyKoQBookingState extends State<MyKoQBooking> {
           ),
         ],
       ),
-<<<<<<< Updated upstream
       bottomNavigationBar: const StudNav(),
-=======
       bottomNavigationBar: StudNav(student: widget.student),
->>>>>>> Stashed changes
     );
   }
 }

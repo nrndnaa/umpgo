@@ -3,13 +3,8 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-<<<<<<< Updated upstream
-  url_launcher_windows
-  geolocator_windows
-=======
   geolocator_windows
   url_launcher_windows
->>>>>>> Stashed changes
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

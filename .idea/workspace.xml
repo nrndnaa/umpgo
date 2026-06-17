@@ -12,6 +12,7 @@
       <change beforePath="$PROJECT_DIR$/umpgo-backend/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/umpgo-backend/routes/api.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/umpgo_frontend/lib/config/api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/umpgo_frontend/lib/config/api.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/umpgo_frontend/lib/domain/student_model.dart" beforeDir="false" afterPath="$PROJECT_DIR$/umpgo_frontend/lib/domain/student_model.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/umpgo_frontend/lib/screens/Attendance/checkin.dart" beforeDir="false" afterPath="$PROJECT_DIR$/umpgo_frontend/lib/screens/Attendance/checkin.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/umpgo_frontend/lib/screens/TuitionFee/pay_feestudent.dart" beforeDir="false" afterPath="$PROJECT_DIR$/umpgo_frontend/lib/screens/TuitionFee/pay_feestudent.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/umpgo_frontend/lib/screens/TuitionFee/payment_historystudent.dart" beforeDir="false" afterPath="$PROJECT_DIR$/umpgo_frontend/lib/screens/TuitionFee/payment_historystudent.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/umpgo_frontend/lib/screens/TuitionFee/payment_historystudent22.dart" beforeDir="false" afterPath="$PROJECT_DIR$/umpgo_frontend/lib/screens/TuitionFee/payment_historystudent22.dart" afterDir="false" />
@@ -68,6 +69,7 @@
     "RunOnceActivity.readMode.enableVisualFormatting": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
+    "com.android.tools.idea.streaming.zoom.toolbar.visible": "false",
     "dart.analysis.tool.window.visible": "false",
     "git-widget-placeholder": "master",
     "kotlin-language-version-configured": "true",

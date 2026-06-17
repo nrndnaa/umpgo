@@ -33,8 +33,6 @@ class CodeEntry extends StatefulWidget {
 class _CodeEntryState extends State<CodeEntry> {
   String _code = '';
   bool _isLoading = false;
-  String? _errorMsg;
-  bool? _codeResult;
   Map<String, dynamic>? _sessionData;
 
   void _onKey(String digit) {
@@ -53,7 +51,7 @@ class _CodeEntryState extends State<CodeEntry> {
 
   Future<void> _submit() async {
     if (_code.length < 6) return;
-    setState(() { _isLoading = true; _errorMsg = null; _codeResult = null; });
+    setState(() => _isLoading = true);
     try {
       final body = <String, dynamic>{
         'code': _code,
@@ -70,8 +68,31 @@ class _CodeEntryState extends State<CodeEntry> {
       final data = jsonDecode(response.body);
 
       if (data['success'] == true) {
-        setState(() { _codeResult = true; _sessionData = data['session']; });
-        await Future.delayed(const Duration(milliseconds: 900));
+        _sessionData = data['session'];
+        if (!mounted) return;
+        await showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                Icon(Icons.check_circle, color: Colors.green, size: 48),
+                SizedBox(height: 12),
+                Text('Code Accepted !',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              ],
+            ),
+            actionsAlignment: MainAxisAlignment.center,
+            actions: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF5B9BD5)),
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK', style: TextStyle(color: Colors.white)),
+              ),
+            ],
+          ),
+        );
         if (!mounted) return;
         Navigator.push(context, MaterialPageRoute(
           builder: (_) => LocationVerify(
@@ -86,12 +107,38 @@ class _CodeEntryState extends State<CodeEntry> {
           ),
         ));
       } else {
-        setState(() { _codeResult = false; _errorMsg = data['message']; });
+        if (!mounted) return;
+        await showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                Icon(Icons.cancel, color: Colors.red, size: 48),
+                SizedBox(height: 12),
+                Text('Invalid Code. Please Try Again',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    textAlign: TextAlign.center),
+              ],
+            ),
+            actionsAlignment: MainAxisAlignment.center,
+            actions: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF5B9BD5)),
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK', style: TextStyle(color: Colors.white)),
+              ),
+            ],
+          ),
+        );
+        setState(() => _code = '');
       }
     } catch (e) {
-      setState(() { _codeResult = false; _errorMsg = 'Connection error'; });
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Connection error')));
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -127,12 +174,7 @@ class _CodeEntryState extends State<CodeEntry> {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: _codeResult == false ? Colors.red
-                              : _codeResult == true ? Colors.green
-                              : const Color(0xFF5B9BD5),
-                          width: 2,
-                        ),
+                        border: Border.all(color: const Color(0xFF5B9BD5), width: 2),
                       ),
                       child: Center(
                         child: Text(
@@ -142,36 +184,7 @@ class _CodeEntryState extends State<CodeEntry> {
                       ),
                     )),
                   ),
-                  const SizedBox(height: 16),
-                  if (_codeResult == true)
-                    Column(children: [
-                      const Icon(Icons.check_circle, color: Colors.green, size: 32),
-                      const SizedBox(height: 4),
-                      const Text('Code Accepted!',
-                          style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 4),
-                      ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.green,
-                            minimumSize: const Size(80, 32)),
-                        child: const Text('OK', style: TextStyle(color: Colors.white)),
-                      ),
-                    ])
-                  else if (_codeResult == false)
-                    Column(children: [
-                      const Icon(Icons.cancel, color: Colors.red, size: 32),
-                      const SizedBox(height: 4),
-                      const Text('Invalid Code. Please Try Again',
-                          style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 4),
-                      ElevatedButton(
-                        onPressed: () => setState(() { _code = ''; _codeResult = null; }),
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.green,
-                            minimumSize: const Size(80, 32)),
-                        child: const Text('OK', style: TextStyle(color: Colors.white)),
-                      ),
-                    ]),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 24),
                   _buildNumpad(),
                   const SizedBox(height: 12),
                   Row(
@@ -179,7 +192,7 @@ class _CodeEntryState extends State<CodeEntry> {
                     children: const [
                       Icon(Icons.gps_fixed, size: 14, color: Colors.orange),
                       SizedBox(width: 4),
-                      Text('GPS must be enabled · On campus check-in only',
+                      Text('GPS must be enabled Â· On campus check-in only',
                           style: TextStyle(fontSize: 11, color: Colors.orange)),
                     ],
                   ),

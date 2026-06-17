@@ -222,8 +222,6 @@ class _AdabDashboardState extends State<AdabDashboard> {
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
             ),
-<<<<<<< HEAD
-=======
 
             const SizedBox(height: 12),
 
@@ -296,7 +294,6 @@ class _AdabDashboardState extends State<AdabDashboard> {
             ),
 
             StudNav(student: widget.student),
->>>>>>> openRegistration
           ],
         ),
       ),

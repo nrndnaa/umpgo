@@ -160,7 +160,7 @@ class _PaymentHistoryStudentState extends State<PaymentHistoryStudent> {
                       cells: [
                         DataCell(Text(index.toString())),
 
-                        DataCell(Text(payment.paidAt.substring(0, 10))),
+                        DataCell(Text(payment.paidAt.toString().substring(0, 10))),
 
                         DataCell(
                           Text('RM${payment.amount.toStringAsFixed(2)}'),
@@ -187,9 +187,9 @@ class _PaymentHistoryStudentState extends State<PaymentHistoryStudent> {
                                         'Amount: RM${payment.amount.toStringAsFixed(2)}',
                                       ),
 
-                                      Text('Method: ${payment.paymentMethod}'),
+                                      Text('Method: ${payment.method}'),
 
-                                      Text('Status: ${payment.paymentStatus}'),
+                                      Text('Status: ${payment.result}'),
 
                                       Text('Date: ${payment.paidAt}'),
                                     ],

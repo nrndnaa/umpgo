@@ -190,7 +190,7 @@ Future<void> _submitPayment() async {
                   horizontal: 20,
                   vertical: 20,
                 ),
-                child: _buildPaymentCard(outstanding),
+                child: _buildPaymentCard(outstanding.toDouble()),
               ),
             ),
 

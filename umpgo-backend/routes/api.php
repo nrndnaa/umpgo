@@ -12,7 +12,7 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::get('/registration-sessions', [OpenRegistrationController::class, 'getSessions']);
 Route::post('/registration-sessions', [OpenRegistrationController::class, 'createSession']);
-Route::get('/registration-sessions/check', [OpenRegistrationController::class, 'checkOpenRegistrationStatus']); // ← must be before {id}
+Route::get('/registration-sessions/check', [OpenRegistrationController::class, 'checkOpenRegistrationStatus']); // â† must be before {id}
 Route::get('/subjects', [OpenRegistrationController::class, 'getAllSubjects']);
 Route::get('/sections/{sectionID}/students', [OpenRegistrationController::class, 'getSectionStudents']);
 Route::get('/student-registration-status', [OpenRegistrationController::class, 'getStudentRegistrationStatus']);
@@ -59,8 +59,6 @@ Route::get('/dashboard/stats', [KoqController::class, 'getDashboardStats']);
 
 Route::post('/attendance/session', [AttendanceController::class, 'createSession']);
 Route::post('/attendance/checkin', [AttendanceController::class, 'checkIn']);
-<<<<<<< Updated upstream
-=======
 Route::get('/student/dashboard', [OpenRegistrationController::class, 'dashboard']);
 
 
@@ -123,4 +121,3 @@ Route::get('/student/{studentID}/modules', [AttendanceController::class, 'getStu
 // Student enrollments (Nurin's)
 Route::get('/students/{studentID}/enrollments', [OpenRegistrationController::class, 'getMyEnrollments']);
 Route::get('/students/{studentID}/koq-bookings', [KoqController::class, 'getMyBookings']);
->>>>>>> Stashed changes

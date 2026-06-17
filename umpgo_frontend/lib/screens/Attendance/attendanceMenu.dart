@@ -1,116 +1,186 @@
+﻿import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:umpgo_frontend/domain/student_model.dart';
+import 'package:http/http.dart' as http;
+import 'package:umpgo_frontend/config/api.dart';
 import 'package:umpgo_frontend/widgets/app_header.dart';
-import 'package:umpgo_frontend/widgets/stud_nav.dart';
+import 'createSession.dart';
+import 'activeSession.dart';
+import 'allSession.dart';
+import 'selected_previous_session.dart';
 
-class AttendanceSuccess extends StatefulWidget {
-  final StudentModel student;
-  final String subjectName;
-  final String subjectCode;
-  final Map<String, dynamic> sessionData;
-  final bool isKoko;
-
-  const AttendanceSuccess({
-    Key? key,
-    required this.student,
-    required this.subjectName,
-    required this.subjectCode,
-    required this.sessionData,
-    this.isKoko = false,
-  }) : super(key: key);
-
+class AttendanceMenu extends StatefulWidget {
+  final int userID;
+  final String userName;
+  final bool isAdab;
+  const AttendanceMenu({Key? key, required this.userID, required this.userName, required this.isAdab}) : super(key: key);
   @override
-  State<AttendanceSuccess> createState() => _AttendanceSuccessState();
+  State<AttendanceMenu> createState() => _AttendanceMenuState();
 }
 
-class _AttendanceSuccessState extends State<AttendanceSuccess>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _ctrl;
-  late Animation<double> _scale;
-  late Animation<double> _fade;
+class _AttendanceMenuState extends State<AttendanceMenu> {
+  List<Map<String, dynamic>> _recentSessions = [];
+  bool _isLoading = true;
+  Color get _amber => widget.isAdab ? const Color(0xFFFFF9C4) : const Color(0xFFFFD18E);
+  Color get _amberDark => widget.isAdab ? const Color(0xFFFFD700) : const Color(0xFFF5A623);
 
   @override
   void initState() {
     super.initState();
-    _ctrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
-    _scale = CurvedAnimation(parent: _ctrl, curve: Curves.elasticOut);
-    _fade  = CurvedAnimation(parent: _ctrl, curve: Curves.easeIn);
-    _ctrl.forward();
+    _load();
   }
 
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
+  Future<void> _load() async {
+    setState(() => _isLoading = true);
+    try {
+      final url = widget.isAdab ? ApiConfig.allSessionsAdab(widget.userID) : ApiConfig.allSessions(widget.userID);
+      final response = await http.get(Uri.parse(url));
+      final data = jsonDecode(response.body);
+      if (data['success'] == true) {
+        final all = List<Map<String, dynamic>>.from(data['sessions']);
+        setState(() => _recentSessions = all.take(3).toList());
+      }
+    } catch (e) { debugPrint('Error: $e'); }
+    finally { setState(() => _isLoading = false); }
   }
 
   @override
   Widget build(BuildContext context) {
-    final now = DateTime.now();
-    final dateStr = '${now.day} ${_month(now.month)} · '
-        '${now.hour.toString().padLeft(2,'0')}:${now.minute.toString().padLeft(2,'0')} AM';
-
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: widget.isAdab ? Colors.white : const Color(0xFFFAF0DC),
+      bottomNavigationBar: Container(
+        margin: const EdgeInsets.all(15),
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        decoration: BoxDecoration(
+          color: _amber,
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            IconButton(icon: const Icon(Icons.home_rounded, size: 28),
+                onPressed: () => Navigator.popUntil(context, (r) => r.isFirst)),
+            IconButton(icon: const Icon(Icons.grid_view_rounded, size: 28), onPressed: () {}),
+            IconButton(icon: const Icon(Icons.notifications_none_rounded, size: 28), onPressed: () {}),
+            IconButton(icon: const Icon(Icons.person_outline_rounded, size: 28), onPressed: () {}),
+          ],
+        ),
+      ),
       body: Column(
         children: [
           const AppHeader(),
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            color: const Color(0xFF5B9BD5),
-            child: const Text('Menu > Location Verification',
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+            color: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: _amber,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Text('Menu > Attendance',
+                  style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 14)),
+            ),
           ),
           Expanded(
-            child: FadeTransition(
-              opacity: _fade,
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: _amber,
+                  borderRadius: BorderRadius.circular(16),
+                ),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 16),
-                    ScaleTransition(
-                      scale: _scale,
-                      child: const Text('🎉', style: TextStyle(fontSize: 64)),
-                    ),
-                    const SizedBox(height: 16),
-                    const Text('Checked In Successfully!',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 4),
-                    const Text('Your attendance has been recorded and verified',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.grey, fontSize: 13)),
-                    const SizedBox(height: 24),
-                    // Detail card
+                    // Generate New Code
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF5F5F5),
+                        color: Colors.white.withOpacity(0.6),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _detailRow(widget.isKoko ? 'Module' : 'Subject', widget.subjectName),
-                          _detailRow('Session', widget.sessionData['sessionTitle'] ?? ''),
-                          _detailRow('Date & Time', dateStr),
-                          _detailRow('Location', 'GPS Verified'),
-                          _detailRow('Status', 'Present', isStatus: true),
+                          const Text('GENERATE NEW CODE',
+                              style: TextStyle(fontSize: 11, color: Colors.black54,
+                                  fontWeight: FontWeight.bold, letterSpacing: 1)),
+                          const SizedBox(height: 12),
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: _amberDark,
+                                foregroundColor: Colors.black87,
+                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                              ),
+                              onPressed: () => Navigator.push(context, MaterialPageRoute(
+                                builder: (_) => CreateSession(userID: widget.userID, userName: widget.userName, isAdab: widget.isAdab),
+                              )).then((_) => _load()),
+                              child: const Text('+ Start New Session',
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 32),
-                    SizedBox(
+                    const SizedBox(height: 12),
+                    // Recent Sessions
+                    Container(
                       width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF5B9BD5),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.6),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('RECENT SESSIONS',
+                              style: TextStyle(fontSize: 11, color: Colors.black54,
+                                  fontWeight: FontWeight.bold, letterSpacing: 1)),
+                          const SizedBox(height: 12),
+                          _isLoading
+                              ? const Center(child: CircularProgressIndicator())
+                              : _recentSessions.isEmpty
+                                  ? const Text('No sessions yet', style: TextStyle(color: Colors.black54))
+                                  : Column(children: _recentSessions.map((s) => _sessionTile(s)).toList()),
+                        ],
+                      ),
+                    ),
+                    const Spacer(),
+                    // View All Sessions
+                    GestureDetector(
+                      onTap: () => Navigator.push(context, MaterialPageRoute(
+                        builder: (_) => AllSession(userID: widget.userID, isAdab: widget.isAdab),
+                      )),
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: _amberDark,
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        onPressed: () => Navigator.popUntil(context, (r) => r.isFirst),
-                        child: const Text('Back', style: TextStyle(color: Colors.white)),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: const [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('View All Sessions',
+                                    style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 15)),
+                                Text('Full attendance history',
+                                    style: TextStyle(color: Colors.black54, fontSize: 12)),
+                              ],
+                            ),
+                            Icon(Icons.arrow_forward, color: Colors.black87),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -118,33 +188,52 @@ class _AttendanceSuccessState extends State<AttendanceSuccess>
               ),
             ),
           ),
-          StudNav(student: widget.student),
         ],
       ),
     );
   }
 
-  Widget _detailRow(String label, String value, {bool isStatus = false}) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 5),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(label, style: const TextStyle(color: Colors.grey, fontSize: 13)),
-        isStatus
-            ? Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                decoration: BoxDecoration(
-                  color: Colors.green,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Text('Present',
-                    style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
-              )
-            : Text(value, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13)),
-      ],
-    ),
-  );
-
-  String _month(int m) => ['Jan','Feb','Mar','Apr','May','Jun',
-      'Jul','Aug','Sep','Oct','Nov','Dec'][m-1];
+  Widget _sessionTile(Map<String, dynamic> s) {
+    final present = s['present'] ?? 0;
+    final total = s['total'] ?? 0;
+    final isActive = s['isActive'] == true || s['isActive'] == 1;
+    return GestureDetector(
+      onTap: () => Navigator.push(context, MaterialPageRoute(
+        builder: (_) => isActive
+            ? ActiveSession(sessionID: s['attSessionID'] as int, userID: widget.userID, isAdab: widget.isAdab)
+            : SelectedPreviousSession(sessionID: s['attSessionID'] as int, isAdab: widget.isAdab),
+      )).then((_) => _load()),
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(s['subjectName'] ?? '',
+                      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Colors.black87)),
+                  Text('${s['started_At']?.toString().substring(0, 10) ?? ''} ${s['sessionTitle'] ?? ''}',
+                      style: const TextStyle(color: Colors.black54, fontSize: 11)),
+                ],
+              ),
+            ),
+            Text('$present / $total',
+                style: const TextStyle(color: Colors.black54, fontSize: 12, fontWeight: FontWeight.w500)),
+          ],
+        ),
+      ),
+    );
+  }
 }
+
+
+
+
+
+
+
+
+
+

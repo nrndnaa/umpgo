@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:umpgo_frontend/config/api.dart';
@@ -13,7 +13,7 @@ import 'package:umpgo_frontend/screens/registrar_dashboard.dart';
 import 'package:umpgo_frontend/screens/treasury_dashboard.dart';
 import 'package:umpgo_frontend/screens/adab_dashboard.dart';
 
-// ─── Theme constants ──────────────────────────────────────────────────────────
+// â”€â”€â”€ Theme constants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _C {
   static const bg = Color(0xFFF4F7FB);
   static const primary = Color(0xFF1E6FBF);
@@ -26,7 +26,7 @@ class _C {
   static const errorLight = Color(0xFFFFEBEE);
 }
 
-// ─── Login Controller ─────────────────────────────────────────────────────────
+// â”€â”€â”€ Login Controller â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class LoginController {
   static Future<String?> login({
     required BuildContext context,
@@ -44,7 +44,10 @@ class LoginController {
       final response = await http
           .post(
             Uri.parse(ApiConfig.login),
-            headers: {'Content-Type': 'application/json'},
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json', // â† add this line
+            },
             body: jsonEncode({
               'username': trimmedUser,
               'password': trimmedPass,
@@ -54,22 +57,25 @@ class LoginController {
           .timeout(const Duration(seconds: 10));
 
       final data = jsonDecode(response.body);
-
       if (data['success'] == true) {
-        _navigateToDashboard(context, role, data['user']);
+        debugPrint('USER DATA: ${data['user']}');
+        debugPrint('ROLE: $role');
+        try {
+          _navigateToDashboard(context, role, data['user']);
+          debugPrint('NAVIGATION SUCCESS');
+        } catch (e, stackTrace) {
+          debugPrint('NAV ERROR: $e');
+          debugPrint('STACK: $stackTrace');
+          return 'Dashboard error: $e';
+        }
         return null;
       } else {
         return data['message'] ?? 'Login failed. Please try again.';
       }
-<<<<<<< Updated upstream
-    } catch (e) {
-        print('LOGIN ERROR: $e'); // add this
-=======
-} catch (e) {
-      print('LOGIN ERROR: $e');
->>>>>>> Stashed changes
-      return 'Could not connect to server. Check your network.';
-    }
+  }  catch (e) {
+  print(e);
+  return 'Error: $e';
+}
   }
 
   static void _navigateToDashboard(
@@ -97,14 +103,10 @@ class LoginController {
         dashboard = TreasuryDashboard(treasury: treasury);
         break;
       case 'Pusat Adab':
-        final adab = PusatAdabModel.fromJson(userData);
-<<<<<<< Updated upstream
-        dashboard = AdabDashboard(adab: adab);
-=======
-dashboard = AdabDashboard(adab: adab, student: StudentModel.empty());
->>>>>>> Stashed changes
-        break;
-      default:
+         final adab = PusatAdabModel.fromJson(userData);
+         dashboard = AdabDashboard(adab: adab); 
+         break;
+        default:
         return;
     }
 
@@ -115,7 +117,7 @@ dashboard = AdabDashboard(adab: adab, student: StudentModel.empty());
   }
 }
 
-// ─── Login Screen ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ Login Screen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -148,7 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
     "Pusat Adab": Icons.gamepad_rounded,
   };
 
-  // ── Role-aware label & hint ─────────────────────────────────────────────
+  // â”€â”€ Role-aware label & hint â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   String get _usernameLabel =>
       (_selectedRole == 'Student') ? 'Matric ID' : 'Staff ID';
 
@@ -205,7 +207,7 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: _C.bg,
       body: Stack(
         children: [
-          // ── Background image ──────────────────────────────────────────
+          // â”€â”€ Background image â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           Positioned(
             top: 0,
             left: 0,
@@ -232,7 +234,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
 
-          // ── Branding ──────────────────────────────────────────────────
+          // â”€â”€ Branding â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           Positioned(
             top: 52,
             left: 0,
@@ -292,7 +294,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
 
-          // ── Login Card ────────────────────────────────────────────────
+          // â”€â”€ Login Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -311,7 +313,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      "Welcome back 👋",
+                      "Welcome back ðŸ‘‹",
                       style: TextStyle(
                         fontSize: 26,
                         fontWeight: FontWeight.w800,
@@ -331,7 +333,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     // Role chips
                     const Text(
-                      "I am a…",
+                      "I am aâ€¦",
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
@@ -389,7 +391,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 24),
 
-                    // Username — label and hint are role-aware
+                    // Username â€” label and hint are role-aware
                     _FieldLabel(_usernameLabel),
                     const SizedBox(height: 8),
                     _InputField(
@@ -530,7 +532,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-// ─── Shared widgets ───────────────────────────────────────────────────────────
+// â”€â”€â”€ Shared widgets â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _FieldLabel extends StatelessWidget {
   final String text;
   const _FieldLabel(this.text);
@@ -601,3 +603,5 @@ class _InputField extends StatelessWidget {
     );
   }
 }
+
+
