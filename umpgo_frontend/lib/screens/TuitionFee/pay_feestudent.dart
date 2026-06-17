@@ -54,17 +54,20 @@ final TextEditingController _amountController =
 Future<void> _submitPayment() async {
 
   if (_selectedMethod == PaymentMethod.fpx &&
-      _selectedBank == null) {
+    _selectedBank == null) {
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Please select a bank.'),
-        backgroundColor: Colors.orange,
-      ),
-    );
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(
+      content: Text('Please select a bank'),
+      backgroundColor: Colors.orange,
+    ),
+  );
 
-    return;
-  }
+  return;
+}
+
+   
+  
 
   final outstanding =
       widget.fee.totalFee - widget.fee.paidAmount;
@@ -82,17 +85,72 @@ Future<void> _submitPayment() async {
     return;
   }
 
-  if (enteredAmount > outstanding) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Maximum payment amount is RM${outstanding.toStringAsFixed(2)}',
+if (enteredAmount > outstanding) {
+
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
         ),
-        backgroundColor: Colors.orange,
-      ),
-    );
-    return;
-  }
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+
+            const Icon(
+              Icons.cancel_outlined,
+              color: Colors.red,
+              size: 70,
+            ),
+
+            const SizedBox(height: 15),
+
+            const Text(
+              'Payment Fail',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            Text(
+              'Maximum payment amount is\nRM${outstanding.toStringAsFixed(2)}',
+              textAlign: TextAlign.center,
+            ),
+
+            const SizedBox(height: 15),
+
+            SizedBox(
+              width: 90,
+              height: 35,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor:
+                      const Color(0xFF42A5F5),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(20),
+                  ),
+                ),
+                child: const Text('OK'),
+              ),
+            ),
+
+          ],
+        ),
+      );
+    },
+  );
+
+  return;
+}
 
   setState(() => _isPaying = true);
 
@@ -123,21 +181,71 @@ Future<void> _submitPayment() async {
     final data = jsonDecode(response.body);
 
     if (response.statusCode == 200 &&
-        data['success'] == true) {
+    data['success'] == true) {
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Payment successful!'),
-          backgroundColor: Colors.green,
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+
+            const Icon(
+              Icons.check_circle,
+              color: Color(0xFF4CAF50),
+              size: 80,
+            ),
+
+            const SizedBox(height: 15),
+
+            const Text(
+              'Payment Success',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 15),
+
+            SizedBox(
+              width: 90,
+              height: 35,
+              child: ElevatedButton(
+                onPressed: () {
+
+                  Navigator.pop(context);
+
+                  Navigator.popUntil(
+                    context,
+                    (route) => route.isFirst,
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor:
+                      const Color(0xFF42A5F5),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(20),
+                  ),
+                ),
+                child: const Text('Ok'),
+              ),
+            ),
+
+          ],
         ),
       );
-
-      Navigator.popUntil(
-        context,
-        (route) => route.isFirst,
-      );
-
-    } else {
+    },
+  );
+}
+    else {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -201,34 +309,40 @@ Future<void> _submitPayment() async {
     );
   }
 
-  Widget _buildBreadcrumb() {
-
-    return Container(
-      width: double.infinity,
-      color: primaryBlue,
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 10,
+Widget _buildBreadcrumb() {
+  return Container(
+    width: double.infinity,
+    margin: const EdgeInsets.only(
+      left: 8,
+      right: 8,
+      top: 10,
+      bottom: 10,
+    ),
+    padding: const EdgeInsets.symmetric(
+      horizontal: 18,
+      vertical: 10,
+    ),
+    decoration: BoxDecoration(
+      color: const Color.fromARGB(255, 116, 190, 255),
+      borderRadius: BorderRadius.circular(15),
+      boxShadow: const [
+        BoxShadow(
+          color: Colors.black12,
+          blurRadius: 3,
+          offset: Offset(0, 2),
+        ),
+      ],
+    ),
+    child: const Text(
+      'Menu > Tuition Fee > Pay Fee',
+      style: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        color: Colors.black,
       ),
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 8,
-        ),
-        decoration: BoxDecoration(
-          color: lightBlue,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: const Text(
-          'Menu > Tuition Fee > Pay Fee',
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildPaymentCard(double outstanding) {
 

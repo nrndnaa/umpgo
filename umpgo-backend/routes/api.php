@@ -75,7 +75,10 @@ Route::post('/login', [AuthController::class, 'login']);
 
 // DUE DATE
 Route::post('/set-due-date', [TuitionFeeController::class, 'setDueDate']);
-
+Route::get(
+    '/due-dates',
+    [TuitionFeeController::class, 'getDueDates']
+);
 
 
 

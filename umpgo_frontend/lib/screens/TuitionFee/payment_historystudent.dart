@@ -13,6 +13,8 @@ import 'package:umpgo_frontend/domain/payment_model.dart';
 // Shown when fee.isPaid == true  (student has already paid)
 // ─────────────────────────────────────────────────────────────────────────────
 
+import 'package:umpgo_frontend/screens/TuitionFee/payreceipt.dart';
+
 class PaymentHistoryStudent extends StatefulWidget {
   final StudentModel student;
   final FeeRecord fee;
@@ -165,41 +167,39 @@ class _PaymentHistoryStudentState extends State<PaymentHistoryStudent> {
                           Text('RM${payment.amount.toStringAsFixed(2)}'),
                         ),
 
-                        DataCell(
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
-                            ),
+DataCell(
+  SizedBox(
+    width: 55,
+    height: 30,
+    child: ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.green,
+        padding: EdgeInsets.zero,
+      ),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => PayReceipt(
+              student: widget.student,
+              fee: widget.fee,
+              payment: payment,
+            ),
+          ),
+        );
+      },
+      child: const Text(
+        'View',
+        style: TextStyle(
+          fontSize: 10,
+        ),
+      ),
+    ),
+  ),
+),
 
-                            onPressed: () {
-                              showDialog(
-                                context: context,
 
-                                builder: (_) => AlertDialog(
-                                  title: const Text('Payment Detail'),
 
-                                  content: Column(
-                                    mainAxisSize: MainAxisSize.min,
-
-                                    children: [
-                                      Text(
-                                        'Amount: RM${payment.amount.toStringAsFixed(2)}',
-                                      ),
-
-                                      Text('Method: ${payment.paymentMethod}'),
-
-                                      Text('Status: ${payment.paymentStatus}'),
-
-                                      Text('Date: ${payment.paidAt}'),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-
-                            child: const Text('View'),
-                          ),
-                        ),
                       ],
                     );
                   }).toList(),
